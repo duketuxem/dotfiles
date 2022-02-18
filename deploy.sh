@@ -16,12 +16,14 @@
 #
 #}
 
+
 install_void_dependencies() {
         # [~/workspace/ricing/dotfiles] - Install dependencies
 
 	printf "Installing all the dependencies for the Rice...\n"
 
-        sudo xbps-install curl tree base-devel xorg \
+	# compton
+        sudo xbps-install curl base-devel xorg \
         libX11-devel libXft-devel libXinerama-devel \
         fonts-droid-ttf \
 	&& printf "Dependencies successfully installed!\n\n"
@@ -50,12 +52,14 @@ install_suckless_suite() {
 # For now just one
 install_custom_fonts() {
 	printf "Assert the custom font directory is existing..."
-	#cd && mkdir -p .local/share/fonts/ && cd .local/share/fonts
-	mkdir -p .local/share/fonts/ && cd .local/share/fonts
+	cd && mkdir -p .local/share/fonts/ && cd .local/share/fonts
 	
 	printf "Downloading Hack Nerd Font..."
-	curl -fLo "Hack Regular Nerd Font Complete Mono2.ttf" \
-		https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete%20Mono.ttf
+	curl -fLo "Hack Regular Nerd Font Complete Mono.ttf" \
+		https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete%20Mono.ttf
+
+	fc-cache -fv ~/.local/share/fonts
+	#if fc-match ... :
 	printf "Hack installed!"
 }
 
@@ -65,5 +69,4 @@ install_void_dependencies
 install_suckless_suite 
 install_custom_fonts
 
-#startx /usr/local/bin/dwm
-
+echo "Welcome home..."

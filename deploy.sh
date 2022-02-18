@@ -60,7 +60,7 @@ install_custom_fonts() {
 
 	fc-cache -fv ~/.local/share/fonts
 	#if fc-match ... :
-	printf "Hack installed!"
+	printf "Hack installed!\n"
 }
 
 # Main
@@ -69,4 +69,4 @@ install_void_dependencies
 install_suckless_suite 
 install_custom_fonts
 
-echo "Welcome home..."
+printf "Welcome home...\n"

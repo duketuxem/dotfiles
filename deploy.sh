@@ -21,15 +21,15 @@ install_void_dependencies() {
 
 	printf "Installing all the dependencies for the Rice...\n"
 
-        sudo xbps-install curl base-devel \
+        sudo xbps-install curl tree base-devel xorg \
         libX11-devel libXft-devel libXinerama-devel \
         fonts-droid-ttf \
 	&& printf "Dependencies successfully installed!\n\n"
 }
 
 install_suckless_suite() {
-        #cd ..
-	# [~/workspace/ricing]
+	# Leaving dotfiles repo...
+        cd ..
 
 	printf "Installing the suckless software suite...\n"
         git clone https://github.com/DukeTuxem/dwm.git \

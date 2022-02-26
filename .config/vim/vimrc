@@ -1,0 +1,124 @@
+"
+"           |  \
+"  __     __ \▓▓______ ____   ______   _______
+" |  \   /  \  \      \    \ /      \ /       \
+"  \▓▓\ /  ▓▓ ▓▓ ▓▓▓▓▓▓\▓▓▓▓\  ▓▓▓▓▓▓\  ▓▓▓▓▓▓▓
+"   \▓▓\  ▓▓| ▓▓ ▓▓ | ▓▓ | ▓▓ ▓▓   \▓▓ ▓▓
+"    \▓▓ ▓▓ | ▓▓ ▓▓ | ▓▓ | ▓▓ ▓▓     | ▓▓_____
+"     \▓▓▓  | ▓▓ ▓▓ | ▓▓ | ▓▓ ▓▓      \▓▓     \
+"      \▓    \▓▓\▓▓  \▓▓  \▓▓\▓▓       \▓▓▓▓▓▓▓
+" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+" General
+set nocompatible          " Embrace the 'future' and break vi compatibility
+
+source $XDG_CONFIG_HOME/vim/respect_xdg.vim " Force XDG Base Directory spec
+
+set mouse=a               " Enable mouse for every mode
+
+filetype on               " Enable type based file detection
+filetype plugin on        " Enable and load plugin(s) for the detected file type
+filetype indent on        " Load an indent file for the detected file type
+
+
+" Visuals
+set number                " Display numbers on the left side of the editor
+set relativenumber        " Show the relative number depending on the cursor
+set colorcolumn=80        " Show the limit with a vertical mark bar
+set showcmd               " Show the command being typed. Ex: "a
+set ruler                 " Show line and column number info in the bottom bar
+set nowrap                " Allow long lines to extend as far as they go
+set showmatch             " Briefly highlight the previous bracket if any...
+set matchtime=3           " ... And shorten the default time
+set scrolloff=10          " This setting should be illegal as it helps scrolling
+"set cursorline            " Underline the cursor
+"set cursorcolumn          " Display a vertical bar at cursor position
+"nmap <F4> :set cursorline!<CR>:set cursorcolumn!<CR>
+
+" Completion menu
+set wildmenu              " Better than spamming tab tab in command line mode
+set wildmode=list:longest " Let me see everything!
+set wildignore=*.jpg,*.png,*.gif,*.pdf,*.pyc,*.flv,*.img
+
+" Background behavior
+set modeline              " Explicit setting for # vim: command
+set modelines=5           " Limit lines to read
+set hidden                " We can not only keep one file opened at a time...
+set autoread              " Reload files changed outside vim
+au FocusGained,BufEnter * :checktime
+
+" Search
+set incsearch             " Find the next match as we type the search
+set hlsearch              " Highlight searches by default
+set ignorecase            " Ignore case when searching...
+set smartcase             " ...unless we type a capital
+" Erase search on a double <Esc> key press
+nnoremap <silent> <Esc><Esc> <Esc>:nohlsearch<CR><Esc>
+
+" Tab setting
+set tabstop=8             " Number of spaces that a <Tab> in the file counts for
+set expandtab             " Replace tabs with space
+set shiftwidth=4
+set softtabstop=4
+
+set title		  " Forward opened file name to the WM
+" TODO: Fix thanks for flying vim everywhere (nnn opening editor)
+" -> Temporary fix is zsh setting cwd for the WM
+"set titleold=
+" Done in zsh (not in nnn yet, generic way...?)
+"let &titleold;=getcwd()   " Fix the 'Thanks for flying vim' ?
+
+
+"set ttymouse=sgr         " Fixes mouse scrolling in st. Update: it seems fixed
+"set visualbell	          " Disable sound
+"set vb t_vb=             " Clearing the visual bell length deactivates flashing
+
+" {{{ Remaps
+" Stop deleting paragraphs because of
+" stupid burried historical reasons...
+" Tmux + ST related ?
+" Ctrl+Left/Right fix to not erase text in any mode
+nmap <ESC>[1;5D <C-Left>
+nmap <ESC>[1;5C <C-Right>
+cmap <ESC>[1;5D <C-Left>
+cmap <ESC>[1;5C <C-Right>
+imap <ESC>[1;5D <C-o><C-Left>
+imap <ESC>[1;5C <C-o><C-Right>
+
+" ctrl+backspace to erase back word in any mode TOFIX
+nmap <C-h> <C-w>
+cmap <C-h> <C-w>
+imap <C-h> <C-w>
+
+" Ctrl + s to save on update
+" config: `stty -ixon` in bash or `set noflowcontrol` in zsh
+noremap <silent> <C-S>    :update<CR>
+vnoremap <silent> <C-S>   <C-C>:update<CR>
+inoremap <silent> <C-S>   <C-O>:update<CR>
+" }}}
+
+" Vimrc under construction...
+nnoremap <F4> :so %<CR>
+
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+nnoremap <F3> :call g:SynStack()<CR>
+
+" Color
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"  " From :help xterm-true-color
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"  " From :help xterm-true-color
+set termguicolors                       " Enable support for truecolor (24bit)
+syntax on                 " Enable syntax highlighting better put after filetype
+"colorscheme monkey
+
+call plug#begin()
+"Plug 'BourgeoisBear/clrzr'  " Requires termguicolors
+call plug#end()
+
+" Eventual extern theme otherwise mine before vim-plug...
+colorscheme onedark

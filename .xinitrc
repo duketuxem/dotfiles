@@ -1,9 +1,13 @@
+# TODO: Change location of xinitrc
+
 feh --no-fehbg --bg-scale $HOME/Pics/wallpaper &
 
 picom --experimental-backends &
 
 # Faster autorepeat
 xset r rate 300 50
+
+xset b off
 
 while true; do
     # Log stderror to a file

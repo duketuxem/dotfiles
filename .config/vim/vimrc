@@ -10,31 +10,36 @@
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-" General
+" General {{{
 set nocompatible          " Embrace the 'future' and break vi compatibility
 
-source $XDG_CONFIG_HOME/vim/respect_xdg.vim " Force XDG Base Directory spec
-
 set mouse=a               " Enable mouse for every mode
+
+source $XDG_CONFIG_HOME/vim/respect_xdg.vim " Force XDG Base Directory spec
 
 filetype on               " Enable type based file detection
 filetype plugin on        " Enable and load plugin(s) for the detected file type
 filetype indent on        " Load an indent file for the detected file type
+" }}}
 
 
-" Visuals
-set number                " Display numbers on the left side of the editor
+" Look and feel {{{
+set number                " Show line number on the side, at current cursor loc
 set relativenumber        " Show the relative number depending on the cursor
 set colorcolumn=80        " Show the limit with a vertical mark bar
 set showcmd               " Show the command being typed. Ex: "a
-set ruler                 " Show line and column number info in the bottom bar
+set noruler               " Show line info at the bottom (useless with airline)
 set nowrap                " Allow long lines to extend as far as they go
 set showmatch             " Briefly highlight the previous bracket if any...
-set matchtime=3           " ... And shorten the default time
-set scrolloff=10          " This setting should be illegal as it helps scrolling
+"set matchtime=3           " ... And shorten the default time -> zt zb zz H M L
+"set scrolloff=5           " This setting should be illegal as it helps scrolling
 "set cursorline            " Underline the cursor
 "set cursorcolumn          " Display a vertical bar at cursor position
 "nmap <F4> :set cursorline!<CR>:set cursorcolumn!<CR>
+
+" Splits
+set splitbelow            " Split more...
+set splitright            " ... naturally
 
 " Completion menu
 set wildmenu              " Better than spamming tab tab in command line mode
@@ -43,7 +48,7 @@ set wildignore=*.jpg,*.png,*.gif,*.pdf,*.pyc,*.flv,*.img
 
 " Background behavior
 set modeline              " Explicit setting for # vim: command
-set modelines=5           " Limit lines to read
+set modelines=1           " Limit lines to read
 set hidden                " We can not only keep one file opened at a time...
 set autoread              " Reload files changed outside vim
 au FocusGained,BufEnter * :checktime
@@ -69,15 +74,15 @@ set title		  " Forward opened file name to the WM
 " Done in zsh (not in nnn yet, generic way...?)
 "let &titleold;=getcwd()   " Fix the 'Thanks for flying vim' ?
 
-
 "set ttymouse=sgr         " Fixes mouse scrolling in st. Update: it seems fixed
 "set visualbell	          " Disable sound
 "set vb t_vb=             " Clearing the visual bell length deactivates flashing
+" }}}
 
-" {{{ Remaps
-" Stop deleting paragraphs because of
-" stupid burried historical reasons...
-" Tmux + ST related ?
+
+" Remaps {{{
+"
+" Stop deleting paragraphs because of stupid burried historical reasons...
 " Ctrl+Left/Right fix to not erase text in any mode
 nmap <ESC>[1;5D <C-Left>
 nmap <ESC>[1;5C <C-Right>
@@ -86,21 +91,36 @@ cmap <ESC>[1;5C <C-Right>
 imap <ESC>[1;5D <C-o><C-Left>
 imap <ESC>[1;5C <C-o><C-Right>
 
-" ctrl+backspace to erase back word in any mode TOFIX
-nmap <C-h> <C-w>
-cmap <C-h> <C-w>
-imap <C-h> <C-w>
+" TOFIX: ctrl+backspace to erase back word in any mode
+"nmap <C-h> <C-w>
+"cmap <C-h> <C-w>
+"imap <C-h> <C-w>
 
 " Ctrl + s to save on update
 " config: `stty -ixon` in bash or `set noflowcontrol` in zsh
 noremap <silent> <C-S>    :update<CR>
 vnoremap <silent> <C-S>   <C-C>:update<CR>
 inoremap <silent> <C-S>   <C-O>:update<CR>
+
+" Embrace the pain: Unmap arrows
+noremap <Up> <Nop>
+noremap <Down> <Nop>
+noremap <Left> <Nop>
+noremap <Right> <Nop>
+inoremap <Up> <Nop>
+inoremap <Down> <Nop>
+inoremap <Left> <Nop>
+inoremap <Right> <Nop>
+
+" Remap Window navigation to save a keystroke
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
 " }}}
 
-" Vimrc under construction...
-nnoremap <F4> :so %<CR>
 
+" Miscellaneous functions... {{{
 function! SynStack()
   if !exists("*synstack")
     return
@@ -109,16 +129,54 @@ function! SynStack()
 endfunc
 nnoremap <F3> :call g:SynStack()<CR>
 
-" Color
-let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"  " From :help xterm-true-color
-let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"  " From :help xterm-true-color
-set termguicolors                       " Enable support for truecolor (24bit)
-syntax on                 " Enable syntax highlighting better put after filetype
-"colorscheme monkey
+nnoremap <F4> :so %<CR>
+" }}}
 
+
+" Color settings {{{
+"
+" Will likely fallback to 256 color mode if commented
+"let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"  " From :help xterm-true-color
+"let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"  " From :help xterm-true-color
+"set termguicolors                       " Enable support for truecolor (24bit)
+
+syntax on
+" }}}
+
+
+" Vim-plug {{{
+"
 call plug#begin()
-"Plug 'BourgeoisBear/clrzr'  " Requires termguicolors
-call plug#end()
 
-" Eventual extern theme otherwise mine before vim-plug...
-colorscheme onedark
+" [Theme(s)]
+Plug 'chriskempson/base16-vim'  " A nice set of pastel look themes
+
+" ===== Those left here are for study and later develop my own theme =====
+Plug 'joshdick/onedark.vim'            " } Those two are almost the same
+"Plug 'sonph/onehalf', { 'rtp': 'vim' } " } The logic differs a bit though
+
+" Has an really clean and minimal structure to study
+" https://github.com/romainl/Apprentice/blob/master/colors/apprentice.vim
+" Jellybeans also is super well written with functionality on top
+" nanotech/jellybeans.vim/blob/master/colors/jellybeans.vim
+" ========================================================================
+
+Plug 'chriskempson/tomorrow-theme'
+
+" Now starting with the awesome!
+" [Bar]
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+call plug#end()
+" }}}
+
+" My under construction custom theme
+colorscheme monkey
+
+let g:airline_theme='angr' " Other of my linkings: deus | term | murmur | angr
+" TODO: Powerline
+
+" TOFIX: Auto source vimrc on save
+"autocmd! bufwritepost $MYVIMRC source %
+
+" vim: foldlevel=0 fdm=marker

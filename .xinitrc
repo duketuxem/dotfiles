@@ -7,6 +7,9 @@ picom --experimental-backends &
 # Faster autorepeat
 xset r rate 300 50
 
+# Who cares about Caps Lock anyway
+xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
+
 xset b off
 
 while true; do

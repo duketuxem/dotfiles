@@ -63,6 +63,8 @@
     export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
     # Java apps now work with Tiling Window Managers
     export _JAVA_AWT_WM_NONREPARENTING=1
+
+    [[ ! -d "$HOME_LOG" ]] && mkdir -p "$HOME_LOG"
 # }}}
 
 

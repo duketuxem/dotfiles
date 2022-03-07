@@ -1,0 +1,150 @@
+#                       __
+#                      |  \
+#     ________  _______| ▓▓____   ______   _______
+#    |        \/       \ ▓▓    \ /      \ /       \
+#     \▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓\  ▓▓▓▓▓▓\  ▓▓▓▓▓▓▓
+#      /    ▓▓ \▓▓    \| ▓▓  | ▓▓ ▓▓   \▓▓ ▓▓
+#  __ /  ▓▓▓▓_ _\▓▓▓▓▓▓\ ▓▓  | ▓▓ ▓▓     | ▓▓_____
+# |  \  ▓▓    \       ▓▓ ▓▓  | ▓▓ ▓▓      \▓▓     \
+#  \▓▓\▓▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓\▓▓       \▓▓▓▓▓▓▓
+# =================================================
+
+
+
+# History
+export HISTSIZE=100000
+export SAVEHIST=100000
+setopt append_history      # (On by default)
+setopt hist_ignore_dups    # Avoid ls ls ls ls
+setopt hist_ignore_space   # Do not record ' cmd'
+
+
+# Misc
+setopt noflowcontrol	    # Disable Ctrl + s / Ctrl + q (XON/XOFF)
+setopt completealiases      # Autocomplete even aliases
+setopt autocd               # ../../..
+setopt notify               # Report background job status immediately
+bindkey -v                  # Enable vim mode on command line
+
+
+# Modules and settings
+# {{{
+
+    # Completion
+    # 1 Create the cache directory if not existing
+    # 2 Mark compinit as a zsh builtin function
+    [[ ! -d "$XDG_CACHE_HOME/zsh" ]] && mkdir -p "$XDG_CACHE_HOME/zsh"
+    autoload -Uz compinit
+    compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
+    zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
+    zstyle ':completion:*' menu select
+
+
+    # Load VCS module
+    #autoload -Uz vcs_info
+    #precmd_vcs_info() { vcs_info }
+    #precmd_functions+=( precmd_vcs_info )
+    #setopt prompt_subst
+    #zstyle ':vcs_info:git:*' formats '%F{240}(%b)%r%f'
+    #zstyle ':vcs_info:*' enable git
+
+
+    autoload -U colors && colors
+# }}}
+
+# Custom functions / features
+# {{{
+
+    # Erase backward word
+    backward-kill-dir () {
+        # A list of non-alphanumeric characters
+        # considered part of a word by the line editor.
+        local WORDCHARS='*?-[]~=&;!#$%^(){}<>|_.'
+        zle backward-kill-word
+    }
+    zle -N backward-kill-dir    # Explicitely (-N) load a custom function
+
+    # Oh...
+    man() {
+        # md = Start bold effect (double-bright).
+        # me = Stop bold effect.
+        # us = Start underline effect.
+        # ue = Stop underline effect.
+        # so = Start stand-out effect (similar to reverse text).
+        # se = Stop stand-out effect (similar to reverse text).
+        LESS_TERMCAP_md=$'\e[01;34m'    \
+        LESS_TERMCAP_me=$'\e[0m'        \
+        LESS_TERMCAP_us=$'\e[01;32m'    \
+        LESS_TERMCAP_ue=$'\e[0m'        \
+        LESS_TERMCAP_so=$'\e[45;43m'    \
+        LESS_TERMCAP_se=$'\e[0m'        \
+        command man -O width=$(($(tput cols)-10)) "$@"
+        # We got color yeaaaaah...
+
+        # TODO: Would be awesome to have the man page
+        # centered and limited to 80 char
+}
+# }}}
+
+# Key mappings
+# {{{
+
+    # TODO: Refacto keymapping like that
+    # TODO: tty color mapping + control sequences
+    # TODO: Extend to other Terminal Emulators ?
+    #typeset -g -A key
+    #key[Delete]="${terminfo[kdch1]}"
+    # https://wiki.archlinux.org/title/zsh#Key_bindings
+
+# -- ST key bindings
+bindkey '^[[P'		delete-char				# Del
+#bindkey '^H'		backward-kill-word			# Ctrl + BackSpace
+bindkey '^[[H' 		beginning-of-line			# Home key
+bindkey '^A'		beginning-of-line			# Ctrl + A
+bindkey '^[[4~'		end-of-line				# End key
+bindkey '^E'		end-of-line				# Ctrl + E
+bindkey '^[[1;3C'	forward-word				# Alt + Right arrow
+bindkey '^[[1;5C'	forward-word				# Ctrl + Right arrow
+bindkey '^[[1;3D'	backward-word				# Alt + Left arrow
+bindkey '^[[1;5D'	backward-word				# Ctrl + Left arrow
+bindkey "^[[M"		kill-word				# Ctrl + Del
+bindkey '^[[5~'		history-beginning-search-backward	# Page up
+bindkey '^[[6~' 	history-beginning-search-forward	# Page down
+bindkey '^K'		kill-line				# Cut
+bindkey '^Y'		yank					# Paste
+bindkey '^[^?'          backward-kill-dir			# [Custom] Alt + BackSpace <3
+
+bindkey -s '^[[1;7D'    ''                                      # Disable Ctrl + Alt + Left
+bindkey -s '^[[1;7C'    ''                                      # Disable Ctrl + Alt + Righ
+# }}}
+
+
+# Prompt
+# {{{
+    # Run a command before the prompt gets displayed
+    # Show the current folder for this case:
+    precmd() { printf "\033]0;%s\007" "${PWD}" }
+    # TODO: Git
+
+
+    #PS1="%n@%m %1~ %# "
+    PROMPT="%B%{$fg[green]%}%n%{$fg[yellow]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%} %{$reset_color%}$%b "
+    #RPROMPT="%(?.%F{green}√.%F{red}?%?)%f %B%F{240}%1~%f%b"
+    RPROMPT="%(?.%F{green}√.%F{red}?%?)%f"
+    #RPROMPT=\$vcs_info_msg_0_
+# }}}
+
+
+source "$XDG_CONFIG_HOME/zsh/aliasrc"
+
+# Thanks Tmux to change my favorite ls colors...
+[[ "$TERM" == "screen-256color" ]] && source "$XDG_CONFIG_HOME/tmux/ls.env"
+
+# Fish-like syntax pre-validation (should be last)
+if [ "$(lsb_release -sd)" = '"Void Linux"' ]; then
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+else # elif [ "$(lsb_release -sd)" = '"Gentoo"' ]; then
+  source /usr/share/zsh/site-functions/zsh-syntax-highlighting.zsh
+fi
+
+# vim: fdm=marker

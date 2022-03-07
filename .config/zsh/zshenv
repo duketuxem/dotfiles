@@ -1,0 +1,27 @@
+#                    __
+#                   |  \
+#  ________  _______| ▓▓____   ______  _______  __     __
+# |        \/       \ ▓▓    \ /      \|       \|  \   /  \
+#  \▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓\  ▓▓▓▓▓▓\ ▓▓▓▓▓▓▓\\▓▓\ /  ▓▓
+#   /    ▓▓ \▓▓    \| ▓▓  | ▓▓ ▓▓    ▓▓ ▓▓  | ▓▓ \▓▓\  ▓▓
+#  /  ▓▓▓▓_ _\▓▓▓▓▓▓\ ▓▓  | ▓▓ ▓▓▓▓▓▓▓▓ ▓▓  | ▓▓  \▓▓ ▓▓
+# |  ▓▓    \       ▓▓ ▓▓  | ▓▓\▓▓     \ ▓▓  | ▓▓   \▓▓▓
+#  \▓▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓ \▓▓▓▓▓▓▓\▓▓   \▓▓    \▓
+
+
+
+# This file is read by *every* possible shell so it should contain
+# as less commands as possible to ensure a quick start up time.
+#
+# It should contain the system path and any other variable
+# that is not _constant_ (otherwise defined in .zprofile), thus
+# *not* requiring the user to log off/log in again for update.
+#
+# To unclutter $HOME, the best way is to set ZDOTDIR in /etc/zsh/zshenv.
+# -> export ZDOTDIR="$HOME/.config/zsh"
+# Otherwise, there will be one ~/.zshenv remaining
+# (ref: zsh startup files)
+
+typeset -U PATH path
+path=("$HOME/.local/bin" "$path[@]")
+export PATH

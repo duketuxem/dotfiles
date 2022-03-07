@@ -1,0 +1,47 @@
+#           __ __
+#          |  \  \
+#   ______ | ▓▓\▓▓ ______   _______  ______   _______
+#  |      \| ▓▓  \|      \ /       \/      \ /       \
+#   \▓▓▓▓▓▓\ ▓▓ ▓▓ \▓▓▓▓▓▓\  ▓▓▓▓▓▓▓  ▓▓▓▓▓▓\  ▓▓▓▓▓▓▓
+#  /      ▓▓ ▓▓ ▓▓/      ▓▓\▓▓    \| ▓▓   \▓▓ ▓▓
+# |  ▓▓▓▓▓▓▓ ▓▓ ▓▓  ▓▓▓▓▓▓▓_\▓▓▓▓▓▓\ ▓▓     | ▓▓_____
+#  \▓▓    ▓▓ ▓▓ ▓▓\▓▓    ▓▓       ▓▓ ▓▓      \▓▓     \
+#   \▓▓▓▓▓▓▓\▓▓\▓▓ \▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓       \▓▓▓▓▓▓▓
+
+
+
+# Color
+alias \
+        grep='grep --color=auto' \
+        diff='diff --color=auto' \
+        dmesg='dmesg -L=auto' \
+        less='less -R'
+
+# Preferences / shortcuts
+alias \
+        j='jobs' \
+        ls='ls -h --color=auto --group-directories-first' \
+        ll='ls -l' \
+        la='ll -a' \
+        gs='git status' \
+        gl='git log' \
+        du='du -h' \
+        v='vim' \
+        vi='vim' \
+        ons='alsamixer' \
+	mkdir='mkdir -p' \
+        xterm='xterm -bg black -fg white' \
+        xinst='sudo xbps-install' \
+        xquery='xbps-query' \
+        xremove='sudo xbps-remove'
+
+# Config
+alias \
+        dot='/usr/bin/git --git-dir="$HOME"/.dotfiles --work-tree="$HOME"' \
+        ons='alsamixer' \
+        tconf='vi "$XDG_CONFIG_HOME"/tmux/tmux.conf' \
+        tsrc='tmux source-file "$XDG_CONFIG_HOME"/tmux/tmux.conf' \
+        vconf='vi "$XDG_CONFIG_HOME"/vim/vimrc' \
+        zconf='vi "$XDG_CONFIG_HOME"/zsh/zshrc' \
+        aliases='vi "$XDG_CONFIG_HOME"/zsh/aliasrc' \
+        src='source "$XDG_CONFIG_HOME"/zsh/zshrc'

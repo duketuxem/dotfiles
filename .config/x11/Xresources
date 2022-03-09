@@ -1,0 +1,8 @@
+! TODO: xrdb -merge prior to startx?
+
+Xft.autohint: 1
+Xft.antialias: 1
+Xft.hinting: true
+Xft.hintstyle: hintslight
+Xft.rgba: rgb
+Xft.lcdfilter: lcddefault

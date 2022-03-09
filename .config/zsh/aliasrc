@@ -9,7 +9,6 @@
 #   \▓▓▓▓▓▓▓\▓▓\▓▓ \▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓       \▓▓▓▓▓▓▓
 
 
-
 # Color
 alias \
         grep='grep --color=auto' \
@@ -17,20 +16,24 @@ alias \
         dmesg='dmesg -L=auto' \
         less='less -R'
 
-# Preferences / shortcuts
+# Tweaks
+alias \
+        du='du -h' \
+        ls='ls -h --color=auto --group-directories-first' \
+        mkdir='mkdir -p' \
+        xterm='xterm -bg black -fg white' \
+
+# Shortcuts
 alias \
         j='jobs' \
-        ls='ls -h --color=auto --group-directories-first' \
         ll='ls -l' \
         la='ll -a' \
+        ga='git add' \
         gs='git status' \
         gl='git log' \
-        du='du -h' \
-        v='vim' \
-        vi='vim' \
         ons='alsamixer' \
-	mkdir='mkdir -p' \
-        xterm='xterm -bg black -fg white' \
+        vi='vim' \
+        vi='GIT_DIR="$HOME"/.dotfiles GIT_WORK_TREE="$HOME" vim' \
         xinst='sudo xbps-install' \
         xquery='xbps-query' \
         xremove='sudo xbps-remove'
@@ -38,10 +41,17 @@ alias \
 # Config
 alias \
         dot='/usr/bin/git --git-dir="$HOME"/.dotfiles --work-tree="$HOME"' \
-        ons='alsamixer' \
-        tconf='vi "$XDG_CONFIG_HOME"/tmux/tmux.conf' \
-        tsrc='tmux source-file "$XDG_CONFIG_HOME"/tmux/tmux.conf' \
-        vconf='vi "$XDG_CONFIG_HOME"/vim/vimrc' \
-        zconf='vi "$XDG_CONFIG_HOME"/zsh/zshrc' \
+        d='dot' \
+        da='dot add' \
+        ds='dot status' \
+        dl='dot log' \
         aliases='vi "$XDG_CONFIG_HOME"/zsh/aliasrc' \
+        zconf='vi "$XDG_CONFIG_HOME"/zsh/zshrc' \
         src='source "$XDG_CONFIG_HOME"/zsh/zshrc'
+        tconf='vi "$XDG_CONFIG_HOME"/tmux/tmux.conf' \
+        vconf='vi "$XDG_CONFIG_HOME"/vim/vimrc' \
+        xinitrc='vi "$XDG_CONFIG_HOME"/x11/xinitrc' \
+        zprofile='vi "$XDG_CONFIG_HOME/zsh/zprofile"'
+
+# XDG Base Directory fixes:
+alias wget='wget --no-hsts'

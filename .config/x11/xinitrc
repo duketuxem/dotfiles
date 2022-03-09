@@ -20,15 +20,16 @@ picom --experimental-backends &
 # -k: kill -b: buttons 45
 imwheel -k -b 45
 
-# Faster autorepeat
-xset r rate 300 50
-
 # No bell thanks
 xset b off
 
-# Who cares about Caps Lock anyway
+# Who cares about Caps Lock anyway - but it used to work ??
 xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
 
+# Faster autorepeat
+xset r rate 300 50
+
+[[ ! -d "$HOME_LOG" ]] && mkdir -p "$HOME_LOG"
 
 while true; do
     # Log stderror to a file

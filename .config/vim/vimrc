@@ -7,23 +7,25 @@
 "    \▓▓ ▓▓ | ▓▓ ▓▓ | ▓▓ | ▓▓ ▓▓     | ▓▓_____
 "     \▓▓▓  | ▓▓ ▓▓ | ▓▓ | ▓▓ ▓▓      \▓▓     \
 "      \▓    \▓▓\▓▓  \▓▓  \▓▓\▓▓       \▓▓▓▓▓▓▓
-" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-" General {{{
+
+" [General]
 set nocompatible          " Embrace the 'future' and break vi compatibility
 
+set encoding=UTF-8        " Explicit setting (required for devicons)
 set mouse=a               " Enable mouse for every mode
 
 source $XDG_CONFIG_HOME/vim/respect_xdg.vim " Force XDG Base Directory spec
 
-filetype on               " Enable type based file detection
-filetype plugin on        " Enable and load plugin(s) for the detected file type
-filetype indent on        " Load an indent file for the detected file type
-" }}}
+" This is called implicitely on call#vim-plug
+"filetype on               " Enable type based file detection
+"filetype plugin on        " Enable and load plugin(s) for the detected file type
+"filetype indent on        " Load an indent file for the detected file type
 
 
-" Look and feel {{{
+" [Look and feel]
+" {{{
 set number                " Show line number on the side, at current cursor loc
 set relativenumber        " Show the relative number depending on the cursor
 set colorcolumn=80        " Show the limit with a vertical mark bar
@@ -79,9 +81,54 @@ set title		  " Forward opened file name to the WM
 "set vb t_vb=             " Clearing the visual bell length deactivates flashing
 " }}}
 
+" Always open help in a new buffer
+autocmd BufEnter *.txt if &filetype == 'help' | wincmd T | endif
 
-" Remaps {{{
-"
+" Remaps
+" {{{
+
+let mapleader= ","
+
+" Thanks
+nnoremap Y y$
+
+" Arrow up/down in cmdline
+cnoremap <C-j> <Down>
+cnoremap <C-k> <Up>
+
+" woh...
+nnoremap ; :
+vnoremap ; :
+
+" FZF
+nnoremap <leader>f :FZF<CR>
+
+" Keep the cursor centered
+" for matches and Join command
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap J mzJ`z
+" And when scrolling
+nnoremap <C-d>  <C-d>zz
+nnoremap <C-u>  <C-u>zz
+
+" [Buffers]
+" Open a new empty
+nmap <leader>t :enew<cr>
+" Close and jump back
+noremap <leader>d  :bp <BAR> bd #<CR>
+" Switch (no history yet)
+noremap <leader>h  :bp<CR>
+noremap <leader>l  :bn<CR>
+" List all
+noremap <leader>L  :ls<CR>
+
+" [Tabs]
+noremap <leader>T  :tabnew<CR>
+" TODO:implement tab for tabs ^^
+noremap <leader>D  :tabc<CR>
+
+
 " Stop deleting paragraphs because of stupid burried historical reasons...
 " Ctrl+Left/Right fix to not erase text in any mode
 nmap <ESC>[1;5D <C-Left>
@@ -90,11 +137,6 @@ cmap <ESC>[1;5D <C-Left>
 cmap <ESC>[1;5C <C-Right>
 imap <ESC>[1;5D <C-o><C-Left>
 imap <ESC>[1;5C <C-o><C-Right>
-
-" TOFIX: ctrl+backspace to erase back word in any mode
-"nmap <C-h> <C-w>
-"cmap <C-h> <C-w>
-"imap <C-h> <C-w>
 
 " Ctrl + s to save on update
 " config: `stty -ixon` in bash or `set noflowcontrol` in zsh
@@ -120,7 +162,8 @@ nnoremap <C-H> <C-W><C-H>
 " }}}
 
 
-" Miscellaneous functions... {{{
+" Miscellaneous functions...
+" {{{
 function! SynStack()
   if !exists("*synstack")
     return
@@ -130,29 +173,38 @@ endfunc
 nnoremap <F3> :call g:SynStack()<CR>
 
 nnoremap <F4> :so %<CR>
+
+" Set the working directory to the current edited file location
+autocmd BufEnter * lcd %:p:h
 " }}}
 
 
-" Color settings {{{
+
+" Plugins (vim-plug)
 "
-" Will likely fallback to 256 color mode if commented
-"let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"  " From :help xterm-true-color
-"let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"  " From :help xterm-true-color
-"set termguicolors                       " Enable support for truecolor (24bit)
-
-syntax on
-" }}}
-
-
-" Vim-plug {{{
-"
-call plug#begin()
+call plug#begin('$XDG_CONFIG_HOME/vim/vim-plug')
 
 " [Theme(s)]
-Plug 'chriskempson/base16-vim'  " A nice set of pastel look themes
+Plug 'chriskempson/base16-vim'  " A nice set of pastel looking like themes
+Plug 'kyoz/purify', { 'rtp': 'vim' } "Alpha patch in st is breaking it :(
+Plug 'sonph/onehalf', { 'rtp': 'vim' }
+" Not decided ? Try almost all vim themes on earth:
+Plug 'flazz/vim-colorschemes'
+
+" [Bar]
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" [Misc]
+Plug 'ryanoAsis/vim-devicons'
+
+" Better syntax for languages
+Plug 'sheerun/vim-polyglot'
+" Show indent levels
+Plug 'Yggdroot/indentLine'
 
 " ===== Those left here are for study and later develop my own theme =====
-Plug 'joshdick/onedark.vim'            " } Those two are almost the same
+" Plug 'joshdick/onedark.vim'            " } Those two are almost the same
 "Plug 'sonph/onehalf', { 'rtp': 'vim' } " } The logic differs a bit though
 
 " Has an really clean and minimal structure to study
@@ -161,22 +213,88 @@ Plug 'joshdick/onedark.vim'            " } Those two are almost the same
 " nanotech/jellybeans.vim/blob/master/colors/jellybeans.vim
 " ========================================================================
 
-Plug 'chriskempson/tomorrow-theme'
+" [ Now the real funny stuff ]
+" NERDTree
+Plug 'preservim/nerdtree'
+  \| Plug 'Xuyuanp/nerdtree-git-plugin' " Show modified files in the tree
+  \| Plug 'tiagofumo/vim-nerdtree-syntax-highlight' " Color file names
 
-" Now starting with the awesome!
-" [Bar]
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" [Git]
+Plug 'tpope/vim-fugitive'       " Stage current file from vim, restore...
+Plug 'airblade/vim-gitgutter'   " Actual modifications inside the buffer
+"Plug 'mhinz/signify'            " An alternative which seems lighter - bug git clone
+
+Plug 'tpope/vim-obsession'      " To work with tmux-resurrect
+
 call plug#end()
+"
+
+" Plugins config
+"
+    " [vim-airline]
+    let g:airline_theme='deus'
+    let g:airline#extensions#tabline#enabled = 1
+    let g:airline_powerline_fonts = 1
+    let g:airline#extensions#tabline#formatter = 'unique_tail'
+
+    " [NERDTree]
+    let NERDTreeQuitOnOpen = 1
+    " Open with , + n
+    map <leader>n :NERDTreeToggle<CR>
+    "autocmd VimEnter * NERDTree | wincmd p
+    " Exit Vim if NERDTree is the only window remaining in the only tab.
+    autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1
+                \ && exists('b:NERDTree') && b:NERDTree.isTabTree()
+                \ | quit | endif
+
+    " Next step when I will use tabs in vim:
+    " Close the tab if NERDTree is the only window remaining in it.
+    autocmd BufEnter * if winnr('$') == 1
+                \ && exists('b:NERDTree')
+                \ && b:NERDTree.isTabTree()
+                \ | quit | endif
+
+    let g:NERDTreeGitStatusUntrackedFilesMode = 'all' " a heavy feature too. default: normal
+    let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'✹ ',
+                \ 'Staged'    :'✚ ',
+                \ 'Untracked' :'✭ ',
+                \ 'Renamed'   :'➜ ',
+                \ 'Unmerged'  :'═ ',
+                \ 'Deleted'   :'✖ ',
+                \ 'Dirty'     :'✗ ',
+                \ 'Ignored'   :'☒ ',
+                \ 'Clean'     :'✔︎ ',
+                \ 'Unknown'   :'? ',
+                \ }
+
+    " [GitGutter]
+    nnoremap <leader>Hp  <Plug>(GitGutterPreviewHunk)
+    nnoremap <leader>Hu  <Plug>(GitGutterUndoHunk)
+    nnoremap <leader>Hs  <Plug>(GitGutterStageHunk)
+    xnoremap <leader>Hs  <Plug>(GitGutterStageHunk)
+
+
+" Color settings
+" {{{
+" Will likely fallback to 256 color mode if commented
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"  " From :help xterm-true-color
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"  " From :help xterm-true-color
+set termguicolors                       " Enable support for truecolor (24bit)
+
+syntax on
 " }}}
 
-" My under construction custom theme
-colorscheme monkey
+let g:indentLine_char = '┊'
+" let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 
-let g:airline_theme='angr' " Other of my linkings: deus | term | murmur | angr
-" TODO: Powerline
+" My under construction custom theme
+"colorscheme monkey
+"colorscheme onedark
+colo base16-eighties
+
 
 " TOFIX: Auto source vimrc on save
 "autocmd! bufwritepost $MYVIMRC source %
 
-" vim: foldlevel=0 fdm=marker
+" vim: foldmethod=marker

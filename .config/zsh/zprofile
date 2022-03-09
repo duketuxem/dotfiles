@@ -56,7 +56,10 @@
     export TERMINFO_DIRS="$XDG_DATA_HOME"/terminfo:/usr/share/terminfo
     export VIMINIT='source $XDG_CONFIG_HOME/vim/vimrc'
     export XAUTHORITY="$XDG_DATA_HOME/Xauthority"
-    # zsh
+    # Respected by xinit but not startx:
+    #export XINITRC
+    #export XSERVERRC
+    # Bash /zsh ??
     export HISTFILE="$XDG_STATE_HOME/zsh/history"
 
     # Fix awfully looking fonts in java apps

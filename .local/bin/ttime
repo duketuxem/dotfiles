@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+start="$(date +'%s.%N')"
+$@ >& /dev/null
+printf "%g\n" "$(date +"%s.%N - ${start}" | bc)" >&2

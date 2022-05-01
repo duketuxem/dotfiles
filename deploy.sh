@@ -64,17 +64,17 @@ install_suckless_suite() {
 
 # For now just one
 install_custom_fonts() {
-    printf "Assert the custom font directory is existing..."
+    printf "Assert the custom font directory is existing...\n"
     call cd
     call mkdir -p .local/share/fonts/
     call cd .local/share/fonts
 
-    printf "Downloading Hack Nerd Font..."
+    printf "Downloading Hack Nerd Font...\n"
     curl -fLo "Hack Regular Nerd Font Complete Mono.ttf" \
         https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete%20Mono.ttf
 
-    curl -fLo "Code New Roman Nerd Font Complete Mono.otf" \
-    ┊   https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CodeNewRoman/Regular/complete/Code%20New%20Roman%20Nerd%20Font%20Complete%20Mono.otf
+    curl -fLo "Code New Roman Nerd Font Complete Mono.otf\n" \
+        https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CodeNewRoman/Regular/complete/Code%20New%20Roman%20Nerd%20Font%20Complete%20Mono.otf
 
     fc-cache -fv ~/.local/share/fonts
     #if fc-match ... :

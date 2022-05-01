@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -eu
+
 # == Void Linux ==
 # sudo + xbps
 
@@ -7,6 +9,7 @@
 # [package manager] update && upgrade
 # [package manager] install git
 # -----------------------------------
+
 
 
 TUNING_DIR="$HOME/workspace/ricing"
@@ -27,12 +30,6 @@ call() {
 }
 
 
-create_arborescence() {
-    call cd
-    call mkdir -p "$TUNING_DIR"
-    call cd "$TUNING_DIR"
-}
-
 install_void_dependencies() {
     printf "Installing all the dependencies for the Rice...\n"
 
@@ -45,15 +42,16 @@ install_void_dependencies() {
 }
 
 install_suckless_suite() {
-    # Leaving dotfiles repo...
-    cd ..
+    call cd
+    call mkdir -p "$TUNING_DIR"
+    call cd "$TUNING_DIR"
 
     printf "Installing the suckless software suite...\n"
     git clone https://github.com/DukeTuxem/dwm.git \
     && cd dwm && git checkout my_fork \
     && sudo make install && cd .. && \
 
-    git clone https://github.com/DukeTuxem/st.git \
+    call git clone https://github.com/DukeTuxem/st.git \
     && cd st && git checkout my_fork \
     && sudo make install && cd .. && \
 
@@ -67,21 +65,25 @@ install_suckless_suite() {
 # For now just one
 install_custom_fonts() {
     printf "Assert the custom font directory is existing..."
-    cd && mkdir -p .local/share/fonts/ && cd .local/share/fonts
+    call cd
+    call mkdir -p .local/share/fonts/
+    call cd .local/share/fonts
 
     printf "Downloading Hack Nerd Font..."
     curl -fLo "Hack Regular Nerd Font Complete Mono.ttf" \
-            https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete%20Mono.ttf
+        https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/complete/Hack%20Regular%20Nerd%20Font%20Complete%20Mono.ttf
+
+    curl -fLo "Code New Roman Nerd Font Complete Mono.otf" \
+    ┊   https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CodeNewRoman/Regular/complete/Code%20New%20Roman%20Nerd%20Font%20Complete%20Mono.otf
 
     fc-cache -fv ~/.local/share/fonts
     #if fc-match ... :
-    printf "Hack installed!\n"
+    printf "Fonts normally installed :/\n"
 }
 
 
 # Main
-install_void_dependencies
-create_directory_structure
+# install_void_dependencies # Tested OK
 install_suckless_suite
 install_custom_fonts
 

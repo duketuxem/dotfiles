@@ -13,6 +13,7 @@ TUNING_DIR="$HOME/workspace/ricing"
 
 
 # utils/wrappers:
+# TOKNOW: printf can not expand $@, why ?
 call() {
     echo "$@"
 
@@ -37,10 +38,8 @@ install_void_dependencies() {
 
     # compton
 
-    sudo xbps-install curl base-devel xorg \
-    # dwm dependencies
+    call sudo xbps-install curl base-devel xorg \
     libX11-devel libXft-devel libXinerama-devel \
-    # font support
     noto-fonts-cjk \
     && printf "Dependencies successfully installed!\n\n"
 }
@@ -79,12 +78,11 @@ install_custom_fonts() {
     printf "Hack installed!\n"
 }
 
+
 # Main
 install_void_dependencies
-
 create_directory_structure
-
 install_suckless_suite
 install_custom_fonts
-#
-#printf "Welcome home...\n"
+
+printf "Welcome home...\n"

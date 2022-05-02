@@ -23,6 +23,8 @@ alias \
         mkdir='mkdir -p' \
         xterm='xterm -bg black -fg white' \
 
+        #vi='GIT_DIR="$HOME"/.dotfiles GIT_WORK_TREE="$HOME" vim' \
+
 # Shortcuts
 alias \
         j='jobs' \
@@ -32,8 +34,8 @@ alias \
         gs='git status' \
         gl='git log' \
         ons='alsamixer' \
+        patch='patch --reject-file=/dev/null --no-backup-if-mismatch --merge' \
         vi='vim' \
-        vi='GIT_DIR="$HOME"/.dotfiles GIT_WORK_TREE="$HOME" vim' \
         xinst='sudo xbps-install' \
         xquery='xbps-query' \
         xremove='sudo xbps-remove'
@@ -47,7 +49,7 @@ alias \
         dl='dot log' \
         aliases='vi "$XDG_CONFIG_HOME"/zsh/aliasrc' \
         zconf='vi "$XDG_CONFIG_HOME"/zsh/zshrc' \
-        src='source "$XDG_CONFIG_HOME"/zsh/zshrc'
+        src='source "$XDG_CONFIG_HOME"/zsh/zshrc' \
         tconf='vi "$XDG_CONFIG_HOME"/tmux/tmux.conf' \
         vconf='vi "$XDG_CONFIG_HOME"/vim/vimrc' \
         xinitrc='vi "$XDG_CONFIG_HOME"/x11/xinitrc' \

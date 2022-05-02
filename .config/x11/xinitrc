@@ -11,7 +11,7 @@
 
 
 # Desktop
-"$HOME"/.local/bin/monitoring/bar.sh &
+#"$HOME"/.local/bin/monitoring/bar.sh &
 feh --no-fehbg --bg-scale "$HOME"/Pics/wallpaper &
 
 picom --experimental-backends &
@@ -23,7 +23,7 @@ imwheel -k -b 45
 # No bell thanks
 xset b off
 
-# Who cares about Caps Lock anyway - but it used to work ??
+# Who cares about Caps Lock anyway
 xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
 
 # Faster autorepeat

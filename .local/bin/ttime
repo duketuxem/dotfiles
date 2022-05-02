@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# A custom `time` giving much more precise results.
+
 start="$(date +'%s.%N')"
 $@ >& /dev/null
-printf "%g\n" "$(date +"%s.%N - ${start}" | bc)" >&2
+printf "%.17g\n" "$(date +"%s.%N - ${start}" | bc)" >&2

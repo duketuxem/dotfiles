@@ -1,0 +1,17 @@
+" Function keys
+
+" F1 (bound to :h by default)
+
+" F4 (source the currently opened file)
+nnoremap <F4> :so %<CR>
+
+" F12
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+nnoremap <F12> :call g:SynStack()<CR>
+
+" vim:ft=vim

@@ -1,0 +1,9 @@
+" indentline
+
+" Show indent levels
+Plug 'Yggdroot/indentLine'
+
+let g:indentLine_char = '┊'
+" let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+
+" vim:ft=vim

@@ -1,0 +1,13 @@
+" Hacks
+
+" This is a hack to hide the numbers on the vertical bar,
+" so, using the terminal emulator capabilities, it is possible to copy/paste.
+" Copy to clipboard without +clipboard
+" :h <lt>
+noremap <leader><lt>  :set nornu! nonu!<CR>
+
+" Attempt to load a theme on (need to relaod vimrc each time if like so...)
+" Really bad idea (it did sigsegv)
+"autocmd BufWritePost * syntax on
+
+" vim:ft=vim

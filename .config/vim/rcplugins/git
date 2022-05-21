@@ -1,0 +1,14 @@
+" git
+
+Plug 'tpope/vim-fugitive'       " Stage current file from vim, restore...
+
+Plug 'airblade/vim-gitgutter'   " Actual modifications inside the buffer
+nmap <leader>Hp  <Plug>(GitGutterPreviewHunk)
+nmap <leader>Hu  <Plug>(GitGutterUndoHunk)
+nmap <leader>Hs  <Plug>(GitGutterStageHunk)
+xmap <leader>Hs  <Plug>(GitGutterStageHunk)
+
+"Plug 'mhinz/signify'            " An alternative which seems lighter - bug git clone
+Plug 'tpope/vim-obsession'      " To work with tmux-resurrect
+
+" vim:ft=vim

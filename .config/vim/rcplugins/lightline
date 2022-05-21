@@ -1,0 +1,12 @@
+" Lightline
+
+" More minimalistic than airline
+Plug 'itchyny/lightline.vim'
+
+set noshowmode
+set laststatus=2
+let g:lightline = {
+\ 'colorscheme': 'darcula',
+\ }
+
+" vim:ft=vim

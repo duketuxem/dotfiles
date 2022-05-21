@@ -1,0 +1,11 @@
+" Plugins to be loaded as late as possible
+
+
+" `Always load the vim-devicons as the very last one.`
+
+" NERDTree icon support
+Plug 'ryanoAsis/vim-devicons'
+" Explicit required setting
+set encoding=UTF-8
+
+" vim:ft=vim

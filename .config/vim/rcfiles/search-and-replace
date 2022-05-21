@@ -1,0 +1,12 @@
+" Search and replace settings
+" ---------------------------
+
+set incsearch             " Find the next match as we type the search
+set hlsearch              " Highlight searches by default
+set ignorecase            " Ignore case when searching...
+set smartcase             " ...unless we type an uppercase letter
+
+" Erase search on <Esc> key press
+nnoremap <silent> <Esc> <Esc>:nohlsearch<CR><Esc>
+
+" vim:ft=vim

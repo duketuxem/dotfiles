@@ -27,10 +27,16 @@ function! s:SourceConfigFilesIn(directory)
    endfor
 endfunction
 
+" Source all 'vanilla' config
 call s:SourceConfigFilesIn('rcfiles')
 
+" Ensure the plugin manager is installed
+source $XDG_CONFIG_HOME/vim/plugin-manager-check
+
+" Load all the plugins and associated config
 call plug#begin('$XDG_CONFIG_HOME/vim/.vim-plug')
 call s:SourceConfigFilesIn('rcplugins')
+
 " tmp
 Plug 'chriskempson/base16-vim'
 Plug 'joshdick/onedark.vim'

@@ -1,6 +1,10 @@
 " Test the existence of the vim plugin manager (vim-plug in my case).
+" If not detected it will be installed at the right location.
 
-" It will be downloaded at the right location if not detected.
+" Why is this not in rcplugins/ ?
+" Because on a freshly installed system, when running vim for the first time,
+" `call plug#begin('$XDG_CONFIG_HOME/vim/.vim-plug')` will be reached before
+" the following assertion:
 
 if empty(glob('$XDG_CONFIG_HOME/vim/autoload/plug.vim'))
   silent !curl -fLo $XDG_CONFIG_HOME/vim/autoload/plug.vim --create-dirs

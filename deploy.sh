@@ -60,7 +60,7 @@ install_void_dependencies() {
     call sudo xbps-install -y curl base-devel xorg \
     libX11-devel libXft-devel libXinerama-devel \
     noto-fonts-cjk \
-    zsh zsh-syntax-highlighting fzf \
+    zsh zsh-syntax-highlighting fzf fd \
     tmux vim htop \
     && success "Package requirements satisfied!\n"
 }

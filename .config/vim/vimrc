@@ -9,270 +9,34 @@
 "      \▓    \▓▓\▓▓  \▓▓  \▓▓\▓▓       \▓▓▓▓▓▓▓
 
 
+set nocompatible          " Implicitely called when sourcing the user's vimrc
 
-" [General]
-set nocompatible          " Embrace the 'future' and break vi compatibility
+set mouse=a               " Enable mouse for every mode. Yeah, I know...
 
-set encoding=UTF-8        " Explicit setting (required for devicons)
-set mouse=a               " Enable mouse for every mode
+let mapleader= ","        " Must be set before defining mappings related to it
 
-source $XDG_CONFIG_HOME/vim/respect_xdg.vim " Force XDG Base Directory spec
+" Sourcing function to manage the whole configuration in a modular way.
+" An idea completely stolen from: https://github.com/christoomey/dotfiles
+" Thanks ;)
+function! s:SourceConfigFilesIn(directory)
+   let directory_splat = '$XDG_CONFIG_HOME/vim/' . a:directory . '/*'
+   for config_file in split(glob(directory_splat), '\n')
+       if filereadable(config_file)
+           execute 'source' config_file
+       endif
+   endfor
+endfunction
 
-" This is called implicitely on call#vim-plug
-"filetype on               " Enable type based file detection
-"filetype plugin on        " Enable and load plugin(s) for the detected file type
-"filetype indent on        " Load an indent file for the detected file type
+call s:SourceConfigFilesIn('rcfiles')
 
-
-" [Look and feel]
-" {{{
-set number                " Show line number on the side, at current cursor loc
-set relativenumber        " Show the relative number depending on the cursor
-set colorcolumn=80        " Show the limit with a vertical mark bar
-set showcmd               " Show the command being typed. Ex: "a
-set noruler               " Show line info at the bottom (useless with airline)
-set nowrap                " Allow long lines to extend as far as they go
-set showmatch             " Briefly highlight the previous bracket if any...
-"set matchtime=3           " ... And shorten the default time -> zt zb zz H M L
-"set scrolloff=5           " This setting should be illegal as it helps scrolling
-"set cursorline            " Underline the cursor
-"set cursorcolumn          " Display a vertical bar at cursor position
-"nmap <F4> :set cursorline!<CR>:set cursorcolumn!<CR>
-
-" Splits
-set splitbelow            " Split more...
-set splitright            " ... naturally
-
-" Completion menu
-set wildmenu              " Better than spamming tab tab in command line mode
-set wildmode=list:longest " Let me see everything!
-set wildignore=*.jpg,*.png,*.gif,*.pdf,*.pyc,*.flv,*.img
-
-" Background behavior
-set modeline              " Explicit setting for # vim: command
-set modelines=1           " Limit lines to read
-set hidden                " We can not only keep one file opened at a time...
-set autoread              " Reload files changed outside vim
-au FocusGained,BufEnter * :checktime
-
-" Search
-set incsearch             " Find the next match as we type the search
-set hlsearch              " Highlight searches by default
-set ignorecase            " Ignore case when searching...
-set smartcase             " ...unless we type a capital
-" Erase search on a double <Esc> key press
-nnoremap <silent> <Esc><Esc> <Esc>:nohlsearch<CR><Esc>
-
-" Tab setting
-set tabstop=8             " Number of spaces that a <Tab> in the file counts for
-set expandtab             " Replace tabs with space
-set shiftwidth=4
-set softtabstop=4
-
-set title		  " Forward opened file name to the WM
-" TODO: Fix thanks for flying vim everywhere (nnn opening editor)
-" -> Temporary fix is zsh setting cwd for the WM
-"set titleold=
-" Done in zsh (not in nnn yet, generic way...?)
-"let &titleold;=getcwd()   " Fix the 'Thanks for flying vim' ?
-
-"set ttymouse=sgr         " Fixes mouse scrolling in st. Update: it seems fixed
-"set visualbell	          " Disable sound
-"set vb t_vb=             " Clearing the visual bell length deactivates flashing
-" }}}
-
-" Always open help in a new buffer
-autocmd BufEnter *.txt if &filetype == 'help' | wincmd T | endif
-
-" Remaps
-" {{{
-
-let mapleader= ","
-
-" Thanks
-nnoremap Y y$
-
-" Arrow up/down in cmdline
-cnoremap <C-j> <Down>
-cnoremap <C-k> <Up>
-
-" woh...
-nnoremap ; :
-vnoremap ; :
-
-" FZF
-nnoremap <leader>f :FZF<CR>
-
-" Keep the cursor centered
-" for matches and Join command
-nnoremap n nzzzv
-nnoremap N Nzzzv
-nnoremap J mzJ`z
-" And when scrolling
-nnoremap <C-d>  <C-d>zz
-nnoremap <C-u>  <C-u>zz
-
-" [Buffers]
-" Open a new empty
-nmap <leader>t :enew<cr>
-" Close and jump back
-noremap <leader>d  :bp <BAR> bd #<CR>
-" Switch (no history yet)
-noremap <leader>h  :bp<CR>
-noremap <leader>l  :bn<CR>
-" List all
-noremap <leader>L  :ls<CR>
-
-" [Tabs]
-noremap <leader>T  :tabnew<CR>
-" TODO:implement tab for tabs ^^
-noremap <leader>D  :tabc<CR>
-
-
-" Stop deleting paragraphs because of stupid burried historical reasons...
-" Ctrl+Left/Right fix to not erase text in any mode
-nmap <ESC>[1;5D <C-Left>
-nmap <ESC>[1;5C <C-Right>
-cmap <ESC>[1;5D <C-Left>
-cmap <ESC>[1;5C <C-Right>
-imap <ESC>[1;5D <C-o><C-Left>
-imap <ESC>[1;5C <C-o><C-Right>
-
-" Ctrl + s to save on update
-" config: `stty -ixon` in bash or `set noflowcontrol` in zsh
-noremap <silent> <C-S>    :update<CR>
-vnoremap <silent> <C-S>   <C-C>:update<CR>
-inoremap <silent> <C-S>   <C-O>:update<CR>
-
-" Embrace the pain: Unmap arrows
-noremap <Up> <Nop>
-noremap <Down> <Nop>
-noremap <Left> <Nop>
-noremap <Right> <Nop>
-inoremap <Up> <Nop>
-inoremap <Down> <Nop>
-inoremap <Left> <Nop>
-inoremap <Right> <Nop>
-
-" Remap Window navigation to save a keystroke
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-" }}}
-
-
-" Miscellaneous functions...
-" {{{
-function! SynStack()
-  if !exists("*synstack")
-    return
-  endif
-  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc
-nnoremap <F3> :call g:SynStack()<CR>
-
-nnoremap <F4> :so %<CR>
-
-" Set the working directory to the current edited file location
-autocmd BufEnter * lcd %:p:h
-" }}}
-
-
-" Plugin list (vim-plug)
-" {{{
-call plug#begin('$XDG_CONFIG_HOME/vim/vim-plug')
-
+call plug#begin('$XDG_CONFIG_HOME/vim/.vim-plug')
+call s:SourceConfigFilesIn('rcplugins')
 " tmp
 Plug 'chriskempson/base16-vim'
 Plug 'joshdick/onedark.vim'
-
-" [Bar]
-Plug 'itchyny/lightline.vim'  " More minimalist than airline
-
-" [Misc]
-Plug 'ryanoAsis/vim-devicons'
-
-" Better syntax for languages
-"Plug 'sheerun/vim-polyglot'
-" Show indent levels
-Plug 'Yggdroot/indentLine'
-
-
-" NERDTree
-Plug 'preservim/nerdtree'
-  \| Plug 'Xuyuanp/nerdtree-git-plugin' " Show modified files in the tree
-  \| Plug 'tiagofumo/vim-nerdtree-syntax-highlight' " Color file names
-
-" [Git]
-Plug 'tpope/vim-fugitive'       " Stage current file from vim, restore...
-Plug 'airblade/vim-gitgutter'   " Actual modifications inside the buffer
-"Plug 'mhinz/signify'            " An alternative which seems lighter - bug git clone
-
-Plug 'tpope/vim-obsession'      " To work with tmux-resurrect
-
+" andromeda
+" purify
 call plug#end()
-
-
-" Plugins config
-"
-    " [Lightline]
-    set noshowmode
-    set laststatus=2
-    let g:lightline = {
-      \ 'colorscheme': 'darcula',
-      \ }
-
-    " [NERDTree]
-    let NERDTreeQuitOnOpen = 1
-    " Open with , + n
-    map <leader>n :NERDTreeToggle<CR>
-    "autocmd VimEnter * NERDTree | wincmd p
-    " Exit Vim if NERDTree is the only window remaining in the only tab.
-    autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1
-                \ && exists('b:NERDTree') && b:NERDTree.isTabTree()
-                \ | quit | endif
-
-    " Next step when I will use tabs in vim:
-    " Close the tab if NERDTree is the only window remaining in it.
-    autocmd BufEnter * if winnr('$') == 1
-                \ && exists('b:NERDTree')
-                \ && b:NERDTree.isTabTree()
-                \ | quit | endif
-
-    let g:NERDTreeGitStatusUntrackedFilesMode = 'all' " a heavy feature too. default: normal
-    let g:NERDTreeGitStatusIndicatorMapCustom = {
-                \ 'Modified'  :'✹',
-                \ 'Staged'    :'✚',
-                \ 'Untracked' :'✭',
-                \ 'Renamed'   :'➜',
-                \ 'Unmerged'  :'═',
-                \ 'Deleted'   :'✖',
-                \ 'Dirty'     :'✗',
-                \ 'Ignored'   :'☒',
-                \ 'Clean'     :'✔︎',
-                \ 'Unknown'   :'?',
-                \ }
-
-    " [GitGutter]
-    nmap <leader>Hp  <Plug>(GitGutterPreviewHunk)
-    nmap <leader>Hu  <Plug>(GitGutterUndoHunk)
-    nmap <leader>Hs  <Plug>(GitGutterStageHunk)
-    xmap <leader>Hs  <Plug>(GitGutterStageHunk)
-
-    " [IndentLine]
-    let g:indentLine_char = '┊'
-    " let g:indentLine_char_list = ['|', '¦', '┆', '┊']
-
-" Color settings
-" {{{ " Will likely fallback to 256 color mode if commented
-  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"  " From :help xterm-true-color (but st)
-  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"  " From :help xterm-true-color (but st)
-  set termguicolors                       " Enable support for truecolor (24bit)
-  syntax on
-" }}}
 
 colorscheme my-eighties
 
-" vim: foldmethod=marker
-"

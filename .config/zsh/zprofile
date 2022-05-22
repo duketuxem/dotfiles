@@ -12,11 +12,10 @@
 #              \▓▓
 
 
-
 # This file is only sourced after a succesful login.
 #
 # I use it to set up my _session_, like with constant environment variables,
-# and to run the graphical server automatically.
+# and to run the graphical server automatically on succesful login.
 # Anything modified here would require to log off and then log in again,
 # so let's keep "static" things here.
 #
@@ -37,6 +36,7 @@
     export XDG_CACHE_HOME="$HOME/.local/cache"
     export XDG_STATE_HOME="$HOME/.local/state"
     export HOME_LOG="$HOME/.local/log"
+    [[ ! -d "$HOME_LOG" ]] && mkdir -p "$HOME_LOG"
 
     # And enforce the policy for rebel applications
     # ~/.asoundrc -> ~/.config/alsa/asoundr
@@ -52,29 +52,28 @@
     export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
     export LESSKEY="$XDG_CONFIG_HOME/less/lesskey"
     export MACHINE_STORAGE_PATH="$XDG_DATA_HOME/docker-machine"
-    export TERMINFO="$XDG_DATA_HOME"/terminfo
-    export TERMINFO_DIRS="$XDG_DATA_HOME"/terminfo:/usr/share/terminfo
-    export VIMINIT='source $XDG_CONFIG_HOME/vim/vimrc'
+    export TERMINFO="$XDG_DATA_HOME/terminfo"
+    export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
+    export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC'
     export XAUTHORITY="$XDG_DATA_HOME/Xauthority"
     # Respected by xinit but not startx:
     #export XINITRC
     #export XSERVERRC
     # Bash /zsh ??
     export HISTFILE="$XDG_STATE_HOME/zsh/history"
+    export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 
     # Fix awfully looking fonts in java apps
     export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
     # Java apps now work with Tiling Window Managers
     export _JAVA_AWT_WM_NONREPARENTING=1
-
-    [[ ! -d "$HOME_LOG" ]] && mkdir -p "$HOME_LOG"
 # }}}
 
 
 # Graphical Session
 # {{{
-    # Run a graphical session if there isn't one running already
-    # ... and the user has logged in from /dev/tty1
+    # Run a graphical session if there isn't one running already,
+    # and the user has logged in from /dev/tty1.
     if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
       # `exec` to log off the user once the session has terminated
       exec startx "$XDG_CONFIG_HOME/x11/xinitrc"
@@ -85,5 +84,4 @@
     fi
 # }}}
 
-
-# vim: syntax=sh fdm=marker
+# vim:ft=sh

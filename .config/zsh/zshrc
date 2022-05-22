@@ -9,6 +9,9 @@
 #  \▓▓\▓▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓\▓▓       \▓▓▓▓▓▓▓
 
 
+# To profile zsh starting time, uncomment the following
+# as well as the last line of this file
+#zmodload zsh/zprof
 
 # History
 export HISTSIZE=100000
@@ -175,6 +178,10 @@ source /usr/share/fzf/key-bindings.zsh
 
 source "$XDG_CONFIG_HOME/zsh/aliasrc"
 
+# nvm (or how soydevs are going to slow down my perfect config...)
+#export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
 # Fish-like syntax pre-validation (should be last)
 if [ "$(lsb_release -sd)" = '"Void Linux"' ]; then
   source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -182,4 +189,5 @@ else # elif [ "$(lsb_release -sd)" = '"Gentoo"' ]; then
   source /usr/share/zsh/site-functions/zsh-syntax-highlighting.zsh
 fi
 
+#zprof
 # vim: fdm=marker

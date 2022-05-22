@@ -33,7 +33,11 @@ alias \
         ga='git add' \
         gs='git status' \
         gl='git log' \
+        gc='git checkout' \
+        gd='git diff' \
         ons='alsamixer' \
+        se='sudoedit' \
+        smci='sudo make clean install' \
         patch='patch --reject-file=/dev/null --no-backup-if-mismatch --merge' \
         vi='vim' \
         xinst='sudo xbps-install' \
@@ -47,6 +51,7 @@ alias \
         da='dot add' \
         ds='dot status' \
         dl='dot log' \
+        ddif='dot diff' \
         aliases='vi "$XDG_CONFIG_HOME"/zsh/aliasrc' \
         zconf='vi "$XDG_CONFIG_HOME"/zsh/zshrc' \
         src='source "$XDG_CONFIG_HOME"/zsh/zshrc' \

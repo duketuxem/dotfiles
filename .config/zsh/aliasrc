@@ -21,6 +21,7 @@ alias \
         du='du -h' \
         ls='ls -h --color=auto --group-directories-first' \
         mkdir='mkdir -p' \
+	feh='feh --scale-down' \
         xterm='xterm -bg black -fg white' \
 
         #vi='GIT_DIR="$HOME"/.dotfiles GIT_WORK_TREE="$HOME" vim' \

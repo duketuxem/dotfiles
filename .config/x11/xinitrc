@@ -12,9 +12,9 @@
 
 # Desktop
 #"$HOME"/.local/bin/monitoring/bar.sh &
-feh --no-fehbg --bg-scale "$HOME"/Pics/wallpaper &
-
+feh --no-fehbg --bg-scale "$HOME"/wallpaper &
 picom --experimental-backends &
+xrandr --auto
 
 # Scroll faster
 # -k: kill -b: buttons 45

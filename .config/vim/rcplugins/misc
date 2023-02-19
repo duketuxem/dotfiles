@@ -1,8 +1,0 @@
-" misc
-
-" This is called implicitely on call#vim-plug (left here for doc)
-"filetype on             " Enable type based file detection
-"filetype plugin on      " Enable and load plugin(s) for the detected file type
-"filetype indent on      " Load an indent file for the detected file type
-
-" vim:ft=vim

@@ -1,6 +1,0 @@
-" Javascript
-
-Plug 'pangloss/vim-javascript'
-Plug 'MaxMEllon/vim-jsx-pretty'
-
-" vim:ft=vim

@@ -1,9 +1,0 @@
-" fzf
-
-" Require the package to be installed on the system.
-" On void:
-" /usr/share/vim/vimfiles/plugin/fzf.vim
-
-nnoremap <leader>f :FZF<CR>
-
-" vim:ft=vim

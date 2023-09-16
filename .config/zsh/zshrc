@@ -9,176 +9,88 @@
 #  \▓▓\▓▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓\▓▓       \▓▓▓▓▓▓▓
 
 
-# To profile zsh starting time, uncomment the following
-# as well as the last line of this file
-#zmodload zsh/zprof
+
+# Uncomment here and at the end of the file to audit startup time
+# zmodload zsh/zprof
+
+#GPG_TTY="$(tty)"
 
 # History
-export HISTSIZE=100000
-export SAVEHIST=100000
-setopt append_history      # (On by default)
-setopt hist_ignore_dups    # Avoid ls ls ls ls
-setopt hist_ignore_space   # Do not record ' cmd'
+HISTSIZE=100001
+SAVEHIST=100001
+setopt append_history		# (On by default)
+setopt inc_append_history	# Immediate recording
+setopt hist_ignore_dups		# Avoid ls ls ls ls
+setopt hist_ignore_space	# Do not record ' cmd'
 
+# Navigation
+setopt autocd			# cd to the given path without cd as a prefix
+setopt autopushd		# all 'cd's goes to the directory stack history
+setopt pushdignoredups		# only remember the location, not the order
+# TODO: Replace the following with a fish-like prevd/nextd plugin custom or not
+alias s='dirs -v | sed 11q'
+alias 1='cd -'
+alias 2='cd -2'
+alias 3='cd -3'
+alias 4='cd -4'
+alias 5='cd -5'
+alias 6='cd -6'
+alias 7='cd -7'
+alias 8='cd -8'
+alias 9='cd -9'
 
 # Misc
-setopt noflowcontrol	      # Disable Ctrl + s / Ctrl + q (XON/XOFF)
-setopt completealiases      # Autocomplete even aliases
-setopt autocd               # ../../..
-setopt notify               # Report background job status immediately
-#bindkey -v                  # Enable vim mode on command line
+setopt notify			# Report background job status immediately
 
 
-# [Completion]
-# 1 Create cache directory if not existing (required for XDG spec)
-# 2 Mark compinit as a zsh builtin function and run it
-# 3 Enable selection - and vim motions
-[[ ! -d "$XDG_CACHE_HOME/zsh" ]] && mkdir -p "$XDG_CACHE_HOME/zsh"
-autoload -Uz compinit
-compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
-zstyle ':completion:*' menu select
-zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
-# Does not work for some reason...
-#bindkey -M menuselect 'h' vi-backward-char
-#bindkey -M menuselect 'k' vi-up-line-or-history
-#bindkey -M menuselect 'l' vi-forward-char
-#bindkey -M menuselect 'j' vi-down-line-or-history
+# TODO: close the completion menu
+# bindkey -M menuselect '^[' undo
+source "$XDG_CONFIG_HOME/zsh/completion.zsh"
 
-# [VCS module]
-#autoload -Uz vcs_info
-#precmd_vcs_info() { vcs_info }
-#precmd_functions+=( precmd_vcs_info )
-#setopt prompt_subst
-#zstyle ':vcs_info:git:*' formats '%F{240}(%b)%r%f'
-#zstyle ':vcs_info:*' enable git
+########################################
+# Completion
+########################################
 
+# ISSUE#1: Thanks Tmux for changing my favorite ls colors...
+# [[ "$TERM" == "screen-256color" ]] && source "$XDG_CONFIG_HOME/tmux/ls.env"
 
-autoload -U colors && colors
+autoload -Uz colors # && colors
+source "$XDG_CONFIG_HOME/zsh/prompt.zsh"
+#bindkey -- "^X^R" _read_comp
+#bindkey -- "^X?" _complete_debug
+#bindkey -- "^XC" _correct_filename
+#bindkey -- "^Xa" _expand_alias
+#bindkey -- "^Xc" _correct_word
+#bindkey -- "^Xd" _list_expansions
+#bindkey -- "^Xe" _expand_word
+#bindkey -- "^Xh" _complete_help
+#bindkey -- "^Xm" _most_recent_file
+#bindkey -- "^Xn" _next_tags
+#bindkey -- "^Xt" _complete_tag
+#bindkey -- "^X~" _bash_list-choices
+#bindkey -- "^[," _history-complete-newer
+#bindkey -- "^[/" _history-complete-older
+#bindkey -- "^[~" _bash_complete-word
 
-# Custom functions / features
-# {{{
+source "$XDG_CONFIG_HOME/zsh/bindings.zsh"
 
-    # Erase backward word
-    backward-kill-dir () {
-        # A list of non-alphanumeric characters
-        # considered part of a word by the line editor.
-        local WORDCHARS='*?-[]~=&;!#$%^(){}<>|_.'
-        zle backward-kill-word
-    }
-    zle -N backward-kill-dir    # Explicitely (-N) load a custom function
-
-    # Oh...
-    man() {
-        # md = Start bold effect (double-bright).
-        # me = Stop bold effect.
-        # us = Start underline effect.
-        # ue = Stop underline effect.
-        # so = Start stand-out effect (similar to reverse text).
-        # se = Stop stand-out effect (similar to reverse text).
-        LESS_TERMCAP_md=$'\e[01;34m'    \
-        LESS_TERMCAP_me=$'\e[0m'        \
-        LESS_TERMCAP_us=$'\e[01;32m'    \
-        LESS_TERMCAP_ue=$'\e[0m'        \
-        LESS_TERMCAP_so=$'\e[45;43m'    \
-        LESS_TERMCAP_se=$'\e[0m'        \
-        command man -O width=$(($(tput cols)-10)) "$@"
-        # We got color yeaaaaah...
-
-        # TODO: Would be awesome to have the man page
-        # centered and limited to 80 char
-}
-# }}}
-
-# Key mappings
-# {{{
-
-    # TODO: Refacto keymapping like that
-    # TODO: tty color mapping + control sequences
-    # TODO: Extend to other Terminal Emulators ?
-    #typeset -g -A key
-    #key[Delete]="${terminfo[kdch1]}"
-    # https://wiki.archlinux.org/title/zsh#Key_bindings
-
-# -- ST key bindings
-bindkey '^[[P'		delete-char				# Del
-#bindkey '^H'		backward-kill-word			# Ctrl + BackSpace
-bindkey '^[[H' 		beginning-of-line			# Home key
-bindkey '^A'		beginning-of-line			# Ctrl + A
-bindkey '^[[4~'		end-of-line				# End key
-bindkey '^E'		end-of-line				# Ctrl + E
-bindkey '^[[1;3C'	forward-word				# Alt + Right arrow
-bindkey '^[[1;5C'	forward-word				# Ctrl + Right arrow
-bindkey '^[[1;3D'	backward-word				# Alt + Left arrow
-bindkey '^[[1;5D'	backward-word				# Ctrl + Left arrow
-bindkey "^[[M"		kill-word				# Ctrl + Del
-bindkey '^[[5~'		history-beginning-search-backward	# Page up
-bindkey '^[[6~' 	history-beginning-search-forward	# Page down
-bindkey '^K'		kill-line				# Cut
-bindkey '^Y'		yank					# Paste
-bindkey '^[^?'          backward-kill-dir			# [Custom] Alt + BackSpace <3
-
-bindkey '^k' history-search-backward
-bindkey '^j' history-search-forward
-
-bindkey -s '^[[1;7D'    ''                                      # Disable Ctrl + Alt + Left
-bindkey -s '^[[1;7C'    ''                                      # Disable Ctrl + Alt + Righ
-# }}}
+# ==========================
+#  Fuzzy File Finding (fzf)
+# ==========================
+source "$XDG_CONFIG_HOME/zsh/fzf.zsh"
+#"^I" fzf-completion
+#"^R" fzf-history-widget
+#"^T" fzf-file-widget
+#"^[c" fzf-cd-widget
 
 
-# Prompt
-# {{{
-    # Run a command before the prompt gets displayed
-    # Show the current folder for this case:
-    precmd() { printf "\033]0;%s\007" "${PWD}" }
-    # TODO: Git
-
-
-    #PS1="%n@%m %1~ %# "
-    PROMPT="%B%{$fg[green]%}%n%{$fg[yellow]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%} %{$reset_color%}$%b "
-    #RPROMPT="%(?.%F{green}√.%F{red}?%?)%f %B%F{240}%1~%f%b"
-    RPROMPT="%(?.%F{green}√.%F{red}?%?)%f"
-    #RPROMPT=\$vcs_info_msg_0_
-# }}}
-
-
-
-# define termcolors here ?
-#export red='\e[0;31m'
-#export RED='\e[1;31m'
-#export green='\e[0;32m'
-#export GREEN='\e[1;32m'
-#export yellow='\e[0;33m'
-#export YELLOW='\e[1;33m'
-#export blue='\e[0;34m'
-#export BLUE='\e[1;34m'
-#export purple='\e[0;35m'
-#export PURPLE='\e[1;35m'
-#export cyan='\e[0;36m'
-#export CYAN='\e[1;36m'
-#export NC='\e[0m'
-# ISSUE#1: Thanks Tmux to change my favorite ls colors...
-[[ "$TERM" == "screen-256color" ]] && source "$XDG_CONFIG_HOME/tmux/ls.env"
-
-# FuzZy Finder - So awesome...
-# - $FZF_TMUX_OPTS
-# - $FZF_CTRL_T_COMMAND
-# - $FZF_CTRL_T_OPTS
-# - $FZF_CTRL_R_OPTS
-# - $FZF_ALT_C_COMMAND
-# - $FZF_ALT_C_OPTS
-export FZF_DEFAULT_COMMAND="fd -H --exclude 'node_modules' --exclude 'mozilla' --exclude '.git'"
-export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --preview '(highlight -O ansi {} || cat {}) 2> /dev/null | head -500'"
-
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
-
-source /usr/share/fzf/completion.zsh
-source /usr/share/fzf/key-bindings.zsh
-
-
-source "$XDG_CONFIG_HOME/zsh/aliasrc"
+# ==========================
+#      Custom commands
+# ==========================
+source "$XDG_CONFIG_HOME/zsh/commands.zsh"
 
 # nvm (or how soydevs are going to slow down my perfect config...)
+# todo: lazy load
 #export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
@@ -189,5 +101,9 @@ else # elif [ "$(lsb_release -sd)" = '"Gentoo"' ]; then
   source /usr/share/zsh/site-functions/zsh-syntax-highlighting.zsh
 fi
 
-#zprof
-# vim: fdm=marker
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# zprof
+

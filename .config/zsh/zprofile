@@ -9,24 +9,25 @@
 #  \▓▓\▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓ \▓▓       \▓▓▓▓▓▓ \▓▓      \▓▓\▓▓ \▓▓▓▓▓▓▓
 #             | ▓▓
 #             | ▓▓
-#              \▓▓
+#                \▓▓
 
 
 # This file is sourced after a succesful login.
 #
 # - It holds the environment variables that are set once for the session.
 # (.zshenv could be used but there is no need to re-set them for every shell)
-# Anything modified here would then require to log off and then log in again.
+# Anything modified here would require to log off and then log in again.
 #
-# - It calls the graphical server if not running already.
+# - It calls the graphical server on tty1 if not running already.
 
 
-
-### Default applications (to be used in desktop subscripts maybe)
-export EDITOR="vim"
-export PAGER="less"
-#export MEDIAPLAYER="mpv"
-#export OTHER...
+### Default applications
+# UN*X legacy
+export EDITOR='vim'
+export PAGER='less'
+# Personnal
+export BROWSER='firefox'
+export PLAYER='mpv'
 
 ### XDG Base directory spec
 export XDG_DESKTOP_DIR="$HOME/"
@@ -66,7 +67,7 @@ export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
 # Java apps now work with Tiling Window Managers
 export _JAVA_AWT_WM_NONREPARENTING=1
 
-
+# =============================================================================
 
 # If no graphical server instance is running and the user has logged from tty1
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then

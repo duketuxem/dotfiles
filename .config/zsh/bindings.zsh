@@ -51,13 +51,14 @@ keys[ShiftTab]="${terminfo[kcbt]}"
 
 # The state of the xterm 'compliance'...
 # TODO (low): fix tmux/screen in xterm
+# - maybe detect the terminal emulator
 case $TERM in
         "xterm")
-		# it seems xterm ignores terminfo
+		# it seems xterm ignores this terminfo entry
 		keys[Backspace]="^H"
 		;;
 	"screen" | "screen-256color")
-		# and it seems terminfo is wrong in that case
+		# and it seems it is wrong in that context
 		# (tmux backspace fix)
 		keys[Backspace]="^?"
 		;;
@@ -188,8 +189,11 @@ bindkey -- "^[[C"		forward-word
 
 ###### TERM=st
 
-# Finally, make sure the terminal is in application mode, when zle is
-# active. Only then are the values from $terminfo valid.
+# When running zsh, some terminals (like xterm) will not consider the
+# terminfo array if the 'application mode' is not set during line edition.
+# This mode is also known as the non-canonical, or raw mode for terminals.
+# The terminfo database is only valid in that context, so the following
+# enables/disables this mode everytime the zsh line editor is to be used.
 if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
 	autoload -Uz add-zle-hook-widget
 	function zle_application_mode_start { echoti smkx }

@@ -8,20 +8,9 @@
 "     \▓▓▓  | ▓▓ ▓▓ | ▓▓ | ▓▓ ▓▓      \▓▓     \
 "      \▓    \▓▓\▓▓  \▓▓  \▓▓\▓▓       \▓▓▓▓▓▓▓
 
-" written and (mostly) tested with version 9.0 on Linux
-" _____________________________________________________________________________
-
-" TODO: netrw ergonomics
-" see the following : noautochdir
-" Session prevents opening a random file elsewhere
-" redraw with autocmd BufWritePost makes vim-cool bug (how to autoaccept ?)
-" tags generation function / workflow
-" git config
-" Ale
-" Completion
-" create own status line
 
 " Always use the XDG Base Directory specification {{{
+
 " copied from: https://wiki.archlinux.org/title/XDG_Base_Directory
 
 " :h set-args (^=)
@@ -43,17 +32,13 @@ set viewdir=$XDG_STATE_HOME/vim/view     | call mkdir(&viewdir,   'p')
 call mkdir($XDG_STATE_HOME."/vim", 'p')
 if !has('nvim') | set viminfofile=$XDG_STATE_HOME/vim/viminfo | endif
 " }}}
-
-" Plugin list : {{{
-
-" install the plugin manager if not present {{{
+" Autoinstall plugin manager and plugins if missing {{{
 if empty(glob('$XDG_CONFIG_HOME/vim/autoload/plug.vim'))
   silent !curl -fLo $XDG_CONFIG_HOME/vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd! VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-" }}}
-" run PlugInstall if there are missing plugins {{{
+" run PlugInstall if there are missing plugins
 autocmd! VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
 	\ | PlugInstall --sync | source $MYVIMRC | endif
 " }}}
@@ -65,10 +50,12 @@ Plug 'preservim/tagbar'         " outline symbols (requires ctags)
 Plug 'junegunn/fzf'
 " motions
 Plug 'tpope/vim-commentary'	" gcc / gcap / ...
-Plug 'tpope/vim-surround'	" cs
+Plug 'tpope/vim-surround'	" cs([
 Plug 'romainl/vim-cool'		" see: /and vim-cool
 
 Plug 'tpope/vim-obsession'      " nice to create sessions
+
+Plug 'tpope/vim-repeat'
 
 " ToImplement
 Plug 'itchyny/lightline.vim'	" lighter status bar than airline
@@ -79,105 +66,131 @@ Plug 'tpope/vim-vinegar'
 " themes
 Plug 'chriskempson/base16-vim'	" cool to test completion
 Plug 'joshdick/onedark.vim'	" kind of fallback...
+Plug 'vimwiki/vimwiki'
 call plug#end()
 
-nnoremap <leader>f :FZF<CR>
 
-" Yggdroot/indentLine
-let g:indentLine_char = '┊'
-let g:indentLine_setColors = 0
+let mapleader = "\\"
 
-" lightline (more minimalistic than airline)
-set noshowmode
-set laststatus=2
-let g:lightline = {
-\ 'colorscheme': 'darcula',
-\ }
+" todo: function keys section
+nnoremap <F2> :set wrap!<CR>
 
-" git
-nmap <leader>Hp  <Plug>(GitGutterPreviewHunk)
-nmap <leader>Hu  <Plug>(GitGutterUndoHunk)
-nmap <leader>Hs  <Plug>(GitGutterStageHunk)
-xmap <leader>Hs  <Plug>(GitGutterStageHunk)
-" }}}
 
-" Editing {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" User Interface (return from the screen)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Terminal: (parent process)
 set title
 set titlestring=VIM
 
-set encoding=UTF-8
+" Appearance:
+set number		" show the line numbers on the left side...
+set relativenumber	" ...with the numbers relative to the current line
+set colorcolumn=80	" show a limit with a vertical mark bar
+set conceallevel=0	" never replace any symbol like lambda sign, whatever
+set nowrap		" allow long lines to extend as far as they go
+
+set belloff=all		" no bell
+set novisualbell	" disable sound
+set vb t_vb=		" clearing the visual bell length deactivates flashing
+
+" <plugin> mark indentation levels
+let g:indentLine_char = '┊'
+let g:indentLine_setColors = 1
+
+" keep the cursor centered
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap J mzJ`z
+nnoremap <C-d>  <C-d>zz
+nnoremap <C-u>  <C-u>zz
+
+" Splits:
+" more natural default behavior
+set splitbelow
+set splitright
+
+" create quick splits
+nnoremap <silent> <leader>s :split<CR>
+nnoremap <silent> <leader>v :vsplit<CR>
+
+" navigation shortcuts
+" vimwiki (Backspace key)
+nnoremap <C-h>		<C-w>h
+nnoremap <C-j>		<C-w>j
+nnoremap <C-k>		<C-w>k
+nnoremap <C-l>		<C-w>l
+
+nnoremap <C-Up>		<C-w>k
+nnoremap <C-Left>	<C-w>h
+nnoremap <C-Down>	<C-w>j
+nnoremap <C-Right>	<C-w>l
+
+
+" Tabs:
+" better to <C-W>T on a previous buffer
+" nnoremap <silent> <leader>t :tabnew<CR>
+" non layout destructive :bd
+nnoremap <silent> <leader>d :b#<bar>bw!#<CR>
+" window/tab destructive :bd
+nnoremap <silent> <leader>D :bd<CR>
+" shortcut of of the shortcut <C-w>c
+nnoremap <silent> <leader>c :close<CR>
+
+nnoremap <silent> <leader>l :ls<CR>
+nnoremap <silent> <leader>L :ls!<CR>
+nnoremap <silent> <leader>q :bprev<CR>
+nnoremap <silent> <leader>p :bnext<CR>
+nnoremap <leader>e :enew<CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Edition (fed to the process) in the idea
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set mouse=a
 
-" appearance {{{
-set number             " show the line numbers on the left side...
-set relativenumber     " ...with the numbers relative to the current line
-set colorcolumn=80     " show the limit with a vertical mark bar
-set conceallevel=0     " never replace any symbol like lambda sign, whatever
-set nowrap             " allow long lines to extend as far as they go
-set showcmd            " show the command being typed. Ex: "a
-set noruler            " deactivate line:column in ruler (handled in plugin)
-set showmatch          " briefly highlight the matching ( { [ if any
-"set matchtime=3        " ... and shorten the default time -> zt zb zz H M L
-"set cursorline         " underline the cursor line position with a marker
-"set cursorcolumn       " same but vertically
-"set scrolloff=5        " scroll before the end of buffer but affect H/M/L too
-set termguicolors      " enable support for truecolor (24bit)
-" }}}
-" tab settings {{{
-set tabstop=4          " number of spaces that a <Tab> in the file counts for
-set shiftwidth=4	   " number of spaces followed by a newline
-set softtabstop=4	   " number of spaces that is inserted when you hit <TAB>
-set noexpandtab        " replace tabs with space
-" }}}
-" search {{{
-set hlsearch           " highlight searches by default
-set incsearch          " find the next match as we type the search
-set ignorecase         " ignore case when searching...
-set smartcase          " ...unless we type an uppercase letter
-nnoremap S :%s//gc<Left><Left><Left>
-" and vim-cool is used to remove highlighted searches automatically (no :nohl)
-" }}}
-" completion menu {{{
-set wildmenu              	" do not spam TAB in command line
+set backspace=indent,eol,start	" erase back even in insert mode
+
+set textwidth=80	" do break text with a newline after n typped chars
+
+set noautochdir        " autochdir changes the global directory, not win/tab
+
+" Files:
+set encoding=UTF-8
+set autoread		" reload files changed outside vim
+set modeline		" enable <fileCommentChar> vim: fdm=marker
+set modelines=1		" limit lines to read
+
+" Tabs:			(Historical reason to choose 8 as a default)
+set tabstop=8		" number of spaces that a <Tab> in a file counts for
+set shiftwidth=0	" number of spaces to use for each step of (auto)indent
+set softtabstop=0	" do not mix space and tabs to make up a set spacing
+set noexpandtab		" never replace tabs with space
+
+" Search:
+set hlsearch		" highlight searches by default
+set incsearch		" find the next match as we type the search
+set ignorecase		" ignore case when searching...
+set smartcase		" ...unless we type an uppercase letter
+
+" Completion_menu:
+set wildmenu	" do not spam TAB in command line
 set wildmode=list:longest,list:lastused,list:full
 set wildignore=*.jpg,*.png,*.gif,*.pdf,*.pyc,*.flv,*.img
 "set wildchar=<Tab> wildmenu wildmode=full
-" }}}
-" folds {{{
+
+"set matchtime=3        " ... and shorten the default time -> zt zb zz H M L
+"set scrolloff=5        " scroll before the end of buffer but affect H/M/L too
+nnoremap S :.,$s//gc<Left><Left><Left>
+" and vim-cool is used to remove highlighted searches automatically (no :nohl)
+
+" Folds:
+set fdm=marker
 set foldenable
-set foldlevelstart=0   " close most folds by default
-set foldnestmax=10     " open most folds by default
-" }}}
-" behavior {{{
-set hidden             " allow hidden buffers (instead of unloading them)
-set splitbelow         " split more...
-set splitright         " ... naturally
-set textwidth=0        " do not break text with a newline after n typped chars
-
-set belloff=all        " no bell
-set novisualbell       " disable sound
-set vb t_vb=           " clearing the visual bell length deactivates flashing
-
-set modeline           " enable <fileCommentChar> vim: fdm=marker
-set modelines=1        " limit lines to read
-
-set autoread           " reload files changed outside vim
-augroup onFocusAttemptToTriggerAutoread
-	autocmd!
-	" note: this is still not close to real-time
-	autocmd FocusGained,BufEnter * :checktime
-augroup END
-
-" TODO: set the working directory to the current edited file location
-set noautochdir        " autochdir changes the global directory, not win/tab
-"augroup lcdToCurrentFileLoc
-"	autocmd!
-"	autocmd BufEnter * lcd %:p:h
-"augroup END
-
-set backspace=indent,eol,start	" erase back even in insert mode
+set foldlevelstart=0	" close most folds by default
+set foldnestmax=10	" open most folds by default
 
 " Tell vim to remember certain things when we exit
 "  '10   :  marks will be remembered for up to 10 previously edited files
@@ -187,34 +200,97 @@ set backspace=indent,eol,start	" erase back even in insert mode
 "  h     :  disable the effect of 'hlsearch'
 "  n...  :  where to save the viminfo files | viminfofile set above
 set viminfo='10,\"1000,:20,%,h
-" }}}
-" enhancement {{{
 
-augroup openHelpToTheRight
-	autocmd!
-	" :h wincmd (T/O/HJKL)
-	autocmd BufEnter *.txt if &filetype == 'help' | wincmd T | endif
-augroup END
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Color
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" perform dot commands over visual blocks:
-vnoremap . :normal .<CR>
+" use truecolor (24bit-mode)
+set termguicolors
 
-" keep the cursor centered
-nnoremap n nzzzv
-nnoremap N Nzzzv
-nnoremap J mzJ`z
-nnoremap <C-d>  <C-d>zz
-nnoremap <C-u>  <C-u>zz
+if &term =~ "^st"
+	" from :help xterm-true-color
+	let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+	let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
+	" Fixes mouse scrolling in st. Update: it seems fixed
+	"set ttymouse=sgr
+endif
+
+colorscheme my-eighties
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Statusline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set showcmd		" show the command being typed. Ex: "a
+set noruler		" deactivate line:column in ruler (handled in plugin)
+set showmatch		" briefly highlight the matching ( { [ if any
+
+"-- lightline settings
+set noshowmode
+set laststatus=2
+let g:lightline = {
+\ 'colorscheme': 'darcula',
+\ }
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Command Line
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " arrow up/down in :cmdline
 cnoremap <C-k> <Up>
 cnoremap <C-j> <Down>
 
 " typos
+" no need if we flip ; with :
 cnoreabbrev E e
 cnoreabbrev Q q
 cnoreabbrev Qa qa
 cnoreabbrev W w
+
+" remap colon to semicolon
+nnoremap ; :
+nnoremap : ;
+vnoremap ; :
+vnoremap : ;
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Fuzzy Finding
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+nnoremap <leader>f :FZF<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Function keys
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" F1 : Help
+nnoremap <F2> :set wrap!<CR>
+" TODO: Remap CTRL-V to include it ?
+set pastetoggle=<F3>
+nnoremap <F4> :set list!<CR>
+
+nnoremap <F12> :call g:SynStack()<CR>
+
+
+" git
+nmap <leader>Hp  <Plug>(GitGutterPreviewHunk)
+nmap <leader>Hu  <Plug>(GitGutterUndoHunk)
+nmap <leader>Hs  <Plug>(GitGutterStageHunk)
+xmap <leader>Hs  <Plug>(GitGutterStageHunk)
+
+
+augroup onFocusAttemptToTriggerAutoread
+	autocmd!
+	" note: this is still not close to real-time
+	autocmd FocusGained,BufEnter * :checktime
+augroup END
+
+" enhancement {{{
+
+" perform dot commands over visual blocks:
+vnoremap . :normal .<CR>
+
 
 " netrw
 let g:netrw_banner = 0
@@ -224,7 +300,6 @@ let g:netrw_altv = 1
 let g:netrw_winsize = 25
 nnoremap <leader>x :Vex<CR>
 " }}}
-" fixes {{{
 
 " consistent mapping
 nnoremap Y y$
@@ -232,118 +307,28 @@ nnoremap Y y$
 " allow netrw buffers to be closed
 let g:netrw_fastbrowse = 0
 
-" necessary color fix for st
-if &term =~ "^st"
-	let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"  " from :help xterm-true-color
-	let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"  " from :help xterm-true-color
-
-	" Fixes mouse scrolling in st. Update: it seems fixed
-	"set ttymouse=sgr
-endif
 
 " explicit mappings to avoid weird behavior on some terminal emulators {{{
 " example: urxvt and st have some trouble dealing 'natively'
 " with Ctrl/Alt + Left/Right while others (kitty, xterm) handle it smoothly
 " Better to set it anyway.
 
+
 " Ctrl
-nmap <ESC>[1;5D <C-Left>
-nmap <ESC>[1;5C <C-Right>
-cmap <ESC>[1;5D <C-Left>
-cmap <ESC>[1;5C <C-Right>
-imap <ESC>[1;5D <C-o><C-Left>
-imap <ESC>[1;5C <C-o><C-Right>
-" Alt
-nmap <ESC>[1;3D <Nop>
-nmap <ESC>[1;3C <Nop>
-cmap <ESC>[1;3D <Nop>
-cmap <ESC>[1;3C <Nop>
-imap <ESC>[1;3D <Nop>
-imap <ESC>[1;3C <Nop>
-" }}}
-" }}}
-" }}}
+" nmap <ESC>[1;5D <C-Left>
+" nmap <ESC>[1;5C <C-Right>
+" cmap <ESC>[1;5D <C-Left>
+" cmap <ESC>[1;5C <C-Right>
+" imap <ESC>[1;5D <C-o><C-Left>
+" imap <ESC>[1;5C <C-o><C-Right>
+" " Alt
+" nmap <ESC>[1;3D <Nop>
+" nmap <ESC>[1;3C <Nop>
+" cmap <ESC>[1;3D <Nop>
+" cmap <ESC>[1;3C <Nop>
+" imap <ESC>[1;3D <Nop>
+" imap <ESC>[1;3C <Nop>
 
-" Bindings {{{
-" using default mapleader -> '\'
-
-nnoremap <silent> <leader>w :w<CR>
-nnoremap <silent> <leader>V :e $MYVIMRC<CR>
-nnoremap <silent> <leader>% :so %<CR>
-
-" navigation {{{
-" lines
-nnoremap B ^
-nnoremap E $
-" windows
-nnoremap <silent> <leader>l :ls<CR>
-nnoremap <silent> <leader>L :ls!<CR>
-nnoremap <silent> <leader>q :bprev<CR>
-nnoremap <silent> <leader>p :bnext<CR>
-nnoremap <silent> <leader>s :split<CR>
-nnoremap <silent> <leader>v :vsplit<CR>
-nnoremap <leader>e :enew<CR>
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
-nnoremap <C-Left> <C-w>h
-nnoremap <C-Down> <C-w>j
-nnoremap <C-Up> <C-w>k
-nnoremap <C-Right> <C-w>l
-" tabs
-nnoremap <silent> <leader>t :$tabnew<bar>b#<bar>bd!#<CR>
-nnoremap <leader>T :wincmd T<CR>
-" non destructive :bd
-nnoremap <silent> <leader>D :b#<bar>bd!#<CR>
-" window/tab destructive :bd
-nnoremap <silent> <leader>d :bd<CR>
-" shortcut of of the shortcut <C-w>c
-nnoremap <silent> <leader>c :close<CR>
-" }}}
-
-" functions keys {{{
-" F12 - check vim syntax group for word under cursor {{{
-function! SynStack()
-  if !exists("*synstack")
-    return
-  endif
-  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc
-nnoremap <F12> :call g:SynStack()<CR>
-" }}}
-" }}}
-
-" }}}
-
-" Custom plugins:
-" Bro: A searchable :bro old {{{
-function! Bro()
-	" only window opened ?
-	if expand('%:p') == ''
-		" then replace it with the oldfiles list
-		:enew | silent 0put =v:oldfiles | 1
-	else
-		" create a new tiny bottom window with old files
-		:new +setl\ buftype=nofile | silent 0put =v:oldfiles | 1
-		:wincmd J | resize 10
-	endif
-	" entering automatic search
-	":nnoremap n nzzzv | nnoremap N Nzzzv | call feedkeys('/')
-	" open selected on enter, and clean previous buff
-	:nnoremap <silent> <buffer> <CR>
-		\ :e <C-r>=getline('.')<CR><CR>
-		\ :bd!#<CR>
-		\ :silent wincmd o<CR>
-endfunction
-" Add ':Bro' to cmdline
-command! Bro call Bro()
-" map leader r to :Bro
-nnoremap <silent> <leader>r :Bro<CR><CR>
-" replace :bro with :Bro
-cnoreabbrev <expr> bro (getcmdtype() ==# ':' && getcmdline() ==# 'bro')
-			\ ? 'Bro' : 'bro'
-" }}}
 " highlight trailing spaces in red {{{
 augroup HighlightUselessWhitespaceInRed
 	autocmd!
@@ -357,7 +342,7 @@ augroup HighlightUselessWhitespaceInRed
 	autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 	autocmd BufWinLeave * call clearmatches()
 augroup END
-" }}}
+
 " automatically restore the previous cursor position {{{
 function! ResCur()
   if line("'\"") <= line("$")
@@ -365,6 +350,7 @@ function! ResCur()
     return 1
   endif
 endfunction
+
 augroup resCur
   autocmd!
   autocmd BufWinEnter * call ResCur()
@@ -394,7 +380,15 @@ augroup quickfix
 augroup END
 " }}}
 
-colorscheme my-eighties
+" Plugins config
+let g:vimwiki_list = [{'path': '~/vimwiki/',
+			\ 'syntax': 'markdown', 'ext': '.md'}]
+
+augroup onVimwikiBindShiftBackspace
+	autocmd!
+	autocmd FileType vimwiki nnoremap <silent><buffer> <C-H> :VimwikiGoBackLink<CR>
+augroup END
+
 
 augroup onVimEnterRestoreSessionIfAny
 	autocmd!
@@ -408,7 +402,12 @@ augroup onVimEnterRestoreSessionIfAny
 	autocmd VimEnter * nested call RestoreSess()
 augroup END
 
-augroup onSaveSourceVimrc
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vimrc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+augroup sourceVimrcOnSave
 	autocmd!
 	autocmd BufWritePost * nested if expand($MYVIMRC) ==# expand('%:p')
 				\ | source $MYVIMRC
@@ -416,4 +415,5 @@ augroup onSaveSourceVimrc
 				\ | endif
 augroup END
 
-" vim: fdm=marker
+" quick edit vimrc in a new tab
+nnoremap <silent> <leader>V :tabnew $MYVIMRC<CR>zozz

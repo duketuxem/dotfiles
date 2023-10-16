@@ -8,17 +8,14 @@ function! Bro()
 		:enew | silent 0put =v:oldfiles | 1
 
 		" open the selected entry (file) replacing the current buffer
-		:nnoremap <buffer> <CR>
-					\ :e <C-r>=getline('.')<CR><CR>
-					\ :bw!#<CR>
-		" todo: <silent> is to hide the last command execution
+		:nnoremap <buffer> <CR> :e! <C-r>=getline('.')<CR><CR>
 	else
-		" create a new window with the recent files opened
-		:new +setl\ buftype=nofile | silent 0put =v:oldfiles
+		" create a new tiny window with the recent files opened
+		:10 new +setl\ buftype=nofile | silent 0put =v:oldfiles | 1
 
 		" ensure it is always at the bottom,
 		" tiny and that the cursor is on the first line
-		:wincmd J | resize 10
+		" :wincmd J
 
 		" open the selected file on enter
 		" wipe the previous buffer with recent files

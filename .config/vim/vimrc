@@ -51,6 +51,7 @@ Plug 'junegunn/fzf'
 " motions
 Plug 'tpope/vim-commentary'	" gcc / gcap / ...
 Plug 'tpope/vim-surround'	" cs([
+Plug 'wellle/targets.vim'	" di(
 Plug 'romainl/vim-cool'		" see: /and vim-cool
 
 Plug 'tpope/vim-obsession'      " nice to create sessions
@@ -67,13 +68,14 @@ Plug 'tpope/vim-vinegar'
 Plug 'chriskempson/base16-vim'	" cool to test completion
 Plug 'joshdick/onedark.vim'	" kind of fallback...
 Plug 'vimwiki/vimwiki'
+Plug 'karoliskoncevicius/oldbook-vim'
 call plug#end()
 
 
 let mapleader = "\\"
 
-" todo: function keys section
-nnoremap <F2> :set wrap!<CR>
+" stuff to merge
+
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -91,6 +93,8 @@ set colorcolumn=80	" show a limit with a vertical mark bar
 set conceallevel=0	" never replace any symbol like lambda sign, whatever
 set nowrap		" allow long lines to extend as far as they go
 
+set lazyredraw		" faster execution of macros, mappings, etc...
+
 set belloff=all		" no bell
 set novisualbell	" disable sound
 set vb t_vb=		" clearing the visual bell length deactivates flashing
@@ -99,12 +103,28 @@ set vb t_vb=		" clearing the visual bell length deactivates flashing
 let g:indentLine_char = '┊'
 let g:indentLine_setColors = 1
 
-" keep the cursor centered
+" Cursor:
+" scroll
+" don't scroll on first line but center cursor
+nnoremap <expr> <C-d>    line('.') == 1 ? 'M' : '<C-d>zzzv'
+nnoremap <C-d>  <C-d>zzzv
+nnoremap <C-u>  <C-u>zzzv
+" next/prev location
+nnoremap <C-i>  <C-i>zzzv
+nnoremap <C-o>  <C-o>zzzv
+" go to tag
+nnoremap <C-]> <C-]>zzzv
+" search
 nnoremap n nzzzv
 nnoremap N Nzzzv
+" join
 nnoremap J mzJ`z
-nnoremap <C-d>  <C-d>zz
-nnoremap <C-u>  <C-u>zz
+" horizontal scrolling
+nnoremap zl zL
+nnoremap zh zH
+" wrapped lines scrolling
+nnoremap j gj
+nnoremap k gk
 
 " Splits:
 " more natural default behavior
@@ -143,6 +163,9 @@ nnoremap <silent> <leader>L :ls!<CR>
 nnoremap <silent> <leader>q :bprev<CR>
 nnoremap <silent> <leader>p :bnext<CR>
 nnoremap <leader>e :enew<CR>
+" Zoom without <C-o>
+nnoremap <silent> <leader>t :-tab split<CR>
+" Then close with <leader>c
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -156,10 +179,19 @@ set backspace=indent,eol,start	" erase back even in insert mode
 set textwidth=80	" do break text with a newline after n typped chars
 
 set noautochdir        " autochdir changes the global directory, not win/tab
+set noswapfile
+
+set tags=tags
 
 " Files:
 set encoding=UTF-8
 set autoread		" reload files changed outside vim
+augroup onFocusAttemptToTriggerAutoread
+	autocmd!
+	" note: this is still not close to real-time
+	autocmd FocusGained,BufEnter * :checktime
+augroup END
+
 set modeline		" enable <fileCommentChar> vim: fdm=marker
 set modelines=1		" limit lines to read
 
@@ -175,22 +207,48 @@ set incsearch		" find the next match as we type the search
 set ignorecase		" ignore case when searching...
 set smartcase		" ...unless we type an uppercase letter
 
+" always start a search from the cursor position
+" not incremental :(
+" nnoremap / :.,$/
+
+" search for the currently selected text in the file
+vnoremap / y/\V<C-R>=escape(@",'/\')<CR><CR>
+
+" should be to replace a selection (is there simpler ?)
+" function! GetVisualSelection()
+"   " Why is this not a built-in Vim script function?!
+"   let [line_start, column_start] = getpos("'<")[1:2]
+"   let [line_end, column_end] = getpos("'>")[1:2]
+"   let lines = getline(line_start, line_end)
+"   if len(lines) == 0
+"     return ''
+"   endif
+"   let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+"   let lines[0] = lines[0][column_start - 1:]
+"   let arf = join(lines, "\n")
+"   exe ':%s/'.arf."/gc<Left><Left><Left>"
+" endfunction
+
 " Completion_menu:
 set wildmenu	" do not spam TAB in command line
 set wildmode=list:longest,list:lastused,list:full
 set wildignore=*.jpg,*.png,*.gif,*.pdf,*.pyc,*.flv,*.img
 "set wildchar=<Tab> wildmenu wildmode=full
+set wildcharm=<TAB>   " recognize tab as completer command in mappings
 
 "set matchtime=3        " ... and shorten the default time -> zt zb zz H M L
 "set scrolloff=5        " scroll before the end of buffer but affect H/M/L too
-nnoremap S :.,$s//gc<Left><Left><Left>
+" nnoremap S :.,$s//gc<Left><Left><Left>
 " and vim-cool is used to remove highlighted searches automatically (no :nohl)
 
 " Folds:
-set fdm=marker
 set foldenable
+set foldmethod=marker
+" what is '1' setting for below ? (some folds ? How come)
 set foldlevelstart=0	" close most folds by default
-set foldnestmax=10	" open most folds by default
+set foldnestmax=2	" open most folds by default
+set foldopen-=block	" do not open ( { [ folds when passing (hjkl) on them
+"set foldclose=all	" auto close fold when leaving the fold scope
 
 " Tell vim to remember certain things when we exit
 "  '10   :  marks will be remembered for up to 10 previously edited files
@@ -238,22 +296,25 @@ let g:lightline = {
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Command Line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" arrow up/down in :cmdline
-cnoremap <C-k> <Up>
-cnoremap <C-j> <Down>
-
-" typos
-" no need if we flip ; with :
-cnoreabbrev E e
-cnoreabbrev Q q
-cnoreabbrev Qa qa
-cnoreabbrev W w
-
 " remap colon to semicolon
 nnoremap ; :
 nnoremap : ;
 vnoremap ; :
 vnoremap : ;
+
+" arrow up/down in :cmdline
+cnoremap <C-k> <Up>
+cnoremap <C-j> <Down>
+
+" open help on the right
+cnoreabbrev h vert h
+
+" Terminal: (:term)
+" rebind escape to avoid <C-w><S-N>
+tnoremap <C-[> <c-\><c-n>
+" impossible on MS-Windows -> :h scroll-mouse-wheel
+tnoremap <ScrollWheelUp> <C-\><C-n><C-u>
+tnoremap <ScrollWheelDown> <C-d>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Fuzzy Finding
@@ -266,87 +327,77 @@ nnoremap <leader>f :FZF<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " F1 : Help
 nnoremap <F2> :set wrap!<CR>
-" TODO: Remap CTRL-V to include it ?
+" TODO: " during the paste can this action happen automatically ?
 set pastetoggle=<F3>
 nnoremap <F4> :set list!<CR>
 
 nnoremap <F12> :call g:SynStack()<CR>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Language specific
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" git
-nmap <leader>Hp  <Plug>(GitGutterPreviewHunk)
-nmap <leader>Hu  <Plug>(GitGutterUndoHunk)
-nmap <leader>Hs  <Plug>(GitGutterStageHunk)
-xmap <leader>Hs  <Plug>(GitGutterStageHunk)
+" Perl:
+let perl_fold=1
+let perl_nofold_subs=1
+let g:perldoc_split_modifier = 'rightbelow 15'
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" netrw
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" allow netrw buffers to be closed
+let g:netrw_fastbrowse = 0
+" let g:netrw_fastbrowse = 0
+" let g:netrw_banner = 0					" remove header
+" let g:netrw_liststyle = 3				" tree like listing
+" let g:netrw_browse_split = 4		" open in previous buffer
+" let g:netrw_altv = 1
+" let g:netrw_winsize = 30
+" let g:netrw_list_hide = &wildignore
+" let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
+" nnoremap <leader>n :Lex<CR>
+
+" " https://www.reddit.com/r/neovim/comments/jr5zdb/remapping_keys_in_netrw/
+" augroup netrw_mapping
+"   autocmd!
+"   autocmd filetype netrw call NetrwMapping()
+" augroup END
+
+" function! NetrwMapping()
+"   " keep the behavior bound to <CR> with nmap
+"   nmap <buffer> l <CR>
+"   nmap <buffer> h -
+"   nnoremap <buffer> <C-l> <C-W>l
+" endfunction
+
+" augroup NERDTreeSetRela
+"   autocmd !
+"   autocmd BufWinEnter NERD_* setlocal relativenumber
+" augroup END
 
 
-augroup onFocusAttemptToTriggerAutoread
-	autocmd!
-	" note: this is still not close to real-time
-	autocmd FocusGained,BufEnter * :checktime
-augroup END
-
-" enhancement {{{
+" Tosort:
 
 " perform dot commands over visual blocks:
 vnoremap . :normal .<CR>
 
-
-" netrw
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
-let g:netrw_altv = 1
-let g:netrw_winsize = 25
-nnoremap <leader>x :Vex<CR>
-" }}}
+" ignore a text to replace from being recorded in registers
+nnoremap c "_c
 
 " consistent mapping
 nnoremap Y y$
 
-" allow netrw buffers to be closed
-let g:netrw_fastbrowse = 0
+" what is it btw ?
+nnoremap <expr> ' "'" . nr2char(getchar()) . "zz"
+nnoremap <expr> ` "`" . nr2char(getchar()) . "zz"
 
-
-" explicit mappings to avoid weird behavior on some terminal emulators {{{
-" example: urxvt and st have some trouble dealing 'natively'
-" with Ctrl/Alt + Left/Right while others (kitty, xterm) handle it smoothly
-" Better to set it anyway.
-
-
-" Ctrl
-" nmap <ESC>[1;5D <C-Left>
-" nmap <ESC>[1;5C <C-Right>
-" cmap <ESC>[1;5D <C-Left>
-" cmap <ESC>[1;5C <C-Right>
-" imap <ESC>[1;5D <C-o><C-Left>
-" imap <ESC>[1;5C <C-o><C-Right>
-" " Alt
-" nmap <ESC>[1;3D <Nop>
-" nmap <ESC>[1;3C <Nop>
-" cmap <ESC>[1;3D <Nop>
-" cmap <ESC>[1;3C <Nop>
-" imap <ESC>[1;3D <Nop>
-" imap <ESC>[1;3C <Nop>
-
-" highlight trailing spaces in red {{{
-augroup HighlightUselessWhitespaceInRed
-	autocmd!
-
-	" does not get triggered whilst you are typing in insert mode
-	:highlight ExtraWhitespace ctermbg=darkred guibg=darkred
-	autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
-	match ExtraWhitespace /\s\+$/
-	autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-	autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-	autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-	autocmd BufWinLeave * call clearmatches()
-augroup END
-
-" automatically restore the previous cursor position {{{
+" Todo: a cursor plugin ?
+" automatically restore the previous cursor position
+" keywords: - vim.fandom.com
+"           - restore_cursor_to_file_position_in_previous_editing_session
 function! ResCur()
-  if line("'\"") <= line("$")
-    normal! g`"
+  if line("'\"") > 1 && line("'\"") <= line("$")
+    silent normal! g`"
     return 1
   endif
 endfunction
@@ -356,39 +407,37 @@ augroup resCur
   autocmd BufWinEnter * call ResCur()
 augroup END
 
-" keywords: - vim.fandom.com
-"           - restore_cursor_to_file_position_in_previous_editing_session
-" }}}
-" Ag as grep {{{
-set grepprg=ag\ --color\ --vimgrep
 
-function! Grep(...)
-	echo join([&grepprg] + [expandcmd(join(a:000, ' '))], ' ')
-	return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
-endfunction
-command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
-cnoreabbrev <expr> grep  (getcmdtype() ==# ':' && getcmdline() ==# 'grep')  ?  'Grep'  : 'grep'
-command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
-cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ?  'LGrep' : 'lgrep'
-
-" if any match, send the output of the Grep command to the quickfix list and set the cursor inside
-augroup quickfix
-	autocmd!
-	autocmd QuickFixCmdPost cgetexpr cwindow
-	autocmd QuickFixCmdPost lgetexpr lwindow
-	" autocmd QuickFixCmdPost grep cwindow
-augroup END
-" }}}
-
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugins config
-let g:vimwiki_list = [{'path': '~/vimwiki/',
-			\ 'syntax': 'markdown', 'ext': '.md'}]
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" GitGutter:
+nmap <leader>Hp  <Plug>(GitGutterPreviewHunk)
+nmap <leader>Hu  <Plug>(GitGutterUndoHunk)
+nmap <leader>Hs  <Plug>(GitGutterStageHunk)
+xmap <leader>Hs  <Plug>(GitGutterStageHunk)
+
+" Vimwiki:
+let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
+
+" [terminal] this conflicts with the shortcut <C-W>H mapping
+" not a big deal since I am often dealing with vimwiki in a separate tab
 augroup onVimwikiBindShiftBackspace
 	autocmd!
 	autocmd FileType vimwiki nnoremap <silent><buffer> <C-H> :VimwikiGoBackLink<CR>
 augroup END
 
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" avoid mistake and unattend effects
+map <C-a> <Nop>
+map <C-x> <Nop>
 
 augroup onVimEnterRestoreSessionIfAny
 	autocmd!
@@ -401,11 +450,6 @@ augroup onVimEnterRestoreSessionIfAny
 	" :h automcmd-nested
 	autocmd VimEnter * nested call RestoreSess()
 augroup END
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Vimrc
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 augroup sourceVimrcOnSave
 	autocmd!

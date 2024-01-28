@@ -2,6 +2,12 @@
 
 # A custom `time` giving much more precise results.
 
+# It is not _absolutely_ true though and will always show a value, even if a
+# command has not been entered.
+
+# TODO:
+# Does it really require bash ?
+
 start="$(date +'%s.%N')"
 $@ >& /dev/null
 printf "%.17g\n" "$(date +"%s.%N - ${start}" | bc)" >&2

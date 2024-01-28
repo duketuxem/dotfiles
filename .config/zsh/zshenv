@@ -1,27 +1,83 @@
-#                    __
-#                   |  \
-#  ________  _______| ▓▓____   ______  _______  __     __
-# |        \/       \ ▓▓    \ /      \|       \|  \   /  \
-#  \▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓\  ▓▓▓▓▓▓\ ▓▓▓▓▓▓▓\\▓▓\ /  ▓▓
-#   /    ▓▓ \▓▓    \| ▓▓  | ▓▓ ▓▓    ▓▓ ▓▓  | ▓▓ \▓▓\  ▓▓
-#  /  ▓▓▓▓_ _\▓▓▓▓▓▓\ ▓▓  | ▓▓ ▓▓▓▓▓▓▓▓ ▓▓  | ▓▓  \▓▓ ▓▓
-# |  ▓▓    \       ▓▓ ▓▓  | ▓▓\▓▓     \ ▓▓  | ▓▓   \▓▓▓
-#  \▓▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓ \▓▓▓▓▓▓▓\▓▓   \▓▓    \▓
-
+#                       __
+#                      |  \
+#     ________  _______| ▓▓____   ______  _______  __     __
+#    |        \/       \ ▓▓    \ /      \|       \|  \   /  \
+#     \▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓\  ▓▓▓▓▓▓\ ▓▓▓▓▓▓▓\\▓▓\ /  ▓▓
+#      /    ▓▓ \▓▓    \| ▓▓  | ▓▓ ▓▓    ▓▓ ▓▓  | ▓▓ \▓▓\  ▓▓
+#  __ /  ▓▓▓▓_ _\▓▓▓▓▓▓\ ▓▓  | ▓▓ ▓▓▓▓▓▓▓▓ ▓▓  | ▓▓  \▓▓ ▓▓
+# |  \  ▓▓    \       ▓▓ ▓▓  | ▓▓\▓▓     \ ▓▓  | ▓▓   \▓▓▓
+#  \▓▓\▓▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓ \▓▓▓▓▓▓▓\▓▓   \▓▓    \▓
 
 
 # This file is read by *every* possible zsh shell so it should contain
-# as less commands as possible to ensure a quick start up time.
-#
-# It should contain the system path and any other variable that is
-# not _constant_ (otherwise defined in .zprofile), thus *not*
-# requiring the user to log off/log in again to update those settings.
-#
-# To unclutter $HOME, the best way is to set ZDOTDIR in /etc/zsh/zshenv.
-# -> export ZDOTDIR="$HOME/.config/zsh"
-# Otherwise, there will be one ~/.zshenv remaining
-# (ref: zsh startup files)
+# as less commands as possible, to ensure a quick start up time.
+
+# [Reminder]
+# /etc/zsh/zshenv:
+# ZDOTDIR="$HOME"/.config/zsh
+# Otherwise, there will be one ~/.zshenv remaining (ref: zsh startup files)
+
+
+
+########################################
+#     Adding ~/local/.bin to $PATH     #
+########################################
 
 typeset -U PATH path
 path=("$path[@]" "$HOME/.local/bin")
 export PATH
+
+
+########################################
+#       XDG Base directory spec        #
+########################################
+
+# Definition
+export XDG_DESKTOP_DIR="$HOME/.local/share"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.local/cache"
+export XDG_STATE_HOME="$HOME/.local/state"
+export HOME_LOG="$HOME/.local/log"
+[[ ! -d "$HOME_LOG" ]] && mkdir -p "$HOME_LOG"
+
+# Exceptions
+# ~/.asoundrc -> Should be supported if XDG is set ~/.config/alsa/asoundrc
+export ADB_VENDOR_KEY="$XDG_CONFIG_HOME/android"
+export ANDROID_AVD_HOME="$XDG_DATA_HOME/android/"
+export ANDROID_EMULATOR_HOME="$XDG_DATA_HOME/android/"
+export ANDROID_SDK_HOME="$XDG_CONFIG_HOME/android"
+export CCACHE_CONFIGPATH="$XDG_CONFIG_HOME/ccache.config"
+export CCACHE_DIR="$XDG_CACHE_HOME/ccache"
+export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+export ELECTRUMDIR="$XDG_DATA_HOME/electrum"
+export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
+export LESSKEY="$XDG_CONFIG_HOME/less/lesskey"
+export MACHINE_STORAGE_PATH="$XDG_DATA_HOME/docker-machine"
+export TERMINFO="$XDG_DATA_HOME/terminfo"
+export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
+export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC'
+export GVIMINIT='let $MYGVIMRC="$XDG_CONFIG_HOME/vim/gvimrc"|source $MYGVIMRC'
+export XAUTHORITY="$XDG_DATA_HOME/Xauthority"
+# Respected by xinit but not startx:
+#export XINITRC
+#export XSERVERRC
+# Bash /zsh ??
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
+export WGETRC="$XDG_CONFIG_HOME/wgetrc"
+
+
+########################################
+#          Other setting/fixes         #
+########################################
+
+# Fix awfully looking fonts in java apps
+export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
+# Java apps now work with Tiling Window Managers
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+# Dark theme
+export QT_STYLE_OVERRIDE='kvantum-dark'
+
+# vim: ft=zsh

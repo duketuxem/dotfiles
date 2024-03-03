@@ -13,20 +13,27 @@
 # Uncomment here and at the end of the file to audit startup time
 # zmodload zsh/zprof
 
-#GPG_TTY="$(tty)"
+### Environment variables (in an interactive context)
+## Default applications
+# UN*X legacy
+export EDITOR='vim'
+export PAGER='less'
+# Personnal
+export BROWSER='firefox'
+export PLAYER='mpv'
 
-# History
-HISTSIZE=100001
-SAVEHIST=100001
-setopt append_history		# (On by default)
-setopt inc_append_history	# Immediate recording
-setopt hist_ignore_dups		# Avoid ls ls ls ls
-setopt hist_ignore_space	# Do not record ' cmd'
+### History
+HISTSIZE=100000
+SAVEHIST=100000
+setopt APPEND_HISTORY		# (On by default)
+setopt INC_APPEND_HISTORY	# Immediate recording
+setopt HIST_IGNORE_DUPS		# Avoid ls ls ls ls
+setopt HIST_IGNORE_SPACE	# Do not record ' cmd'
 
-# Navigation
-setopt autocd			# cd to the given path without cd as a prefix
-setopt autopushd		# all 'cd's goes to the directory stack history
-setopt pushdignoredups		# only remember the location, not the order
+### Navigation
+setopt AUTOCD			# cd to the given path without cd as a prefix
+setopt AUTOPUSHD		# all 'cd's goes to the directory stack history
+setopt PUSHDIGNOREDUPS		# only remember the location, not the order
 # TODO: Replace the following with a fish-like prevd/nextd plugin custom or not
 alias s='dirs -v | sed 11q'
 alias 1='cd -'
@@ -39,22 +46,22 @@ alias 7='cd -7'
 alias 8='cd -8'
 alias 9='cd -9'
 
-# Misc
-setopt notify			# Report background job status immediately
+### Misc
+setopt NOTIFY			# Report background job status immediately
 
+### Mappings
+source "$XDG_CONFIG_HOME/zsh/bindings.zsh"
 
+### Completion
 # TODO: close the completion menu
 # bindkey -M menuselect '^[' undo
 source "$XDG_CONFIG_HOME/zsh/completion.zsh"
 
-########################################
-# Completion
-########################################
 
+### Prompt
 # ISSUE#1: Thanks Tmux for changing my favorite ls colors...
 # [[ "$TERM" == "screen-256color" ]] && source "$XDG_CONFIG_HOME/tmux/ls.env"
-
-autoload -Uz colors # && colors
+autoload -Uz colors && colors
 source "$XDG_CONFIG_HOME/zsh/prompt.zsh"
 #bindkey -- "^X^R" _read_comp
 #bindkey -- "^X?" _complete_debug
@@ -72,7 +79,6 @@ source "$XDG_CONFIG_HOME/zsh/prompt.zsh"
 #bindkey -- "^[/" _history-complete-older
 #bindkey -- "^[~" _bash_complete-word
 
-source "$XDG_CONFIG_HOME/zsh/bindings.zsh"
 
 # ==========================
 #  Fuzzy File Finding (fzf)
@@ -94,16 +100,16 @@ source "$XDG_CONFIG_HOME/zsh/commands.zsh"
 #export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
+
 # Fish-like syntax pre-validation (should be last)
-if [ "$(lsb_release -sd)" = '"Void Linux"' ]; then
-  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-else # elif [ "$(lsb_release -sd)" = '"Gentoo"' ]; then
-  source /usr/share/zsh/site-functions/zsh-syntax-highlighting.zsh
+if [ -f "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]
+then
+	source "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+elif [ -f "/usr/share/zsh/site-functions/zsh-syntax-highlighting.zsh" ]
+then
+	source "/usr/share/zsh/site-functions/zsh-syntax-highlighting.zsh"
+else
+	echo "Can not find the zsh-syntax-highlight file location"
 fi
 
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
 # zprof
-

@@ -23,13 +23,18 @@
 # ^ Those should be reserved for WM functionnality
 
 
-########################################
+# -----------------------------------------------------------------------------
 # Reading from Terminfo and adapting
-########################################
+# -----------------------------------------------------------------------------
 
-# The following attempts to use the terminfo database
-# to standardize the implementation of terminal escape sequences
-# across various terminal emulators. See `man terminfo`.
+# Terminfo is an effort to establish a standard on top of historical different
+# terminal emulator implementations.
+# As such, the following makes use of the terminfo database to bind some common
+# terminal escape sequences 'independantly' of the terminal emulator used.
+# See `man terminfo`.
+
+# Explicitely loading the zsh terminfo interface module
+zmodload zsh/terminfo
 
 # Destroyed array after binding
 declare -A keys
@@ -71,9 +76,9 @@ for key val in "${(@kv)keys}"; do
 done
 
 
-########################################
+# -----------------------------------------------------------------------------
 # Custom functions / plugins
-########################################
+# -----------------------------------------------------------------------------
 
 # backward-kill-word has to mind '/' and '$' as separators
 custom-backward-kill() {
@@ -106,7 +111,7 @@ zle -N edit-command-line
 ########################################
 
 # Disable Ctrl + s / Ctrl + q (XON/XOFF) to free two mappings
-setopt noflowcontrol
+setopt NOFLOWCONTROL
 
 # Remove (-r) all bindings from an empty prefix (-p), which matches all.
 bindkey -rp ''
@@ -164,6 +169,7 @@ bindkey -- '^P'			end-of-line
 bindkey -- '^S'			accept-line-with-pager
 #bindkey -- '^F
 bindkey -- '^G'			append-grep
+bindkey -- '^H'			backward-delete-char
 #bindkey -- '^J'			#mandatory ?
 bindkey -- '^K'			kill-line
 bindkey -- '^L'			clear-screen	# no terminfo entry (ff) ?
@@ -188,6 +194,8 @@ bindkey -- "^[[D"		backward-word
 bindkey -- "^[[C"		forward-word
 
 ###### TERM=st
+# if TERM = ST then...
+#
 
 # When running zsh, some terminals (like xterm) will not consider the
 # terminfo array if the 'application mode' is not set during line edition.
@@ -209,4 +217,9 @@ unset keys
 ### Resources
 # `man zshzle`
 # https://wiki.archlinux.org/title/zsh#Key_bindings
-# https://unix.stackexchange.com/questions/253271	# Understanding CR/LF
+#
+# Understanding CR/LF:
+# https://unix.stackexchange.com/questions/253271
+#
+# How to get How to get control characters for Ctrl+Left from terminfo in Zsh:
+# https://stackoverflow.com/questions/31379824/

@@ -9,35 +9,28 @@
 #  \▓▓\▓▓   \▓▓\▓▓\▓▓   \▓▓\▓▓   \▓▓▓▓ \▓▓       \▓▓▓▓▓▓▓
 
 
+# Use case:
+# --------
+#
+# This file should be (in my opinion) as minimal as possible and just contain
+# commands that are to be run only one time when the X server is started.
 
-# Desktop
-#"$HOME"/.local/bin/monitoring/bar.sh &
-feh --no-fehbg --bg-scale "$HOME"/wallpaper &
-picom --experimental-backends &
-xrandr --auto
 
-# Scroll faster
-# -k: kill -b: buttons 45
-imwheel -k -b 45
-
-# No bell thanks
-xset b off
+xrandr --auto			# find and use most of the monitors
+xset b off			# disable that bloody bell
+xset r rate 300 50		# faster autorepeat
 
 # Who cares about Caps Lock anyway
 xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
 
-# Faster autorepeat
-xset r rate 300 50
 
-[[ ! -d "$HOME_LOG" ]] && mkdir -p "$HOME_LOG"
-
-while true;
+while :
 do
-    # Log stderror to a file
-    dwm 2> "$HOME_LOG/dwm.log"
+    # Log stderr to a file
+    # dwm 2>&1 >> "$HOME_LOG"/dwm.log
 
     # No error logging
-    #dwm >/dev/null 2>&1
+    dwm >/dev/null 2>&1
 done
 
 # vim:ft=sh

@@ -9,10 +9,11 @@ can add a plugin very easily by dropping it in your plugin directory.
 
 ### In my case
 
-Since I chose to manage my vim configuration using a modular approach,
-I guess this directory won't be used that much.
+I see this folder like an old fashioned way of extending vim's functionnality.
 
-One example that comes to my mind though:
-It could be interesting to comment out much of the vimrc configuration, and
-simply throw a script in this directory for testing in an isolated manner.
+My plugin manager handles everything, using `.vim_plug` to cache the plugins
+repositories, it is way more convenient than just throwing some pieces
+of vim scripts one by one into that folder...
+
+It could be used to test a script in an "isolated" loading point though.
 

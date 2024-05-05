@@ -1,31 +1,36 @@
-# 1. Read from the Terminfo database
+# =============================================================================
+# Notes
+# =============================================================================
+#
+# This script is doing the following:
+# 1. Attempt to read the Terminfo database
 # 2. Define custom functions/plugins ready to be bound
 # 3. In the darkness, bind them all
-
-# Technical notes:
-# ----------------
-# declare -A : associative array
-# The keys array is a custom implementation so it is not compatible with zkbd.
-# I might be wrong but I think a zkbd array can be really helpful only
-# if dealing with uncommon (maybe proprietary ?) system architectures.
 #
-# zle -N : explicitely load a function so it can be bound before calling it
-# bindkey -- : mark the end of the options so only arguments are passed
-#
-# [Reminder about the syntax about non printable ASCII]
-# ASCII[28] == File Separator == \034 == \x1c == Ctrl + \ == "^\\\\"
-# -> 'showkey -a' is really helpful
-#
-# Overall remarks:
-# Exception for Alt+BS but otherwise no mixing with Window Manager bindings!
+# Overall:
+# --------
+# Exception for Alt+BS, otherwise no mixing with the Window Manager bindings!
 # Alt + ~
 # Alt + F1..F12
-# ^ Those should be reserved for WM functionnality
+# ^ Those should be reserved for some Windows Manager functionnality
+#
+# Technical:
+# ----------
+#
+# 'keys' is a custom implementation so it is not compatible with zkbd.
+#
+# zle -N : explicitely load a function so it can be bound before calling it
+#
+# bindkey -- : mark the end of the options so only arguments are passed
+#
+# [Reminder about the syntax for non printable ASCII]
+# ASCII[28] == File Separator == \034 == \x1c == Ctrl + \ == "^\\\\"
+# -> 'showkey -a' is really helpful
 
 
-# -----------------------------------------------------------------------------
+# =============================================================================
 # Reading from Terminfo and adapting
-# -----------------------------------------------------------------------------
+# =============================================================================
 
 # Terminfo is an effort to establish a standard on top of historical different
 # terminal emulator implementations.
@@ -36,7 +41,7 @@
 # Explicitely loading the zsh terminfo interface module
 zmodload zsh/terminfo
 
-# Destroyed array after binding
+# Custom associative array (-A) to be destroyed after bindings are done
 declare -A keys
 
 keys[Enter]="${terminfo[cr]:-^M}"
@@ -69,16 +74,20 @@ case $TERM in
 		;;
 esac
 
-for key val in "${(@kv)keys}"; do
-	[[ -z "$val" ]] && \
+# Warning to show which keys will fail to be bound
+for key val in "${(@kv)keys}"
+do
+	if [[ -z "$val" ]]
+	then
 		echo "(!) Missing terminfo entry for key : $key (!)" 2>&1
+	fi
 	# echo "$key -> $val" | cat -vt
 done
 
 
-# -----------------------------------------------------------------------------
+# =============================================================================
 # Custom functions / plugins
-# -----------------------------------------------------------------------------
+# =============================================================================
 
 # backward-kill-word has to mind '/' and '$' as separators
 custom-backward-kill() {
@@ -89,6 +98,7 @@ custom-backward-kill() {
 }
 zle -N custom-backward-kill
 
+# Use of local ?
 append-grep() {
 	BUFFER+="| grep -i "
 	zle end-of-line
@@ -106,11 +116,11 @@ autoload edit-command-line;
 zle -N edit-command-line
 
 
-########################################
+# ============================================================================
 # Bindings from scratch
-########################################
+# ============================================================================
 
-# Disable Ctrl + s / Ctrl + q (XON/XOFF) to free two mappings
+# Disable Ctrl + s / Ctrl + q (XON/XOFF) to free up two mappings
 setopt NOFLOWCONTROL
 
 # Remove (-r) all bindings from an empty prefix (-p), which matches all.

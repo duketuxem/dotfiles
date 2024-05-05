@@ -21,22 +21,22 @@
 # time upon each new shell invocation, but just for the sake of sanitizing the
 # home folder from unwanted dotfiles, this is safer. In any case I switch to
 # another desktop environment for trying out anything, I am not going to see
-# random files popping just because I did login graphically...
+# random files popping just because I logged on graphically...
 
 # Past note:
 # (.zshenv could be used but there is no need to re-set them for every shell)
 # Anything modified here would require to log off and then log in again.
 
 
-
 # If no graphical server instance is running and the user has logged from tty1
-if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
-	# `exec` to log off once the session has terminated (calling zlogout)
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]] && [[ $(command -v startx) ]]
+then
+	# `exec` to log off once the graphical session has been terminated
+	# (calling zlogout)
 	exec startx "$XDG_CONFIG_HOME/x11/xinitrc"
 
 	# Could use xinit instead of startx
 	#   #exec xinit -- /usr/bin/X -nolisten tcp vt7
-	#   fi
 fi
 
 # vim:ft=zsh

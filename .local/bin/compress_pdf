@@ -1,6 +1,9 @@
 #!/usr/bin/env zsh
 
-# Todo: Args
+# TODO:
+# - Check args
+# - Change shebang to sh (?)
+# - Check if 'gs' exists
 
 # ghostscript
 gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 \

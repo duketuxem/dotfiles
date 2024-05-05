@@ -1,4 +1,4 @@
-"
+
 "           |  \
 "  __     __ \▓▓______ ____   ______   _______
 " |  \   /  \  \      \    \ /      \ /       \
@@ -58,6 +58,12 @@ Plug 'tpope/vim-obsession'      " nice to create sessions
 
 Plug 'tpope/vim-repeat'
 
+Plug 'preservim/NERDTree'
+
+Plug 'vimwiki/vimwiki'
+
+Plug 'junegunn/vim-easy-align'
+
 " ToImplement
 Plug 'itchyny/lightline.vim'	" lighter status bar than airline
 Plug 'tpope/vim-fugitive'       " Stage current file from vim, restore...
@@ -65,10 +71,11 @@ Plug 'airblade/vim-gitgutter'   " Actual modifications inside the buffer
 Plug 'tpope/vim-vinegar'
 
 " themes
+Plug 'morhetz/gruvbox'
 Plug 'chriskempson/base16-vim'	" cool to test completion
 Plug 'joshdick/onedark.vim'	" kind of fallback...
-Plug 'vimwiki/vimwiki'
 Plug 'karoliskoncevicius/oldbook-vim'
+Plug 'sainnhe/everforest'
 call plug#end()
 
 
@@ -76,7 +83,7 @@ let mapleader = "\\"
 
 " stuff to merge
 
-
+nnoremap <leader><CR> :! clear && echo <BAR> ./%<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " User Interface (return from the screen)
@@ -172,11 +179,14 @@ nnoremap <silent> <leader>t :-tab split<CR>
 " Edition (fed to the process) in the idea
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+set hidden
+
 set mouse=a
 
 set backspace=indent,eol,start	" erase back even in insert mode
 
-set textwidth=80	" do break text with a newline after n typped chars
+set textwidth=79	" do break text with a newline after n typped chars
+set nojoinspaces	" leave only one space when joining (gqg)
 
 set noautochdir        " autochdir changes the global directory, not win/tab
 set noswapfile
@@ -254,10 +264,10 @@ set foldopen-=block	" do not open ( { [ folds when passing (hjkl) on them
 "  '10   :  marks will be remembered for up to 10 previously edited files
 "  "1000 :  will save up to 1000 lines for each register
 "  :20   :  up to 20 lines of command-line history will be remembered
-"  %     :  saves and restores the buffer list
+"  %     :  saves and restores the buffer list | off - (use sessions if needed)
 "  h     :  disable the effect of 'hlsearch'
 "  n...  :  where to save the viminfo files | viminfofile set above
-set viminfo='10,\"1000,:20,%,h
+set viminfo='10,\"1000,:20,h
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Color
@@ -419,7 +429,8 @@ nmap <leader>Hs  <Plug>(GitGutterStageHunk)
 xmap <leader>Hs  <Plug>(GitGutterStageHunk)
 
 " Vimwiki:
-let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_list = [{'path': '~/documents/vimwiki',
+			\ 'syntax': 'markdown', 'ext': '.md'}]
 
 " [terminal] this conflicts with the shortcut <C-W>H mapping
 " not a big deal since I am often dealing with vimwiki in a separate tab
@@ -442,7 +453,11 @@ map <C-x> <Nop>
 augroup onVimEnterRestoreSessionIfAny
 	autocmd!
 	function! RestoreSess()
-		if filereadable(expand("~/Session.vim"))
+		" [Gvim specific]
+		" do not restore the session if v:servername contains numbers.
+		" if so, it means an existing vim instance is running, but the
+		" goal is to have a fresh one started, not a mirrored instance
+		if filereadable(expand("~/Session.vim")) && v:servername !~ '\d'
 			source ~/Session.vim
 		endif
 	endfunction

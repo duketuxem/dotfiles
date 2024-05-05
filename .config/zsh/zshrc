@@ -23,6 +23,7 @@ export BROWSER='firefox'
 export PLAYER='mpv'
 
 ### History
+HISTFILE="$XDG_STATE_HOME/zsh/history"
 HISTSIZE=100000
 SAVEHIST=100000
 setopt APPEND_HISTORY		# (On by default)
@@ -80,9 +81,9 @@ source "$XDG_CONFIG_HOME/zsh/prompt.zsh"
 #bindkey -- "^[~" _bash_complete-word
 
 
-# ==========================
+# =============================================================================
 #  Fuzzy File Finding (fzf)
-# ==========================
+# =============================================================================
 source "$XDG_CONFIG_HOME/zsh/fzf.zsh"
 #"^I" fzf-completion
 #"^R" fzf-history-widget
@@ -90,9 +91,9 @@ source "$XDG_CONFIG_HOME/zsh/fzf.zsh"
 #"^[c" fzf-cd-widget
 
 
-# ==========================
-#      Custom commands
-# ==========================
+# =============================================================================
+# Custom commands
+# =============================================================================
 source "$XDG_CONFIG_HOME/zsh/commands.zsh"
 
 # nvm (or how soydevs are going to slow down my perfect config...)

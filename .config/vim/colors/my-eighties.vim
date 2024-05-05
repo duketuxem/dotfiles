@@ -108,7 +108,7 @@ call s:h("Delimiter",      s:dark6, "", "")  " + . = ( ) ...
 hi! link Operator          Delimiter
 
 call s:h("Comment",        s:dark3, "", "")
-call s:h("Todo",           s:dark0, s:yellow, "bold,underline")
+call s:h("Todo",           s:orange, "", "bold,underline")
 call s:h("Special",        s:cyan, "", "")
 call s:h("SpecialComment", s:cyan, "", "")
 call s:h("Debug",          s:cyan, "", "")
@@ -119,10 +119,11 @@ hi! link Error             ErrorMsg
 " }}}
 
 " {{{ Vim
-call s:h("vimOption",     s:red, "", "")       " i.e.: anything after a set
-call s:h("vimFunction",   s:blue, "", "")      " function name highlighting
-call s:h("vimAutoEvent",  s:orange, "", "")    " AuBuf / ...
-call s:h("vimEnvVar",     s:yellow, "", "")    " Var is yellow
+call s:h("vimOption",         s:red, "", "")       " i.e.: anything after a set
+call s:h("vimFunction",       s:blue, "", "")      " function name highlighting
+call s:h("vimAutoEvent",      s:orange, "", "")    " AuBuf / ...
+call s:h("vimEnvVar",         s:yellow, "", "")    " Var is yellow
+call s:h("vimCommentTitle",   s:bonus_olight, "", "")
 " }}}
 " {{{ JavaScript
 " call s:h("javaExternal", s:purple, "", "")  " import
@@ -160,6 +161,30 @@ call s:h("javaOperator", s:purple, "", "") " new
 call s:h("javaTypedef", s:orange, "", "") " this
 call s:h("javaAnnotation", s:cyan, "", "") " @Override
 " }}}
+" }}}
+
+" {{{ Extensions
+" Vimwiki
+call s:h("VimwikiHeader1",	s:purple, "", "bold")
+call s:h("VimwikiHeader2",	s:purple, "", "bold")
+call s:h("VimwikiHeader3",	s:purple, "", "bold")
+call s:h("VimwikiHeader4",	s:purple, "", "bold")
+call s:h("VimwikiHeader5",	s:purple, "", "bold")
+call s:h("VimwikiHeader6",	s:purple, "", "bold")
+call s:h("VimwikiHeader7",	s:purple, "", "bold")
+call s:h("VimwikiLink",		s:blue, "", "underline") " underline KO...
+call s:h("VimwikiCode",		s:yellow, "", "")
+call s:h("VimwikiListTodo",	s:red, "", "")
+" hi VimwikiHeaderChar
+" hi VimwikiHR
+" hi VimwikiList
+" hi VimwikiTag
+" hi VimwikiMarkers
+"
+" GitGutter
+" Not accurate, look more to actually configure it...
+call s:h("SignColumn",	s:blue, "", "bold")
+
 " }}}
 
 delf s:h

@@ -15,22 +15,33 @@
 # [Reminder]
 # /etc/zsh/zshenv:
 # ZDOTDIR="$HOME"/.config/zsh
-# Otherwise, there will be one ~/.zshenv remaining (ref: zsh startup files)
+# -> Otherwise, there would be one ~/.zshenv remaining (ref: zsh startup files)
 
 
 
-########################################
-#     Adding ~/local/.bin to $PATH     #
-########################################
+# =============================================================================
+# Path setting
+# =============================================================================
 
-typeset -U PATH path
-path=("$path[@]" "$HOME/.local/bin")
+# Prepend:
+path=(
+	"$HOME/.local/bin"
+	$path
+)
+
+# Append:
+# path+=("$HOME/.local/bin")
+
+# Make each array entry unique
+typeset -U path
+
+# Zsh always keeps its internal $path and the classic $PATH in sync
 export PATH
 
 
-########################################
-#       XDG Base directory spec        #
-########################################
+# =============================================================================
+# XDG Base directory spec
+# =============================================================================
 
 # Definition
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -39,7 +50,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.local/cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 export HOME_LOG="$HOME/.local/log"
-[[ ! -d "$HOME_LOG" ]] && mkdir -p "$HOME_LOG"
+# [[ ! -d "$HOME_LOG" ]] && mkdir -p "$HOME_LOG"
 
 # Exceptions
 # ~/.asoundrc -> Should be supported if XDG is set ~/.config/alsa/asoundrc
@@ -63,14 +74,12 @@ export XAUTHORITY="$XDG_DATA_HOME/Xauthority"
 # Respected by xinit but not startx:
 #export XINITRC
 #export XSERVERRC
-# Bash /zsh ??
-export HISTFILE="$XDG_STATE_HOME/zsh/history"
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 
 
-########################################
-#          Other setting/fixes         #
-########################################
+# =============================================================================
+# Graphical settings/fixes
+# =============================================================================
 
 # Fix awfully looking fonts in java apps
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'

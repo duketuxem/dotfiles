@@ -15,7 +15,7 @@ packages:
       # TODO: reconsider base-devel in this profile
       - htop curl wget
       # shell
-      - zsh zsh-syntax-highlighting tmux fuck
+      - zsh zsh-syntax-highlighting tmux thefuck
       # editor
       - ctags
       # CLI power

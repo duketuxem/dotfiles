@@ -18,13 +18,12 @@ then
 
 		if [ "$ID" = 'debian' ]
 		then
-			distro_file='debian.txt'
-			package_manager='apt-get install'
-			privilege_escalation='sudo'
+			sudo apt-get install \
+{{ range .packages.core.debian -}} {{ . }} {{ end}}
 		elif [ "$ID" = 'void' ]
 		then
-			sudo xbps-install {{ range .packages.core.void -}}
-			{{ end -}}
+			sudo xbps-install \
+{{ range .packages.core.void -}} {{ . }} {{ end}}
 		else
 			echo 'Can not detect linux distribution, aborting.'
 			exit 1
@@ -46,3 +45,5 @@ else
 	echo "Unsupported platform for now"
 	return 1
 fi
+
+# vim: ft=sh

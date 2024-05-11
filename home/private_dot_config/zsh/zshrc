@@ -1,0 +1,116 @@
+#                       __
+#                      |  \
+#     ________  _______| ▓▓____   ______   _______
+#    |        \/       \ ▓▓    \ /      \ /       \
+#     \▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓\  ▓▓▓▓▓▓\  ▓▓▓▓▓▓▓
+#      /    ▓▓ \▓▓    \| ▓▓  | ▓▓ ▓▓   \▓▓ ▓▓
+#  __ /  ▓▓▓▓_ _\▓▓▓▓▓▓\ ▓▓  | ▓▓ ▓▓     | ▓▓_____
+# |  \  ▓▓    \       ▓▓ ▓▓  | ▓▓ ▓▓      \▓▓     \
+#  \▓▓\▓▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓\▓▓       \▓▓▓▓▓▓▓
+
+
+
+# Uncomment here and at the end of the file to audit startup time
+# zmodload zsh/zprof
+
+### Environment variables (in an interactive context)
+## Default applications
+# UN*X legacy
+export EDITOR='vim'
+export PAGER='less'
+# Personnal
+export BROWSER='firefox'
+export PLAYER='mpv'
+
+### History
+HISTFILE="$XDG_STATE_HOME/zsh/history"
+HISTSIZE=100000
+SAVEHIST=100000
+setopt APPEND_HISTORY		# (On by default)
+setopt INC_APPEND_HISTORY	# Immediate recording
+setopt HIST_IGNORE_DUPS		# Avoid ls ls ls ls
+setopt HIST_IGNORE_SPACE	# Do not record ' cmd'
+
+### Navigation
+setopt AUTOCD			# cd to the given path without cd as a prefix
+setopt AUTOPUSHD		# all 'cd's goes to the directory stack history
+setopt PUSHDIGNOREDUPS		# only remember the location, not the order
+# TODO: Replace the following with a fish-like prevd/nextd plugin custom or not
+alias s='dirs -v | sed 11q'
+alias 1='cd -'
+alias 2='cd -2'
+alias 3='cd -3'
+alias 4='cd -4'
+alias 5='cd -5'
+alias 6='cd -6'
+alias 7='cd -7'
+alias 8='cd -8'
+alias 9='cd -9'
+
+### Misc
+setopt NOTIFY			# Report background job status immediately
+
+### Mappings
+source "$XDG_CONFIG_HOME/zsh/bindings.zsh"
+
+### Completion
+# TODO: close the completion menu
+# bindkey -M menuselect '^[' undo
+source "$XDG_CONFIG_HOME/zsh/completion.zsh"
+
+
+### Prompt
+# ISSUE#1: Thanks Tmux for changing my favorite ls colors...
+# [[ "$TERM" == "screen-256color" ]] && source "$XDG_CONFIG_HOME/tmux/ls.env"
+autoload -Uz colors && colors
+source "$XDG_CONFIG_HOME/zsh/prompt.zsh"
+#bindkey -- "^X^R" _read_comp
+#bindkey -- "^X?" _complete_debug
+#bindkey -- "^XC" _correct_filename
+#bindkey -- "^Xa" _expand_alias
+#bindkey -- "^Xc" _correct_word
+#bindkey -- "^Xd" _list_expansions
+#bindkey -- "^Xe" _expand_word
+#bindkey -- "^Xh" _complete_help
+#bindkey -- "^Xm" _most_recent_file
+#bindkey -- "^Xn" _next_tags
+#bindkey -- "^Xt" _complete_tag
+#bindkey -- "^X~" _bash_list-choices
+#bindkey -- "^[," _history-complete-newer
+#bindkey -- "^[/" _history-complete-older
+#bindkey -- "^[~" _bash_complete-word
+
+
+# =============================================================================
+#  Fuzzy File Finding (fzf)
+# =============================================================================
+source "$XDG_CONFIG_HOME/zsh/fzf.zsh"
+#"^I" fzf-completion
+#"^R" fzf-history-widget
+#"^T" fzf-file-widget
+#"^[c" fzf-cd-widget
+
+
+# =============================================================================
+# Custom commands
+# =============================================================================
+source "$XDG_CONFIG_HOME/zsh/commands.zsh"
+
+# nvm (or how soydevs are going to slow down my perfect config...)
+# todo: lazy load
+#export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+
+# Fish-like syntax pre-validation (should be last)
+if [ -f "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]
+then
+	source "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+elif [ -f "/usr/share/zsh/site-functions/zsh-syntax-highlighting.zsh" ]
+then
+	source "/usr/share/zsh/site-functions/zsh-syntax-highlighting.zsh"
+else
+	echo "Can not find the zsh-syntax-highlight file location"
+fi
+
+# zprof

@@ -1,0 +1,42 @@
+#                                          ______  __ __
+#                                         /      \|  \  \
+#     ________  ______   ______   ______ |  ▓▓▓▓▓▓\\▓▓ ▓▓ ______
+#    |        \/      \ /      \ /      \| ▓▓_  \▓▓  \ ▓▓/      \
+#     \▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓\  ▓▓▓▓▓▓\  ▓▓▓▓▓▓\ ▓▓ \   | ▓▓ ▓▓  ▓▓▓▓▓▓\
+#      /    ▓▓| ▓▓  | ▓▓ ▓▓   \▓▓ ▓▓  | ▓▓ ▓▓▓▓   | ▓▓ ▓▓ ▓▓    ▓▓
+#  __ /  ▓▓▓▓_| ▓▓__/ ▓▓ ▓▓     | ▓▓__/ ▓▓ ▓▓     | ▓▓ ▓▓ ▓▓▓▓▓▓▓▓
+# |  \  ▓▓    \ ▓▓    ▓▓ ▓▓      \▓▓    ▓▓ ▓▓     | ▓▓ ▓▓\▓▓     \
+#  \▓▓\▓▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓ \▓▓       \▓▓▓▓▓▓ \▓▓      \▓▓\▓▓ \▓▓▓▓▓▓▓
+#             | ▓▓
+#             | ▓▓
+#              \▓▓
+
+
+# This file is sourced after a _non graphical_ succesful login.
+# When using a display manager for example, this file is not sourced.
+# For that reason and to cover a maximum of cases, all the environment
+# variables should remain in the `zshenv` file.
+
+# It is a pity to think that all the export statements will be replayed all the
+# time upon each new shell invocation, but just for the sake of sanitizing the
+# home folder from unwanted dotfiles, this is safer. In any case I switch to
+# another desktop environment for trying out anything, I am not going to see
+# random files popping just because I logged on graphically...
+
+# Past note:
+# (.zshenv could be used but there is no need to re-set them for every shell)
+# Anything modified here would require to log off and then log in again.
+
+
+# If no graphical server instance is running and the user has logged from tty1
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]] && [[ $(command -v startx) ]]
+then
+	# `exec` to log off once the graphical session has been terminated
+	# (calling zlogout)
+	exec startx "$XDG_CONFIG_HOME/x11/xinitrc"
+
+	# Could use xinit instead of startx
+	#   #exec xinit -- /usr/bin/X -nolisten tcp vt7
+fi
+
+# vim:ft=zsh

@@ -23,7 +23,9 @@ then
 			privilege_escalation='sudo'
 		elif [ "$ID" = 'void' ]
 		then
-			sudo xbps-install {{ range .packages.core.void }}
+			sudo xbps-install <<EOF
+			{{ range .packages.core.void }}
+			EOF
 		else
 			echo 'Can not detect linux distribution, aborting.'
 			exit 1

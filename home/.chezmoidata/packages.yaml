@@ -1,0 +1,22 @@
+packages:
+  core:
+    debian:
+      # system
+      - htop curl wget
+      # shell
+      - zsh zsh-syntax-highlighting tmux
+      # editor
+      - vim universal-ctags
+      # CLI
+      - tree fzf fd-find bat neofetch
+
+    void:
+      # system utils
+      # TODO: reconsider base-devel in this profile
+      - htop curl wget
+      # shell
+      - zsh-syntax-highlighting tmux
+      # editor
+      - ctags
+      # CLI power
+      - fzf fd bat neofetch

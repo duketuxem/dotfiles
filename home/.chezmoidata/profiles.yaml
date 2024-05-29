@@ -1,0 +1,52 @@
+linux:
+  profiles:
+    core:
+      folders_to_manage:
+        # - '~/.config'
+        - '~/.config/tmux'
+        - '~/.config/vim'
+        - '~/.config/zsh'
+        # - '~/.local'
+        # - '~/.local/cache'
+        # - '~/.local/log'
+        # - '~/.local/share'
+        # - '~/.local/state'
+      packages:
+        - bat
+        - curl
+        - fzf
+        - neofetch
+        - tmux
+        - tree
+        - vim
+        - wget
+        - zsh
+        - zsh-syntax-highlighting
+    desktop:
+      depends_on: core
+      folders_to_create:
+        - '~/documents/vimwiki'
+        - '~/downloads'
+        - '~/games'
+        - '~/images'
+        - '~/music'
+        - '~/scratch'
+        - '~/sync'
+        - '~/videos'
+      packages:
+        - firefox
+
+  debian:
+    core:
+      - fd-find
+      - universal-ctags
+    desktop:
+
+  void:
+    core:
+      - fd
+      - ctags
+    desktop:
+
+windows:
+

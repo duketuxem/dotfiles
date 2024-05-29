@@ -1,0 +1,220 @@
+#!/bin/sh
+
+current_shell=$(ps -p $$ -o comm=)
+echo "DEBUG: Current shell: $current_shell"
+
+# =============================================================================
+# Utility functions
+# =============================================================================
+
+has()
+{
+	_cmd=$(command -v "$1") 2>/dev/null || return 1
+	[ -x "$_cmd" ] || return 1
+}
+
+ask()
+{
+	printf "%s [Y/n] " "$1"
+	read -r answer
+	if [ -z "$answer" ] || [ "$answer" = "y" ] || [ "$answer" = "Y" ]
+	then
+		return 0
+	else
+		return 1
+	fi
+}
+
+count()
+{
+	# Disable globbing.
+	# This ensures that the word-splitting is safe.
+	set -f
+
+	# Populate the positional parameters with the elements of the list
+	set -- $1
+
+	# Print each list value on its own line.
+	printf '%s\n' "$#"
+
+	# Re-enable globbing.
+	set +f
+}
+
+
+split()
+{
+	# Disable globbing.
+	# This ensures that the word-splitting is safe.
+	set -f
+
+	# This is safe to disable as it just warns against
+	# word-splitting which is the behavior we expect.
+	# shellcheck disable=2086
+	set -- $1
+
+	# Print each list value on its own line.
+	printf '%s\n' "$@"
+
+	# Re-enable globbing.
+	set +f
+}
+
+is_number() {
+    case $1 in
+        ''|*[!0-9]*) return 1 ;;
+        *) return 0 ;;
+    esac
+}
+
+# =============================================================================
+# Linux functions
+# =============================================================================
+
+# Try two linux flavor detection methods :
+# - eval ID="distro_name" to check it later in the script
+# - To be implemented: parsing lsb_release output
+# If the first one is working then the second is skipped.
+detect_linux()
+{
+	no_osrelease=0
+	no_lsbrelease=0
+
+	if [ ! -f '/etc/os-release' ]
+	then
+		no_osrelease=1
+		echo "$0: Can not find /etc/os-release."
+	else
+		echo "$0: Parsing /etc/os-release"
+		# TODO: know if 'ID' is present everywhere
+		distro=$(grep '^ID' /etc/os-release | sed s/ID/distro/)
+		# echo $distro
+		eval "$distro"
+		echo "$0: Found '$distro'"
+	fi
+
+	if [ "$no_osrelease" -eq 1 ]
+	then
+		if ! has lsb_release
+		then
+			no_lsbrelease=1
+			echo "$0: No lsb_release command available."
+		else
+			# TODO:
+			echo "$0: TODO: Need to parse lsb_release -a"
+		fi
+		echo "As lsb_release's output parsing is not implemented, the script will exit"
+		exit 2
+	fi
+
+	if [ "$no_osrelease" -eq 1 ] && [ "$no_lsbrelease" -eq 1 ]
+	then
+		echo "$0: Error, can not identify Linux flavor"
+		# TODO: Implement fallback after lsb_release ?
+		exit 1
+	fi
+
+	unset no_osrelease
+	unset no_lsbrelease
+}
+
+which_linux_profile()
+{
+	# Retrieve all profiles and trim the last whitespace (Go template)
+	profile_list='{{range $key, $value := .linux.profiles}}{{$key}} {{end}}'
+	profile_list=${profile_list%${profile_list##*[![:space:]]}}
+	nb_profiles=$(count "$profile_list")
+	if [ "$nb_profiles" -eq 0 ]; then
+		echo "$0: Error, no linux profiles found in profiles.yaml"
+		exit 1
+	fi
+
+	# User interaction
+	echo "$0: Select a profile to install from the following list:"
+	count=1
+	for profile in $(split "$profile_list"); do
+		printf "[$count] $profile\n"
+		count=$(($count + 1))
+	done
+
+	choice=
+	while [ -z "$choice" ] || ! is_number "$choice" \
+		|| [ "$choice" -lt 1 ] || [ "$choice" -gt "$nb_profiles" ]; do
+		echo "$0: Please select a value between 1 and $nb_profiles"
+		read -r choice
+	done
+
+
+	count=1
+	for profile in $(split "$profile_list"); do
+		if [ "$count" -eq "$choice" ]; then
+			profile_install="$profile"
+			break
+		fi
+	done
+	echo "$profile_install will be installed !"
+
+
+	unset count
+	unset choice
+	unset nb_profiles
+	#unset profile_list
+
+}
+
+# install_profile()
+# {
+
+# }
+
+# if ask "Run the installation ?"
+
+operating_system="$(uname -s)"
+if [ "$operating_system" = 'Linux' ]
+then
+	echo "$0: Linux operating system detected"
+	detect_linux
+
+	which_linux_profile
+
+	exit
+
+
+	if [ "$distro" = 'debian' ]
+	then
+
+		if ask "Install the packages from the core profile ?"
+		then
+			core="{{ range .linux.profiles.core.packages -}} {{ . }} {{ end}}"
+			core="$core {{ range .linux.debian.core -}} {{ . }} {{ end}}"
+			echo $core
+			# sudo apt-get install 
+		fi
+	elif [ "$distro" = 'void' ]
+	then
+		if ask "Install the packages from the 'core' profile ?"
+		then
+			sudo xbps-install \
+				{{ range .linux.profiles.core.packages -}} {{ . }} {{ end}} \
+				{{ range .linux.void.core -}} {{ . }} {{ end}}
+		fi
+		# Test ok
+
+		if ask "Install the packages from the 'desktop' profile ?"
+		then
+			sudo xbps-install \
+				{{ range .linux.profiles.desktop.packages -}} {{ . }} {{ end}}
+				# {{ range .linux.void.desktop -}} {{ . }} {{ end}}
+		fi
+	fi
+
+elif [ "$operating_system" = "FreeBSD" ]
+then
+	echo "(Free)BSD Unimplemented"
+	return 1
+else
+	echo "Unsupported platform for now"
+	return 1
+fi
+
+# vim: ft=sh

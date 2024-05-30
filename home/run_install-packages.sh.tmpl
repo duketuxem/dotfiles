@@ -181,15 +181,15 @@ install_core_profile()
 	case "$distro" in
 		'debian' | 'ubuntu')
 			core="$core {{ range .linux.debian.core -}} {{.}} {{ end}}"
-			sudo apt-get install "$core"
+			eval "sudo apt-get install $core"
 			;;
 		'void')
 			core="$core {{ range .linux.void.core -}} {{.}} {{ end}}"
-			sudo xbps-install "$core"
+			eval "sudo xbps-install $core"
 			;;
 		'arch')
 			# No range
-			sudo pacman -S "$core"
+			eval "sudo pacman -S $core"
 			;;
 	esac
 	unset core
@@ -205,15 +205,15 @@ install_desktop_profile()
 	case "$distro" in
 		'debian' | 'ubuntu')
 			desktop="$desktop {{ range .linux.debian.desktop -}} {{.}} {{ end}}"
-			sudo apt-get install "$desktop"
+			eval "sudo apt-get install $desktop"
 			;;
 		'void')
 			desktop="$desktop {{ range .linux.void.desktop -}} {{.}} {{ end}}"
-			sudo xbps-install "$desktop"
+			"sudo xbps-install $desktop"
 			;;
 		'arch')
 			# No range .linux.arch.desktop
-			sudo pacman -S "$desktop"
+			"sudo pacman -S $desktop"
 			;;
 	esac
 
@@ -239,7 +239,7 @@ then
 	# detect_package_manager
 
 	which_linux_profile
-	if ask "Install the packages from the chosen profile ?"
+	if  ask "Install the packages from the chosen profile ?"
 	then
 		[ "$profile" = "core" ] && install_core_profile
 		[ "$profile" = "desktop" ] && install_desktop_profile

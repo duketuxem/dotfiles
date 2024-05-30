@@ -60,7 +60,8 @@ split()
 	set +f
 }
 
-is_number() {
+is_number()
+{
     case $1 in
         ''|*[!0-9]*) return 1 ;;
         *) return 0 ;;
@@ -114,13 +115,28 @@ detect_linux()
 		exit 1
 	fi
 
-	unset no_osrelease
-	unset no_lsbrelease
+	unset no_osrelease no_lsbrelease
 }
+
+# detect_package_manager()
+# {
+# 	if [ "$distro" = 'debian' ] || [ "$distro" = "ubuntu" ]
+# 	then
+# 		privilege_escalation='sudo'
+# 		package_manager='apt-get install'
+# 	elif [ "$distro" = 'void' ]
+# 	then
+# 		privilege_escalation='sudo'
+# 		package_manager='xbps-install'
+# 	else
+# 		echo 'Can not detect linux distribution, aborting.'
+# 		exit 1
+# 	fi
+# }
 
 which_linux_profile()
 {
-	# Retrieve all profiles and trim the last whitespace (Go template)
+	# Retrieve all profiles and trim the last whitespace
 	profile_list='{{range $key, $value := .linux.profiles}}{{$key}} {{end}}'
 	profile_list=${profile_list%${profile_list##*[![:space:]]}}
 	nb_profiles=$(count "$profile_list")
@@ -148,25 +164,71 @@ which_linux_profile()
 	count=1
 	for profile in $(split "$profile_list"); do
 		if [ "$count" -eq "$choice" ]; then
-			profile_install="$profile"
 			break
 		fi
 	done
-	echo "$profile_install will be installed !"
+	# Since every variable is global, $profile is set with the last break
+	# Anyway, I am not imaginating having a thousand to manage...
+	echo "$profile will be installed !"
 
-
-	unset count
-	unset choice
-	unset nb_profiles
-	#unset profile_list
-
+	unset nb_profiles count choice profile_list
 }
 
-# install_profile()
-# {
+install_core_profile()
+{
+	core="{{ range .linux.profiles.core.packages -}} {{.}} {{ end}}"
 
-# }
+	case "$distro" in
+		'debian' | 'ubuntu')
+			core="$core {{ range .linux.debian.core -}} {{.}} {{ end}}"
+			sudo apt-get install "$core"
+			;;
+		'void')
+			core="$core {{ range .linux.void.core -}} {{.}} {{ end}}"
+			sudo xbps-install "$core"
+			;;
+		'arch')
+			# No range
+			sudo pacman -S "$core"
+			;;
+	esac
+	unset core
+}
 
+install_desktop_profile()
+{
+	# depends_on: core
+	install_core_profile
+
+	desktop="{{ range .linux.profiles.desktop.packages -}} {{.}} {{ end}}"
+
+	case "$distro" in
+		'debian' | 'ubuntu')
+			desktop="$desktop {{ range .linux.debian.desktop -}} {{.}} {{ end}}"
+			sudo apt-get install "$desktop"
+			;;
+		'void')
+			desktop="$desktop {{ range .linux.void.desktop -}} {{.}} {{ end}}"
+			sudo xbps-install "$desktop"
+			;;
+		'arch')
+			# No range .linux.arch.desktop
+			sudo pacman -S "$desktop"
+			;;
+	esac
+
+	unset desktop
+}
+
+configure_core_profile()
+{
+	folders="{{ range .linux.profiles.core.folders_to_manage -}} {{.}} {{ end}}"
+	for folder in $(split "$folders")
+	do
+		chezmoi apply -f "$folder"
+	done
+	unset folders folder
+}
 # if ask "Run the installation ?"
 
 operating_system="$(uname -s)"
@@ -174,39 +236,17 @@ if [ "$operating_system" = 'Linux' ]
 then
 	echo "$0: Linux operating system detected"
 	detect_linux
+	# detect_package_manager
 
 	which_linux_profile
-
-	exit
-
-
-	if [ "$distro" = 'debian' ]
-	then
-
-		if ask "Install the packages from the core profile ?"
-		then
-			core="{{ range .linux.profiles.core.packages -}} {{ . }} {{ end}}"
-			core="$core {{ range .linux.debian.core -}} {{ . }} {{ end}}"
-			echo $core
-			# sudo apt-get install 
-		fi
-	elif [ "$distro" = 'void' ]
-	then
-		if ask "Install the packages from the 'core' profile ?"
-		then
-			sudo xbps-install \
-				{{ range .linux.profiles.core.packages -}} {{ . }} {{ end}} \
-				{{ range .linux.void.core -}} {{ . }} {{ end}}
-		fi
-		# Test ok
-
-		if ask "Install the packages from the 'desktop' profile ?"
-		then
-			sudo xbps-install \
-				{{ range .linux.profiles.desktop.packages -}} {{ . }} {{ end}}
-				# {{ range .linux.void.desktop -}} {{ . }} {{ end}}
-		fi
+	if ! ask "Install the packages from the chosen profile ?"
+	then # User answers yes
+		[ "$profile" = "core" ] && install_core_profile
+		[ "$profile" = "desktop" ] && install_desktop_profile
 	fi
+
+	[ "$profile" = "core" ] && configure_core_profile
+	[ "$profile" = "desktop" ] && configure_desktop_profile
 
 elif [ "$operating_system" = "FreeBSD" ]
 then
@@ -217,4 +257,4 @@ else
 	return 1
 fi
 
-# vim: ft=sh
+# vim: ft=sh fen

@@ -239,8 +239,8 @@ then
 	# detect_package_manager
 
 	which_linux_profile
-	if ! ask "Install the packages from the chosen profile ?"
-	then # User answers yes
+	if ask "Install the packages from the chosen profile ?"
+	then
 		[ "$profile" = "core" ] && install_core_profile
 		[ "$profile" = "desktop" ] && install_desktop_profile
 	fi

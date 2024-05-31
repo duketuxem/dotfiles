@@ -222,10 +222,10 @@ install_desktop_profile()
 
 configure_core_profile()
 {
-	folders="{{ range .linux.profiles.core.folders_to_manage -}} {{.}} {{ end}}"
+	folders="{{ range .linux.profiles.core.folders -}} {{.}} {{ end}}"
 	for folder in $(split "$folders")
 	do
-		chezmoi apply -f "$folder"
+		chezmoi apply --verbose "$folder"
 	done
 	unset folders folder
 }

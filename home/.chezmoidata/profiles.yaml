@@ -2,15 +2,17 @@ linux:
   profiles:
 
     core:
-      folders_to_manage:
-        # - '~/.config'
+      folders:
+        # core apps config to watch
         - '~/.config/tmux'
         # - '~/.config/vim'
         - '~/.config/zsh'
-        # - '~/.local'
+
+        # the following folders need to exist
+        - '~/.local' # implies the following:
         # - '~/.local/cache'
         # - '~/.local/log'
-        # - '~/.local/share'
+        # - '~/.local/share' # (chezmoi init)
         # - '~/.local/state'
       packages:
         - bat

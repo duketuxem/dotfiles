@@ -41,7 +41,6 @@ count()
 	set +f
 }
 
-
 split()
 {
 	# Disable globbing.
@@ -118,22 +117,6 @@ detect_linux()
 	unset no_osrelease no_lsbrelease
 }
 
-# detect_package_manager()
-# {
-# 	if [ "$distro" = 'debian' ] || [ "$distro" = "ubuntu" ]
-# 	then
-# 		privilege_escalation='sudo'
-# 		package_manager='apt-get install'
-# 	elif [ "$distro" = 'void' ]
-# 	then
-# 		privilege_escalation='sudo'
-# 		package_manager='xbps-install'
-# 	else
-# 		echo 'Can not detect linux distribution, aborting.'
-# 		exit 1
-# 	fi
-# }
-
 which_linux_profile()
 {
 	# Retrieve all profiles and trim the last whitespace
@@ -145,7 +128,7 @@ which_linux_profile()
 		exit 1
 	fi
 
-	# User interaction
+	# User prompting
 	echo "$0: Select a profile to install from the following list:"
 	count=1
 	for profile in $(split "$profile_list"); do
@@ -153,13 +136,13 @@ which_linux_profile()
 		count=$(($count + 1))
 	done
 
+	# Force a choice
 	choice=
 	while [ -z "$choice" ] || ! is_number "$choice" \
 		|| [ "$choice" -lt 1 ] || [ "$choice" -gt "$nb_profiles" ]; do
 		echo "$0: Please select a value between 1 and $nb_profiles"
 		read -r choice
 	done
-
 
 	count=1
 	for profile in $(split "$profile_list"); do
@@ -229,14 +212,12 @@ configure_core_profile()
 	done
 	unset folders folder
 }
-# if ask "Run the installation ?"
 
 operating_system="$(uname -s)"
 if [ "$operating_system" = 'Linux' ]
 then
 	echo "$0: Linux operating system detected"
 	detect_linux
-	# detect_package_manager
 
 	which_linux_profile
 	if  ask "Install the packages from the chosen profile ?"
@@ -256,5 +237,8 @@ else
 	echo "Unsupported platform for now"
 	return 1
 fi
+
+# Run this script (run_onchange) when new packages are added:
+# profiles.yaml hash: {{ include ".chezmoidata/profiles.yaml" | sha256sum }}
 
 # vim: ft=sh fen

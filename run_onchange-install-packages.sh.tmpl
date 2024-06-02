@@ -203,6 +203,11 @@ install_desktop_profile()
 	unset desktop
 }
 
+if ! ask "Install or update system packages ?";
+then
+	return 0
+fi
+
 operating_system="$(uname -s)"
 if [ "$operating_system" = 'Linux' ]
 then
@@ -210,11 +215,9 @@ then
 	detect_linux
 
 	which_linux_profile
-	if  ask "Install the packages from the chosen profile ?"
-	then
-		[ "$profile" = "core" ] && install_core_profile
-		[ "$profile" = "desktop" ] && install_desktop_profile
-	fi
+	[ "$profile" = "core" ] && install_core_profile
+	[ "$profile" = "desktop" ] && install_desktop_profile
+
 elif [ "$operating_system" = "FreeBSD" ]
 then
 	echo "(Free)BSD Unimplemented"

@@ -103,7 +103,7 @@ detect_linux()
 			# TODO:
 			echo "$0: TODO: Need to parse lsb_release -a"
 		fi
-		echo "As lsb_release's output parsing is not implemented, the script will exit"
+		echo "lsb_release's output parsing is not implemented, the script will exit"
 		exit 2
 	fi
 
@@ -151,7 +151,7 @@ which_linux_profile()
 		fi
 	done
 	# Since every variable is global, $profile is set with the last break
-	# Anyway, I am not imaginating having a thousand to manage...
+	# Anyway, I am not imaginating having a thousand profile to manage...
 	echo "$profile will be installed !"
 
 	unset nb_profiles count choice profile_list
@@ -159,7 +159,7 @@ which_linux_profile()
 
 install_core_profile()
 {
-	core="{{ range .linux.profiles.core.packages -}} {{.}} {{ end}}"
+	core="{{ range .linux.profiles.core -}} {{.}} {{ end}}"
 
 	case "$distro" in
 		'debian' | 'ubuntu')
@@ -183,7 +183,7 @@ install_desktop_profile()
 	# depends_on: core
 	install_core_profile
 
-	desktop="{{ range .linux.profiles.desktop.packages -}} {{.}} {{ end}}"
+	desktop="{{ range .linux.profiles.desktop -}} {{.}} {{ end}}"
 
 	case "$distro" in
 		'debian' | 'ubuntu')
@@ -192,25 +192,15 @@ install_desktop_profile()
 			;;
 		'void')
 			desktop="$desktop {{ range .linux.void.desktop -}} {{.}} {{ end}}"
-			"sudo xbps-install $desktop"
+			eval "sudo xbps-install $desktop"
 			;;
 		'arch')
 			# No range .linux.arch.desktop
-			"sudo pacman -S $desktop"
+			eval "sudo pacman -S $desktop"
 			;;
 	esac
 
 	unset desktop
-}
-
-configure_core_profile()
-{
-	folders="{{ range .linux.profiles.core.folders -}} {{.}} {{ end}}"
-	for folder in $(split "$folders")
-	do
-		chezmoi apply --verbose "$folder"
-	done
-	unset folders folder
 }
 
 operating_system="$(uname -s)"
@@ -225,10 +215,6 @@ then
 		[ "$profile" = "core" ] && install_core_profile
 		[ "$profile" = "desktop" ] && install_desktop_profile
 	fi
-
-	[ "$profile" = "core" ] && configure_core_profile
-	[ "$profile" = "desktop" ] && configure_desktop_profile
-
 elif [ "$operating_system" = "FreeBSD" ]
 then
 	echo "(Free)BSD Unimplemented"
@@ -239,6 +225,6 @@ else
 fi
 
 # Run this script (run_onchange) when new packages are added:
-# profiles.yaml hash: {{ include ".chezmoidata/profiles.yaml" | sha256sum }}
+# profiles.yaml hash: {{ include ".chezmoidata.yaml" | sha256sum }}
 
 # vim: ft=sh fen

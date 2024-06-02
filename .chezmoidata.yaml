@@ -1,0 +1,37 @@
+# TODO: Documentation
+# desktop profiles implies core 'can not "use" firefox" if I don't get my CLI
+# setup up and running
+
+linux:
+  profiles:
+    core:
+      - bat
+      - curl
+      - fzf
+      - neofetch
+      - tmux
+      - tree
+      - vim
+      - wget
+      - zsh
+      - zsh-syntax-highlighting
+
+    # implies core
+    desktop:
+      packages:
+        - firefox
+
+  debian:
+    core:
+      - fd-find
+      - universal-ctags
+    desktop:
+
+  void:
+    core:
+      - fd
+      - ctags
+    desktop:
+
+windows:
+

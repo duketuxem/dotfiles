@@ -217,6 +217,7 @@ then
 	which_linux_profile
 	[ "$profile" = "core" ] && install_core_profile
 	[ "$profile" = "desktop" ] && install_desktop_profile
+	return 0
 
 elif [ "$operating_system" = "FreeBSD" ]
 then

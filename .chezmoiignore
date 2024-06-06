@@ -1,2 +1,4 @@
 LICENSE
 README.md
+install-packages.sh
+install-packages.sh.tmpl

@@ -1,7 +1,6 @@
 #!/bin/sh
 
-current_shell=$(ps -p $$ -o comm=)
-echo "DEBUG: Current shell: $current_shell"
+echo "INFO - Current shell: $(ps -p $$ -o comm=)"
 
 # =============================================================================
 # Utility functions
@@ -132,7 +131,7 @@ which_linux_profile()
 	echo "$0: Select a profile to install from the following list:"
 	count=1
 	for profile in $(split "$profile_list"); do
-		printf "[$count] $profile\n"
+		printf "$0: [$count] $profile\n"
 		count=$(($count + 1))
 	done
 
@@ -141,6 +140,7 @@ which_linux_profile()
 	while [ -z "$choice" ] || ! is_number "$choice" \
 		|| [ "$choice" -lt 1 ] || [ "$choice" -gt "$nb_profiles" ]; do
 		echo "$0: Please select a value between 1 and $nb_profiles"
+		printf "%s: %s" "$0" "$1"
 		read -r choice
 	done
 
@@ -152,7 +152,7 @@ which_linux_profile()
 	done
 	# Since every variable is global, $profile is set with the last break
 	# Anyway, I am not imaginating having a thousand profile to manage...
-	echo "$profile will be installed !"
+	echo "$0: $profile will be installed !"
 
 	unset nb_profiles count choice profile_list
 }
@@ -202,11 +202,6 @@ install_desktop_profile()
 
 	unset desktop
 }
-
-if ! ask "Install or update system packages ?";
-then
-	return 0
-fi
 
 operating_system="$(uname -s)"
 if [ "$operating_system" = 'Linux' ]

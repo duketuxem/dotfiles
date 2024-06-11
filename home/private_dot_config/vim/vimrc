@@ -433,7 +433,7 @@ function! NetrwMapping()
   " go above and below a directory
   " TODO: better 'h' user experience
   nnoremap <buffer> h <Plug>NetrwBrowseUpDir
-  nnoremap <buffer> l <Plug>NetrwLocalBrowseCheck
+  nnoremap <buffer> l <Plug>NetrwLocalBrowseCheck<BAR>zz
   " enter opens the selected file so closes the tree view to focus
   nnoremap <silent><buffer> <CR> <Plug>NetrwLocalBrowseCheck<BAR>:Lexplore<CR>
 endfunction

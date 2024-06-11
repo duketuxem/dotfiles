@@ -8,7 +8,6 @@ alias \
         dmesg='dmesg -L=auto' 						\
         du='du -h' 							\
         grep='grep --color=auto'		 			\
-        less='less -R' 							\
         ls='ls -h --color=auto --group-directories-first' 		      \
         mkdir='mkdir -p' 						      \
         patch='patch --reject-file=/dev/null --no-backup-if-mismatch --merge' \

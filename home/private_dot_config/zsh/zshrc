@@ -18,6 +18,7 @@
 # UN*X legacy
 export EDITOR='vim'
 export PAGER='less'
+export LESS='-R'
 # Personnal
 export BROWSER='firefox'
 export PLAYER='mpv'

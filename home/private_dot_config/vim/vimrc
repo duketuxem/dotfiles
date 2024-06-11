@@ -52,40 +52,31 @@ endif
 
 call plug#begin('$XDG_CONFIG_HOME/vim/.vim-plug')
 
+" UI
 Plug 'Yggdroot/indentLine'	" show indent levels of spaces
 Plug 'preservim/tagbar'         " outline symbols (requires ctags)
 Plug 'junegunn/fzf'
-
-" Git
-Plug 'airblade/vim-gitgutter'   " Actual modifications inside the buffer
-Plug 'tpope/vim-fugitive'       " Stage current file from vim, restore...
+" TODO: setup
+Plug 'itchyny/lightline.vim'	" lighter status bar than airline
 
 " motions
 Plug 'tpope/vim-commentary'	" gcc / gcap / ...
 Plug 'tpope/vim-surround'	" cs([
 Plug 'wellle/targets.vim'	" di(
+Plug 'tpope/vim-repeat'		" ?
+Plug 'junegunn/vim-easy-align'	" align on '=' : gaip=
 
-Plug 'tpope/vim-obsession'      " nice to create sessions
+" git
+Plug 'airblade/vim-gitgutter'   " Actual modifications inside the buffer
+Plug 'tpope/vim-fugitive'       " Stage current file from vim, restore...
 
-Plug 'tpope/vim-repeat'
+" resume sessions
+Plug 'tpope/vim-obsession'      " :Obsess / :Obsess!
 
-" Plug 'preservim/NERDTree'
-
+" vim apps
 Plug 'vimwiki/vimwiki'
+" could be a calendar or something...
 
-Plug 'junegunn/vim-easy-align'
-
-
-" ToImplement
-Plug 'itchyny/lightline.vim'	" lighter status bar than airline
-" Plug 'tpope/vim-vinegar'
-
-" themes
-Plug 'morhetz/gruvbox'
-Plug 'chriskempson/base16-vim'	" cool to test completion
-Plug 'joshdick/onedark.vim'	" kind of fallback...
-Plug 'karoliskoncevicius/oldbook-vim'
-Plug 'sainnhe/everforest'
 call plug#end()
 
 " run :PlugInstall if there are some missing plugins
@@ -476,7 +467,7 @@ augroup END
 "           - restore_cursor_to_file_position_in_previous_editing_session
 function! ResCur()
   if line("'\"") > 1 && line("'\"") <= line("$")
-    if foldclosed(line("'\""))
+    if foldclosed(line("'\"")) < 0
       silent normal! g`"zz
     else
       silent normal! g`"zozz

@@ -50,21 +50,337 @@ alias 9='cd -9'
 
 ### Misc
 setopt NOTIFY			# Report background job status immediately
+unsetopt BEEP
 
-### Mappings
-source "$XDG_CONFIG_HOME/zsh/bindings.zsh"
+# Mappings {{{
+#
+# 1. Attempt to read the Terminfo database
+# 2. Define custom functions/plugins ready to be bound
+# 3. In the darkness, bind them all
+#
+# Overall:
+# --------
+# Exception for Alt+BS, otherwise no mixing with the Window Manager bindings!
+# Alt + ~
+# Alt + F1..F12
+# ^ Those should be reserved for some Windows Manager functionnality
+#
+# Technical:
+# ----------
+#
+# 'keys' is a custom implementation so it is not compatible with zkbd.
+#
+# zle -N : explicitely load a function so it can be bound before calling it
+#
+# bindkey -- : mark the end of the options so only arguments are passed
+#
+# [Reminder about the syntax for non printable ASCII]
+# ASCII[28] == File Separator == \034 == \x1c == Ctrl + \ == "^\\\\"
+# -> 'showkey -a' is really helpful
 
-### Completion
+
+# =============================================================================
+# Reading from Terminfo and adapting
+# =============================================================================
+
+# Terminfo is an effort to establish a standard on top of historical different
+# terminal emulator implementations.
+# As such, the following makes use of the terminfo database to bind some common
+# terminal escape sequences 'independantly' of the terminal emulator used.
+# See `man terminfo`.
+
+# Explicitely loading the zsh terminfo interface module
+zmodload zsh/terminfo
+
+# Custom associative array (-A) to be destroyed after bindings are done
+declare -A keys
+
+keys[Enter]="${terminfo[cr]:-^M}"
+keys[EnterNumpad]="${terminfo[kent]:-^M}"
+keys[Backspace]="${terminfo[kbs]}"
+keys[Delete]="${terminfo[kdch1]}"
+keys[Up]="${terminfo[kcuu1]}"
+keys[Down]="${terminfo[kcud1]}"
+keys[Left]="${terminfo[kcub1]}"
+keys[Right]="${terminfo[kcuf1]}"
+keys[PageUp]="${terminfo[kpp]}"
+keys[PageDown]="${terminfo[knp]}"
+keys[Home]="${terminfo[khome]}"
+keys[End]="${terminfo[kend]}"
+keys[Tab]="${terminfo[ht]}"
+keys[ShiftTab]="${terminfo[kcbt]}"
+
+# The state of the xterm 'compliance'...
+# TODO (low): fix tmux/screen in xterm
+# - maybe detect the terminal emulator
+case $TERM in
+        "xterm")
+		# it seems xterm ignores this terminfo entry
+		keys[Backspace]="^H"
+		;;
+	"screen" | "screen-256color")
+		# and it seems it is wrong in that context
+		# (tmux backspace fix)
+		keys[Backspace]="^?"
+		;;
+esac
+
+# Warning to show which keys will fail to be bound
+for key val in "${(@kv)keys}"
+do
+	if [[ -z "$val" ]]
+	then
+		echo "(!) Missing terminfo entry for key : $key (!)" 2>&1
+	fi
+	# echo "$key -> $val" | cat -vt
+done
+
+
+# =============================================================================
+# Custom functions / plugins
+# =============================================================================
+
+# backward-kill-word has to mind '/' and '$' as separators
+custom-backward-kill() {
+	# A list of non-alphanumeric characters
+	# considered part of a word by the line editor.
+	local WORDCHARS='*?-[]~=&;!#%^(){}<>|_.'
+	zle backward-kill-word
+}
+zle -N custom-backward-kill
+
+# Use of local ?
+append-grep() {
+	BUFFER+="| grep -i "
+	zle end-of-line
+}
+zle -N append-grep
+
+accept-line-with-pager() {
+	BUFFER+=" | \"$PAGER\""
+	zle accept-line
+}
+zle -N accept-line-with-pager
+
+# Allow to execute vim with the current edited command in buffer
+autoload edit-command-line;
+zle -N edit-command-line
+
+
+# ============================================================================
+# Bindings from scratch
+# ============================================================================
+
+# Disable Ctrl + s / Ctrl + q (XON/XOFF) to free up two mappings
+setopt NOFLOWCONTROL
+
+# Remove (-r) all bindings from an empty prefix (-p), which matches all.
+bindkey -rp ''
+
+###### keys array binding
+
+bindkey -- "${keys[Enter]}" 		accept-line
+bindkey -- "${keys[EnterNumpad]}"	accept-line
+
+[[ -n "${terminfo[kbs]}" ]] &&		\
+	bindkey -- "${keys[Backspace]}"	backward-delete-char
+[[ -n "${terminfo[kdch1]}" ]] &&	\
+	bindkey -- "${keys[Delete]}"	delete-char
+[[ -n "${terminfo[kcuu1]}" ]] &&	\
+	bindkey -- "${keys[Up]}"	up-line-or-history
+[[ -n "${terminfo[kcud1]}" ]] &&	\
+	bindkey -- "${keys[Down]}"	down-line-or-history
+[[ -n "${terminfo[kcub1]}" ]] &&	\
+	bindkey -- "${keys[Left]}" 	backward-char
+[[ -n "${terminfo[kcuf1]}" ]] &&	\
+	bindkey -- "${keys[Right]}"	forward-char
+[[ -n "${terminfo[kpp]}" ]] &&		\
+	bindkey -- "${keys[PageUp]}"	history-beginning-search-backward
+[[ -n "${terminfo[knp]}" ]] &&		\
+	bindkey -- "${keys[PageDown]}"	history-beginning-search-forward
+[[ -n "${terminfo[khome]}" ]] &&	\
+	bindkey -- "${keys[Home]}"	beginning-of-line
+[[ -n "${terminfo[kend]}" ]] &&		\
+	bindkey -- "${keys[End]}"	end-of-line
+# Fallback (since managed by fzf later) behavior for Tab & ShiftTab
+[[ -n "${terminfo[ht]}"	]] &&		\
+	bindkey -- "${keys[Tab]}"	expand-or-complete
+# 'Portable' Alt + Del
+bindkey -- "^[${keys[Backspace]}"	custom-backward-kill
+
+
+### Map the ASCII chracters from 32 to 127 as a (-R)ange
+bindkey -R -- " "-"~"		self-insert # Exclude control chars
+bindkey -- "\M-^@"-"\M-^?"	self-insert # Internationalization
+
+# Free bindings left : ^^
+bindkey -- '^_'			undo
+bindkey -- '^@'			redo
+### Top row
+bindkey -- '^Q'			beginning-of-line
+bindkey -- '^W'			custom-backward-kill
+bindkey -- '^E'			edit-command-line
+bindkey -- '^R'			history-incremental-search-backward
+# bindkey -- '^T'			FREE
+bindkey -- '^U'			backward-kill-line
+#bindkey -- '^O'			FREE
+bindkey -- '^P'			end-of-line
+### Home row
+#bindkey -- '^A'
+bindkey -- '^S'			accept-line-with-pager
+#bindkey -- '^F
+bindkey -- '^G'			append-grep
+bindkey -- '^H'			backward-delete-char
+#bindkey -- '^J'			#mandatory ?
+bindkey -- '^K'			kill-line
+bindkey -- '^L'			clear-screen	# no terminfo entry (ff) ?
+bindkey -- '^Y'			yank
+### Bottom row
+#bindkey -- '^X'
+bindkey -- '^V'			quoted-insert
+bindkey -- '^B'			execute-last-named-cmd
+bindkey -- '^N'			execute-named-cmd
+# Free: F1..F12
+### Non alpha
+# info: broken on urxvt, and probably others
+bindkey -- '^[[1;5C'		forward-word	# Ctrl + Right
+bindkey -- '^[[1;5D'		backward-word	# Ctrl + Left
+bindkey -- '^[[3;5~'		kill-word	# Ctrl + Del
+
+###### Misc.
+bindkey -- "^[[200~"		bracketed-paste
+
+###### TERM=Linux
+bindkey -- "^[[D"		backward-word
+bindkey -- "^[[C"		forward-word
+
+###### TERM=st
+# if TERM = ST then...
+#
+
+# When running zsh, some terminals (like xterm) will not consider the
+# terminfo array if the 'application mode' is not set during line edition.
+# This mode is also known as the non-canonical, or raw mode for terminals.
+# The terminfo database is only valid in that context, so the following
+# enables/disables this mode everytime the zsh line editor is to be used.
+if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
+	autoload -Uz add-zle-hook-widget
+	function zle_application_mode_start { echoti smkx }
+	function zle_application_mode_stop { echoti rmkx }
+	add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
+	add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
+fi
+
+# Unset the previously declared array
+unset keys
+
+
+### Resources
+# `man zshzle`
+# https://wiki.archlinux.org/title/zsh#Key_bindings
+#
+# Understanding CR/LF:
+# https://unix.stackexchange.com/questions/253271
+#
+# How to get How to get control characters for Ctrl+Left from terminfo in Zsh:
+# https://stackoverflow.com/questions/31379824/
+# }}}
+
+# Completion {{{
 # TODO: close the completion menu
 # bindkey -M menuselect '^[' undo
-source "$XDG_CONFIG_HOME/zsh/completion.zsh"
+
+# =============================================================================
+# Global options
+# =============================================================================
+
+# Propose completion of dotfiles
+setopt GLOBDOTS
 
 
-### Prompt
+# =============================================================================
+# Completion init
+# =============================================================================
+
+### Explicitely load the complist module (for menu-select)
+# Need to be called before compinit is initialized
+zmodload zsh/complist
+# Required variable to be set to the value of $LS_COLORS
+ZLS_COLORS="${LS_COLORS}"
+# Since we're here, just set up ahead
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+### Make sure the caching directory is not the zsh config folder and use it
+[[ ! -d "$XDG_CACHE_HOME/zsh" ]] && mkdir -p "$XDG_CACHE_HOME/zsh"
+zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh"
+zstyle ':completion:*' use-cache on
+
+### Load the completion module
+# Mark compinit as a zsh builtin function (otherwise looked as an executable)
+autoload -Uz compinit
+# Run the compinit function and respect the XDG_* dirs spec
+compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
+
+
+# =============================================================================
+# Completion settings
+# =============================================================================
+
+### Completer control functions - ZSHCOMPSYS(1)
+# _expand_alias:
+# Need to be before _complete
+#
+# _complete:
+# Trigger the actual completion system
+#
+# _extensions:
+# Typing '*.' then tab will list all the current file types in the directory
+#
+# _approximate:
+# Correct 'tyest' to 'test' using tab for a directory to change to, for example
+zstyle ':completion:*' completer 			\
+					_expand_alias	\
+					_complete 	\
+					_extensions 	\
+					_approximate
+
+
+### Menu
+# Use list for any completion
+zstyle ':completion:*' menu select
+# Sort list by size then modification time
+zstyle ':completion:*' file-sort size change #reverse
+zstyle ':completion:*' group-name ''	# Split aliases/cmds/..  by section
+# Sections
+zstyle ':completion:*:*:*:*:corrections' format '%F{yellow}!- %d (errors: %e) -!%f'
+zstyle ':completion:*:*:*:*:descriptions' format '%F{blue}-- %D %d --%f'
+zstyle ':completion:*:*:*:*:messages' format ' %F{purple} -- %d --%f'
+zstyle ':completion:*:*:*:*:warnings' format ' %F{red}-- no matches found --%f'
+# Group by (not sure that it works)
+# zstyle ':completion:*:*:-command-:*:*' group-order 			\
+# 							aliases 	\
+# 							builtins 	\
+# 							functions 	\
+# 							commands
+# ls -l output format in any case (no trigger on numeric threshold)
+# -> Does not keep the colors unfortunately... TODO: Search a replacement ?
+# zstyle ':completion:*' file-list all
+
+### Misc
+# Show all the possibilities for a: 'cd -'
+zstyle ':completion:*' complete-options true
+# Supposed to show command option descriptions ?
+zstyle ':completion:*' verbose yes
+
+
+# reference:
+# zstyle :completion:<function>:<completer>:<command>:<argument>:<tag>
+# }}}
+
+# Prompt {{{
 # ISSUE#1: Thanks Tmux for changing my favorite ls colors...
 # [[ "$TERM" == "screen-256color" ]] && source "$XDG_CONFIG_HOME/tmux/ls.env"
 autoload -Uz colors && colors
-source "$XDG_CONFIG_HOME/zsh/prompt.zsh"
 #bindkey -- "^X^R" _read_comp
 #bindkey -- "^X?" _complete_debug
 #bindkey -- "^XC" _correct_filename
@@ -81,21 +397,187 @@ source "$XDG_CONFIG_HOME/zsh/prompt.zsh"
 #bindkey -- "^[/" _history-complete-older
 #bindkey -- "^[~" _bash_complete-word
 
+setopt PROMPTSUBST	# Required for string interpolation in prompt
 
+# autoload -Uz VCS_INFO
+
+# zstyle ':vcs_info:*' enable git
+# zstyle ':vcs_info:*' formats       '%F{5}(%F{cyan}%b%F{5})%f'
+# zstyle ':vcs_info:*' actionformats '%F{5}(%F{cyan}%b%F{3})%F{1}%a%F{5}]%f'
+# zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b%F{1}:%F{3}%r'
+# # Enable checking for (un)staged changes, enabling use of %u and %c
+# zstyle ':vcs_info:*' check-for-changes true
+# # Set custom strings for an unstaged vcs repo changes (*) and staged changes (+)
+# zstyle ':vcs_info:*' unstagedstr ' *'	# ongoing modifications
+# zstyle ':vcs_info:*' stagedstr ' +'		# todo: push
+# ✗
+
+
+
+timer_show=
+# Except when the shell is started, add one new line after each command.
+precmd() {
+	# Override the precmd() with the following function
+	# which will then be executed after each command
+	#precmd() {
+	#    echo
+	#}
+
+	if [ $timer ]; then
+		timer_show=$(($SECONDS - $timer)) # $SECONDS is an internal var
+		unset timer
+	fi
+	# vcs_info
+}
+
+preexec() {
+	timer=${timer:-$SECONDS}
+}
+
+
+# PROMPT == PS1
+# %B/%b bold
+# %F/%f color{red|green|blue|magenta|cyan|white}
+PS1="%B"				# start bold mode
+PS1="$PS1%F{green}%n"			# green username
+PS1="$PS1%F{yellow}@"			# yellow @
+PS1="$PS1%F{blue}%M "			# blue hostname
+PS1="$PS1%F{magenta}%~ "		# magenta path
+# PS1="$PS1%f%b\$vcs_info_msg_0_ "	# stop color & bold
+
+PS1="$PS1%1(j.%F{yellow} %j .)%f"	# yellow background jobs
+PS1="$PS1%(?.%F{green}√.%F{red}%?)%f"	# √ or fail code on the right
+
+PS1="$PS1"$'\n'				# split prompt
+
+PS1="$PS1%B%F{yellow} %b%f"		# prompt char itself
+
+
+# TODO: tty depending prompt (with battery status, replacement of dwm...)
+#cd ~/dwm
+
+# }}}
+
+# fzf {{{
 # =============================================================================
 #  Fuzzy File Finding (fzf)
 # =============================================================================
-source "$XDG_CONFIG_HOME/zsh/fzf.zsh"
+#
+# FuzZy Finder - So awesome...
+# - $FZF_TMUX_OPTS
+# - $FZF_CTRL_T_COMMAND
+# - $FZF_CTRL_T_OPTS
+# - $FZF_CTRL_R_OPTS
+# - $FZF_ALT_C_COMMAND
+# - $FZF_ALT_C_OPTS
+export FZF_DEFAULT_COMMAND="fd -H --exclude 'node_modules' --exclude 'mozilla' --exclude '.git'"
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --preview '(highlight -O ansi {} || cat {}) 2> /dev/null | head -500'"
+
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
+
+source /usr/share/fzf/completion.zsh
+source /usr/share/fzf/key-bindings.zsh
 #"^I" fzf-completion
 #"^R" fzf-history-widget
 #"^T" fzf-file-widget
 #"^[c" fzf-cd-widget
+# }}}
 
-
+# Commands {{{
 # =============================================================================
 # Custom commands
 # =============================================================================
-source "$XDG_CONFIG_HOME/zsh/commands.zsh"
+# -----------------------------------------------------------------------------
+# Tweaks
+# -----------------------------------------------------------------------------
+alias \
+	feh='feh --scale-down --full-screen' 				\
+	mpv='mpv --fullscreen'		 				\
+        diff='diff --color=auto' 					\
+        dmesg='dmesg -L=auto' 						\
+        du='du -h' 							\
+        grep='grep --color=auto'		 			\
+        ls='ls -h --color=auto --group-directories-first' 		      \
+        mkdir='mkdir -p' 						      \
+        patch='patch --reject-file=/dev/null --no-backup-if-mismatch --merge' \
+        xterm='xterm -bg black -fg white'
+
+
+# Oh...
+man() {
+	# Enable color and use as much width as possible
+	#
+	# md = Start bold effect (double-bright).
+	# me = Stop bold effect.
+	# us = Start underline effect.
+	# ue = Stop underline effect.
+	# so = Start stand-out effect (similar to reverse text).
+	# se = Stop stand-out effect (similar to reverse text).
+	LESS="-j.5"			\
+	LESS_TERMCAP_md=$'\e[01;34m'    \
+	LESS_TERMCAP_me=$'\e[0m'        \
+	LESS_TERMCAP_us=$'\e[01;32m'    \
+	LESS_TERMCAP_ue=$'\e[0m'        \
+	LESS_TERMCAP_so=$'\e[45;43m'    \
+	LESS_TERMCAP_se=$'\e[0m'        \
+	command man -O width=$(($(tput cols)-10)) "$@"
+	# -O indent=10 ?
+}
+
+
+
+#vi='GIT_DIR="$HOME"/.dotfiles GIT_WORK_TREE="$HOME" vim' \
+
+### XDG Base Directory fixes:
+alias wget='wget --no-hsts'
+
+
+### Shortcuts
+# conflicts with ghostscript
+        # gs='git status' \
+alias \
+	la='ls -a'				\
+	ll='ls -l'				\
+	lla='ls -al'				\
+        ga='git add'				\
+        gc='git checkout'			\
+        gd='git diff'				\
+        gl='git log'				\
+        j='jobs'				\
+        ons='alsamixer'				\
+        se='sudoedit'				\
+        smci='sudo make clean install'		\
+        vi='vim'				\
+        xinst='sudo xbps-install'		\
+        xquery='xbps-query'			\
+        xremove='sudo xbps-remove'		\
+	tree='tree --dirsfirst'			\
+	vw='vim -c VimwikiIndex'		\
+	nnn='nnn -e'				\
+	watch='watch --color'
+
+### Config
+alias \
+        dot='/usr/bin/git --git-dir="$HOME"/.dotfiles --work-tree="$HOME"' \
+        da='dot add' \
+        ds='dot status' \
+        dl='dot log' \
+        ddif='dot diff' \
+        reload="source $XDG_CONFIG_HOME/zsh/zshrc" \
+        tconf="$EDITOR $XDG_CONFIG_HOME/tmux/tmux.conf" \
+        vconf="$EDITOR $XDG_CONFIG_HOME/vim/vimrc" \
+        xinitrc="$EDITOR $XDG_CONFIG_HOME/x11/xinitrc" \
+        zprofile="$EDITOR $XDG_CONFIG_HOME/zsh/zprofile" \
+        zconf="$EDITOR $XDG_CONFIG_HOME/zsh/zshrc"
+
+### Admin
+alias \
+	rack='sudo sshfs -oIdentityFile="$HOME"/.ssh/id_ed25519,allow_other root@192.168.50.179:/mnt /mnt/rack' \
+	unrack='sudo umount -l /mnt/rack' \
+	lsblk="lsblk; echo; ps aux | awk 'NR==1 || /sftp/ && !/awk/'"
+# }}}
+
 
 # nvm (or how soydevs are going to slow down my perfect config...)
 # todo: lazy load

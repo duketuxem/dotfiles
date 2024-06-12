@@ -30,21 +30,38 @@ software suite at a central place.
 
 ### On Linux
 
-First, let's install the missing packages:
+#### Install packages
 
 1. `chezmoi init duketuxem`
 2. `chezmoi cd`
 3. `./install-packages.sh`
 4. Choose core or desktop (core is for headless/tty, desktop for graphical use)
 5. The relevant packages should be installed!
-6. You can `exit` the shell since it was spawned by chezmoi
 
-Finally, let's deploy all the config on the target:
+You may `exit` the shell since it was spawned by chezmoi
 
-1. `chezmoi apply`
+#### Deploy config
+
+`chezmoi apply` to install everything on the host
+
+#### Show zsh the configuration path
+
+For all users:
+
+`echo 'ZDOTDIR="$HOME"/.config/zsh' | sudo tee /etc/zsh/zshenv`
+
+Or only for the current user:
+
+`echo 'ZDOTDIR="$HOME"/.config/zsh' > ~/.zshenv`
+
+`echo 'source $ZDOTDIR/.zshenv' >> ~/.zshenv`
+
+#### Logout and login again
+
+1. `chsh /bin/zsh` (or any platform default shell path and type the user passwd
+2. `exit`
+
 
 ### On Windows
 
 This is to be done.
-
-

@@ -1,0 +1,30 @@
+#              __          __   __
+#             |  \        |  \ |  \
+#     __    __ \▓▓_______  \▓▓_| ▓▓_    ______   _______
+#    |  \  /  \  \       \|  \   ▓▓ \  /      \ /       \
+#     \▓▓\/  ▓▓ ▓▓ ▓▓▓▓▓▓▓\ ▓▓\▓▓▓▓▓▓ |  ▓▓▓▓▓▓\  ▓▓▓▓▓▓▓
+#      >▓▓  ▓▓| ▓▓ ▓▓  | ▓▓ ▓▓ | ▓▓ __| ▓▓   \▓▓ ▓▓
+#  __ /  ▓▓▓▓\| ▓▓ ▓▓  | ▓▓ ▓▓ | ▓▓|  \ ▓▓     | ▓▓_____
+# |  \  ▓▓ \▓▓\ ▓▓ ▓▓  | ▓▓ ▓▓  \▓▓  ▓▓ ▓▓      \▓▓     \
+#  \▓▓\▓▓   \▓▓\▓▓\▓▓   \▓▓\▓▓   \▓▓▓▓ \▓▓       \▓▓▓▓▓▓▓
+
+# This file is read each time `startx` is invoked.
+# Note: It is called from .zprofile to avoid typing `startx` after login.
+
+
+# Commands to execute only once and to not be managed by the window manager
+xrandr --auto			# find and use most of the monitors
+xset b off			# disable that bloody bell
+xset r rate 300 50		# faster autorepeat
+
+# The window manager will manage the rest of the session
+while :
+do
+    # Log stderr to a file
+    # dwm 2>&1 >> "$HOME_LOG"/dwm.log
+
+    # No error logging
+    dwm >/dev/null 2>&1
+done
+
+# vim:ft=sh

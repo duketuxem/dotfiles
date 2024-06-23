@@ -18,9 +18,8 @@ linux:
 
     # implies core
     desktop:
-      packages:
-        - xorg
-        - firefox
+      - xorg
+      - firefox
 
   debian:
     core:

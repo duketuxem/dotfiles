@@ -8,7 +8,7 @@
 "      \▓    \▓▓\▓▓  \▓▓  \▓▓\▓▓       \▓▓▓▓▓▓▓
 
 
-" Always use the XDG Base Directory specification [[[
+" Always use the XDG Base Directory specification {{{
 
 " Refuse to run if there are some missing environment variables set
 " (for plugin manager auto install essentially)
@@ -40,8 +40,8 @@ set viewdir=$XDG_STATE_HOME/vim/view     | call mkdir(&viewdir,   'p')
 
 call mkdir($XDG_STATE_HOME."/vim", 'p')
 if !has('nvim') | set viminfofile=$XDG_STATE_HOME/vim/viminfo | endif
-" ]]]
-" Plugins [[[
+" }}}
+" Plugins {{{
 
 " Autoinstall the plugin manager if missing
 if empty(glob('$XDG_CONFIG_HOME/vim/autoload/plug.vim'))
@@ -82,11 +82,11 @@ call plug#end()
 " run :PlugInstall if there are some missing plugins
 autocmd! VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
 	\ | PlugInstall --sync | source $MYVIMRC | endif
-" ]]]
+" }}}
 
 let mapleader = "\\"
 
-" User Interface (View) [[[
+" User Interface (View) {{{
 
 " Terminal: (parent process)
 set title
@@ -107,8 +107,8 @@ set vb t_vb=		" clearing the visual bell length deactivates flashing
 
 " Cursor: Keep centered when...
 " scrolling up/down
-nnoremap <expr> <C-d>    line('.') == 1 ? 'M' : '<C-d>zzzv'
-nnoremap <C-u>  <C-u>zzzv
+nnoremap <expr> <C-d>    line('.') == 1 ? 'M' : '<C-d>zz'
+nnoremap <C-u>  <C-u>zz
 " going to the next/prev location
 nnoremap <C-i>  <C-i>zzzv
 nnoremap <C-o>  <C-o>zzzv
@@ -174,8 +174,8 @@ nnoremap <leader>e :enew<CR>
 " <plugin> mark indentation levels
 let g:indentLine_char = '┊'
 let g:indentLine_setColors = 1
-" ]]]
-" Editing / Background [[[
+" }}}
+" Editing / Background {{{
 
 set hidden		" allow background buffers
 set swapfile		" warn/recover the same opened file multiple times
@@ -325,8 +325,8 @@ augroup END
 "  h     :  disable the effect of 'hlsearch'
 "  n...  :  where to save the viminfo files | viminfofile set above
 set viminfo='10,\"1000,:20,h
-" ]]]
-" Color [[[
+" }}}
+" Color {{{
 
 " use truecolor (24bit-mode)
 set termguicolors
@@ -341,8 +341,8 @@ set termguicolors
 "endif
 
 colorscheme my-eighties
-" ]]]
-" Command Line and :term [[[
+" }}}
+" Command Line and :term {{{
 
 " remap colon to semicolon, game changer...
 nnoremap ; :
@@ -365,8 +365,8 @@ tnoremap <C-[> <c-\><c-n>
 " impossible on MS-Windows -> :h scroll-mouse-wheel
 tnoremap <ScrollWheelUp> <C-\><C-n><C-u>
 tnoremap <ScrollWheelDown> <C-d>
-" ]]]
-" Statusline [[[
+" }}}
+" Statusline {{{
 
 set showcmd		" show the command being typed. Ex: "a
 set noruler		" deactivate the vim ruler (x:y) - handled in plugin
@@ -377,8 +377,8 @@ set laststatus=2	" always show the status line
 let g:lightline = {
 \ 'colorscheme': 'darcula',
 \ }
-" ]]]
-" Function keys [[[
+" }}}
+" Function keys {{{
 "
 " F1 : Help
 nnoremap <F2> :set wrap!<CR>
@@ -388,16 +388,16 @@ nnoremap <F4> :set list!<CR>
 
 " inspect current element vim symbol name (for syntax checking)
 nnoremap <F12> :call g:SynStack()<CR>
-" ]]]
-" Language specific [[[
+" }}}
+" Language specific {{{
 
 " Perl:
 " undocumented settings to basically close all the pods but not the subs
 let perl_fold=1
 let perl_nofold_subs=1
 let g:perldoc_split_modifier = 'rightbelow 15'
-"]]]
-" netrw [[[
+"}}}
+" netrw {{{
 
 let g:netrw_fastbrowse = 0		" always re-read directories content
 let g:netrw_banner = 0			" remove header
@@ -428,9 +428,9 @@ function! NetrwMapping()
   " enter opens the selected file so closes the tree view to focus
   " nnoremap <silent><buffer> <CR> <Plug>NetrwLocalBrowseCheck<BAR>:Lexplore<CR>
 endfunction
-" ]]]
+" }}}
 
-" Plugins config [[[
+" Plugins config {{{
 
 " GitGutter:
 nmap <leader>Hp  <Plug>(GitGutterPreviewHunk)
@@ -480,7 +480,7 @@ augroup resCur
   autocmd!
   autocmd BufWinEnter * call ResCur()
 augroup END
-" ]]]
+" }}}
 
 " Vimrc:
 " quick edit vimrc in a new tab
@@ -493,5 +493,3 @@ augroup sourceVimrcOnSave
 				\ | echo ".vimrc saved and reloaded!"
 				\ | endif
 augroup END
-
-" vim: fmr=[[[,]]]

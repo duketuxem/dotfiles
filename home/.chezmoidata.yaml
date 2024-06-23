@@ -19,19 +19,25 @@ linux:
     # implies core
     desktop:
       packages:
+        - xorg
         - firefox
 
   debian:
     core:
+      - build-essential
       - fd-find
       - universal-ctags
     desktop:
 
   void:
     core:
+      - base-devel
       - fd
       - ctags
     desktop:
+      - libX11-devel
+      - libXft-devel
+      - libXinerama-devel
 
 windows:
 

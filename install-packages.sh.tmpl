@@ -1,120 +1,13 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 echo "INFO - Current shell: $(ps -p $$ -o comm=)"
 
-# =============================================================================
-# Utility functions
-# =============================================================================
-
-has()
-{
-	_cmd=$(command -v "$1") 2>/dev/null || return 1
-	[ -x "$_cmd" ] || return 1
-}
-
-ask()
-{
-	printf "%s [Y/n] " "$1"
-	read -r answer
-	if [ -z "$answer" ] || [ "$answer" = "y" ] || [ "$answer" = "Y" ]
-	then
-		return 0
-	else
-		return 1
-	fi
-}
-
-count()
-{
-	# Disable globbing.
-	# This ensures that the word-splitting is safe.
-	set -f
-
-	# Populate the positional parameters with the elements of the list
-	set -- $1
-
-	# Print each list value on its own line.
-	printf '%s\n' "$#"
-
-	# Re-enable globbing.
-	set +f
-}
-
-split()
-{
-	# Disable globbing.
-	# This ensures that the word-splitting is safe.
-	set -f
-
-	# This is safe to disable as it just warns against
-	# word-splitting which is the behavior we expect.
-	# shellcheck disable=2086
-	set -- $1
-
-	# Print each list value on its own line.
-	printf '%s\n' "$@"
-
-	# Re-enable globbing.
-	set +f
-}
-
-is_number()
-{
-    case $1 in
-        ''|*[!0-9]*) return 1 ;;
-        *) return 0 ;;
-    esac
-}
-
-# =============================================================================
-# Linux functions
-# =============================================================================
-
-# Try two linux flavor detection methods :
-# - eval ID="distro_name" to check it later in the script
-# - To be implemented: parsing lsb_release output
-# If the first one is working then the second is skipped.
-detect_linux()
-{
-	no_osrelease=0
-	no_lsbrelease=0
-
-	if [ ! -f '/etc/os-release' ]
-	then
-		no_osrelease=1
-		echo "$0: Can not find /etc/os-release."
-	else
-		echo "$0: Parsing /etc/os-release"
-		# TODO: know if 'ID' is present everywhere
-		distro=$(grep '^ID' /etc/os-release | sed s/ID/distro/)
-		# echo $distro
-		eval "$distro"
-		echo "$0: Found '$distro'"
-	fi
-
-	if [ "$no_osrelease" -eq 1 ]
-	then
-		if ! has lsb_release
-		then
-			no_lsbrelease=1
-			echo "$0: No lsb_release command available."
-		else
-			# TODO:
-			echo "$0: TODO: Need to parse lsb_release -a"
-		fi
-		echo "lsb_release's output parsing is not implemented, the script will exit"
-		exit 2
-	fi
-
-	if [ "$no_osrelease" -eq 1 ] && [ "$no_lsbrelease" -eq 1 ]
-	then
-		echo "$0: Error, can not identify Linux flavor"
-		# TODO: Implement fallback after lsb_release ?
-		exit 1
-	fi
-
-	unset no_osrelease no_lsbrelease
-}
+if [ ! -f "./utils.sh" ];
+then
+	printf 'This script must be run from within ~/.local/share/chezmoi'
+	exit 1
+fi
+. ./utils.sh
 
 which_linux_profile()
 {
@@ -222,8 +115,5 @@ else
 	echo "Unsupported platform for now"
 	return 1
 fi
-
-# Run this script (run_onchange) when new packages are added:
-# profiles.yaml hash: {{ include ".chezmoidata.yaml" | sha256sum }}
 
 # vim: ft=sh fen

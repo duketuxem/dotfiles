@@ -8,6 +8,7 @@ linux:
       - bat
       - curl
       - fzf
+      - htop
       - neofetch
       - tmux
       - tree
@@ -27,6 +28,10 @@ linux:
       - fd-find
       - universal-ctags
     desktop:
+      - libx11-dev
+      - libxft-dev
+      - libxinerama-dev
+      - fonts-noto-cjk
 
   void:
     core:
@@ -37,6 +42,7 @@ linux:
       - libX11-devel
       - libXft-devel
       - libXinerama-devel
+      - noto-fonts-cjk
 
 windows:
 

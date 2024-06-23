@@ -22,8 +22,9 @@ suckless_git_upstream="https://git.suckless.org/"
 custom_git_repo_https="https://github.com/duketuxem"
 custom_git_repo_ssh="git@github.com:duketuxem"
 software_list="dmenu dwm st"
+forks_dir="$HOME/workspace/repos"
 
-target_dir="$HOME/workspace/repos"
+fonts_dir="$HOME/.local/share/fonts"
 
 
 # =============================================================================
@@ -59,9 +60,6 @@ done
 
 setup_desktop()
 {
-	# Reset sudo authentication 'cache' to force for a password prompt
-	[ "$1" = 'sudo' ] && sudo -k
-
 	for soft in $(split "$software_list")
 	do
 		info "Installing $soft..."
@@ -73,19 +71,32 @@ setup_desktop()
 			&& make clean \
 			&& cd ..
 	done
+
+
 }
 
+setup_fonts()
+{
+	curl -fLo "CodeNewRomanNerdFont-Regular.otf" \
+		https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/CodeNewRoman/Regular/CodeNewRomanNerdFont-Regular.otf
+}
 
 operating_system="$(uname -s)"
 if [ "$operating_system" = 'Linux' ]
 then
-	cd "$target_dir" || fatal "Can not cd to: $target_dir"
-	setup_desktop "sudo" || fatal "something went wrong"
+	cd "$forks_dir"		|| fatal "Can not cd to: $forks_dir"
+	setup_desktop "sudo"	|| fatal "Something went wrong"
+
+	cd "$fonts_dir"		|| fatal "Can not cd to: $fonts_dir"
+	setup_fonts		|| fatal "Could not install font(s)"
 
 elif [ "$operating_system" = "FreeBSD" ]
 then
-	cd "$target_dir" || fatal "Can not cd to: $target_dir"
-	setup_desktop "doas" || fatal "something went wrong"
+	cd "$forks_dir"		|| fatal "Can not cd to: $forks_dir"
+	setup_desktop "doas"	|| fatal "Something went wrong"
+
+	cd "$fonts_dir"		|| fatal "Can not cd to: $fonts_dir"
+	setup_fonts		|| fatal "Could not install font(s)"
 else
 	error "Unsupported platform for now"
 	return 1

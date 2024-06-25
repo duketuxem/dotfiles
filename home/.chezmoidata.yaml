@@ -44,5 +44,4 @@ linux:
       - libXinerama-devel
       - noto-fonts-cjk
 
-windows:
-
+bsd:

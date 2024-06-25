@@ -1,0 +1,458 @@
+#!/usr/bin/env sh
+
+# =============================================================================
+# Default configuration
+# =============================================================================
+
+###### Script mandatory parts
+# error status
+err=0
+
+# Disabling git interactive prompts allows for testing a repository existence
+# Must be set this way to 'close stdin' (required by check_git_repository)
+GIT_ASKPASS="echo"
+SSH_ASKPASS="echo"
+
+
+###### User variables
+default_shell='/bin/zsh'
+
+suckless_git_upstream="https://git.suckless.org/"
+
+custom_git_repo_https="https://github.com/duketuxem"
+custom_git_repo_ssh="git@github.com:duketuxem"
+software_list="dmenu dwm st"
+forks_dir="$HOME/workspace/repos"
+
+fonts_dir="$HOME/.local/share/fonts"
+
+# =============================================================================
+# Utility functions
+# =============================================================================
+
+###### Color-coded logging functions
+error()
+{
+	printf '\033[0;1;31m%s\033[0m\n' "$*" # red
+}
+
+success()
+{
+	printf '\033[0;1;32m%s\033[0m\n' "$*" # green
+}
+
+warning()
+{
+	printf '\033[0;1;33m%s\033[0m\n' "$*" # yellow
+}
+
+info()
+{
+	printf '\033[0;1;34m%s\033[0m\n' "$*" # blue
+}
+
+step()
+{
+	printf '\033[0;1;35m%s\033[0m\n' "$*" # purple
+}
+
+fatal()
+{
+	error "$1\n"
+	exit 1
+}
+
+###### Checks
+check_git_repository()
+{
+	printf 'Checking if the '\''%s'\'' repository exists... ' "$1"
+	# --exit-code allows the command to fail if the branch is incorrect
+	if ! git ls-remote --exit-code "$1" > /dev/null 2>&1
+	then
+		error "\nThe repository $1 does not seem to exist"
+		err=1
+	else
+		success "OK!"
+	fi
+}
+
+# Try two linux flavor detection methods :
+# - eval ID="distro_name" to check it later in the script
+# - To be implemented: parsing lsb_release output
+# If the first one is working then the second is skipped.
+detect_linux()
+{
+	no_osrelease=0
+	no_lsbrelease=0
+
+	if [ ! -f '/etc/os-release' ]
+	then
+		no_osrelease=1
+		echo "$0: Can not find /etc/os-release."
+	else
+		echo "$0: Parsing /etc/os-release"
+		# TODO: know if 'ID' is present everywhere
+		distro=$(grep '^ID' /etc/os-release | sed s/ID/distro/)
+		# echo $distro
+		eval "$distro"
+		echo "$0: Found '$distro'"
+	fi
+
+	if [ "$no_osrelease" -eq 1 ]
+	then
+		if ! has lsb_release
+		then
+			no_lsbrelease=1
+			echo "$0: No lsb_release command available."
+		else
+			# TODO:
+			echo "$0: TODO: Need to parse lsb_release -a"
+		fi
+		echo "lsb_release's output parsing is not implemented, the script will exit"
+		exit 2
+	fi
+
+	if [ "$no_osrelease" -eq 1 ] && [ "$no_lsbrelease" -eq 1 ]
+	then
+		echo "$0: Error, can not identify Linux flavor"
+		# TODO: Implement fallback after lsb_release ?
+		exit 1
+	fi
+
+	unset no_osrelease no_lsbrelease
+}
+
+# TODO: detect_bsd()
+
+# Check if a command exists and is executable (mind aliases and functions)
+# This is copied from: https://github.com/dylanaraps/pfetch
+has()
+{
+	_cmd=$(command -v "$1") 2>/dev/null || return 1
+	[ -x "$_cmd" ] || return 1
+}
+
+is_number()
+{
+	case $1 in
+		''|*[!0-9]*) return 1 ;;
+		*) return 0 ;;
+	esac
+}
+
+###### Miscellaneous
+# TODO: Test truthiness and write better
+# Prompt the user with a yes/no question
+# Usage:
+# if ask "Question" -> error (user said no)
+ask()
+{
+	printf "%s [Y/n] " "$1"
+	read -r answer
+	if [ -z "$answer" ] || [ "$answer" = "y" ] || [ "$answer" = "Y" ]
+	then
+		return 1
+	else
+		return 0
+	fi
+}
+
+# Count the number of elements in a list
+count()
+{
+	# disable globbing to ensure the word-splitting is safe.
+	set -f
+	# populate the positional parameters with the elements of the list
+	set -- $1
+	# print each list value on its own line.
+	printf '%s\n' "$#"
+	# re-enable globbing.
+	set +f
+}
+
+# Split a string into a list, one element per line
+split()
+{
+	# disable globbing to ensure the word-splitting is safe.
+	set -f
+	# safe to disable as it just warns against
+	# word-splitting which is the behavior we expect.
+	# shellcheck disable=2086
+	set -- $1
+
+	# print each list value on its own line.
+	printf '%s\n' "$@"
+
+	# re-enable globbing.
+	set +f
+}
+
+
+# =============================================================================
+# Desktop section
+# =============================================================================
+
+for soft in $(split "$software_list")
+do
+	check_git_repository "$custom_git_repo_https/$soft"
+done
+
+[ $err -eq 1 ] && fatal "One or more repository is incorrect"
+
+setup_forks()
+{
+	for soft in $(split "$software_list")
+	do
+		if [ -d "$soft" ]
+		then
+			warning "Folder $soft already exists, skipping..."
+			continue
+		fi
+
+		info "Installing $soft..."
+		git clone "$custom_git_repo_https/$soft" \
+			&& cd "$soft" \
+			&& "$1" make install \
+			&& git remote add upstream "$suckless_git_upstream/$soft.git" \
+			&& git remote set-url origin "$custom_git_repo_ssh/$soft.git" \
+			&& make clean \
+			&& cd ..
+	done
+
+
+}
+
+setup_fonts()
+{
+	curl -fLo "CodeNewRomanNerdFont-Regular.otf" \
+		https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/CodeNewRoman/Regular/CodeNewRomanNerdFont-Regular.otf
+}
+
+# =============================================================================
+# Packages
+# =============================================================================
+
+which_linux_profile()
+{
+	# Retrieve all profiles and trim the last whitespace
+	profile_list='{{range $key, $value := .linux.profiles}}{{$key}} {{end}}'
+	profile_list=${profile_list%${profile_list##*[![:space:]]}}
+	nb_profiles=$(count "$profile_list")
+	if [ "$nb_profiles" -eq 0 ]; then
+		echo "$0: Error, no linux profiles found in profiles.yaml"
+		exit 1
+	fi
+
+	# User prompting
+	echo "$0: Select a profile to install from the following list:"
+	count=1
+	for profile in $(split "$profile_list"); do
+		printf "$0: [$count] $profile\n"
+		count=$(($count + 1))
+	done
+
+	# Force a choice
+	choice=
+	while [ -z "$choice" ] || ! is_number "$choice" \
+		|| [ "$choice" -lt 1 ] || [ "$choice" -gt "$nb_profiles" ]; do
+		echo "$0: Please select a value between 1 and $nb_profiles"
+		printf "%s: %s" "$0" "$1"
+		read -r choice
+	done
+
+	count=1
+	for profile in $(split "$profile_list"); do
+		if [ "$count" -eq "$choice" ]; then
+			break
+		fi
+	done
+	# Since every variable is global, $profile is set with the last break
+	# Anyway, I am not imaginating having a thousand profiles to manage...
+	echo "$0: $profile will be installed !"
+
+	unset nb_profiles count choice profile_list
+}
+
+install_linux_core_profile()
+{
+	core="{{ range .linux.profiles.core -}} {{.}} {{ end}}"
+
+	case "$distro" in
+		'debian' | 'ubuntu')
+			core="$core {{ range .linux.debian.core -}} {{.}} {{ end}}"
+			eval "sudo apt-get install $core"
+			;;
+		'void')
+			core="$core {{ range .linux.void.core -}} {{.}} {{ end}}"
+			eval "sudo xbps-install $core"
+			;;
+		'arch')
+			# No range
+			eval "sudo pacman -S $core"
+			;;
+	esac
+	unset core
+}
+
+install_linux_desktop_profile()
+{
+	# depends_on: core
+	install_core_profile
+
+	desktop="{{ range .linux.profiles.desktop -}} {{.}} {{ end}}"
+
+	case "$distro" in
+		'debian' | 'ubuntu')
+			desktop="$desktop {{ range .linux.debian.desktop -}} {{.}} {{ end}}"
+			eval "sudo apt-get install $desktop"
+			;;
+		'void')
+			desktop="$desktop {{ range .linux.void.desktop -}} {{.}} {{ end}}"
+			eval "sudo xbps-install $desktop"
+			;;
+		'arch')
+			# No range .linux.arch.desktop
+			eval "sudo pacman -S $desktop"
+			;;
+	esac
+
+	unset desktop
+}
+
+# A wrapper of the above section
+install_linux_packages()
+{
+	detect_linux
+
+	which_linux_profile
+	[ "$profile" = "core" ] && install_linux_core_profile
+	[ "$profile" = "desktop" ] && install_linux_desktop_profile
+}
+
+
+
+# =============================================================================
+# Script steps
+# =============================================================================
+
+display_help()
+{
+	printf 'Prepare a host to apply the configuration from this repository.
+
+Usage:
+%s [command]
+
+Commands:
+all            Execute all steps for a complete environment setup.
+packages       Install necessary packages based on the detected OS.
+shell          Set the configuration path and change the default shell.
+help           Show this help message and usage instructions.
+
+Examples:
+%s all
+%s packages
+%s shell
+%s help
+' "$0" "$0" "$0" "$0" "$0"
+}
+
+# Cross platform package installation
+install_packages()
+{
+	if [ "$operating_system" = 'Linux' ]; then
+		install_linux_packages
+	elif [ "$operating_system" = 'FreeBSD' ]; then
+		printf "BSD Unsupported for now\n"
+		# install_bsd_packages
+	else
+		fatal "Unsupported or unknown platform"
+	fi
+}
+
+# A set of forked software that make my GUI
+install_desktop()
+{
+	if [ "$operating_system" = 'Linux' ]
+	then
+		cd "$forks_dir"		|| fatal "Can not cd to: $forks_dir"
+		setup_forks "sudo"	|| fatal "Something went wrong"
+
+		cd "$fonts_dir"		|| fatal "Can not cd to: $fonts_dir"
+		setup_fonts		|| fatal "Could not install font(s)"
+
+	elif [ "$operating_system" = "FreeBSD" ]
+	then
+		cd "$forks_dir"		|| fatal "Can not cd to: $forks_dir"
+		setup_forks "doas"	|| fatal "Something went wrong"
+
+		cd "$fonts_dir"		|| fatal "Can not cd to: $fonts_dir"
+		setup_fonts		|| fatal "Could not install font(s)"
+	else
+		error "Unsupported platform for now"
+		return 1
+	fi
+	success "Done!"
+}
+
+setup_shell()
+{
+	step 'Setting up the default shell.'
+	if [ ! -f '/etc/zsh/zshenv' ]
+	then
+		# Create a default file if it does not exist
+		echo 'ZDOTDIR="$HOME"/.config/zsh' | sudo tee /etc/zsh/zshenv
+	elif ! grep -q 'ZDOTDIR' /etc/zsh/zshenv
+	then
+		# Add the config to a possibly existing default file if not set
+		echo 'ZDOTDIR="$HOME"/.config/zsh' | sudo tee -a /etc/zsh/zshenv
+	fi
+
+	chsh "$default_shell"
+}
+
+# =============================================================================
+# Main
+# =============================================================================
+
+operating_system="$(uname -s)"
+
+if [ $# -eq 0 ]; then
+    display_help
+    exit 1
+fi
+
+case "$1" in
+	'all')
+		install_packages
+		chezmoi apply
+		[ "$profile" = 'desktop' ] && install_desktop
+		setup_shell
+
+		success "All done, log out and then log back in to see the changes."
+		;;
+
+	'desktop')
+		# Requires:
+		# install_packages (with desktop profile)
+		# `chezmoi apply` for having the required folder paths created
+		install_desktop
+		# setup_shell
+		;;
+	'packages')
+		install_packages
+		warning "Do not forget to manually run `chezmoi apply` if needed."
+		;;
+	'shell')
+		setup_shell
+		;;
+
+	'help')
+		display_help
+		;;
+	*)
+		printf 'Unknown command: %s\n\n' "$1"
+		display_help
+		;;
+esac
+
+# vim: ft=sh fen

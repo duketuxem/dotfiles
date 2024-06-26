@@ -5,9 +5,6 @@
 # =============================================================================
 
 ###### Script mandatory parts
-# error status
-err=0
-
 # Disabling git interactive prompts allows for testing a repository existence
 # Must be set this way to 'close stdin' (required by check_git_repository)
 GIT_ASKPASS="echo"
@@ -70,9 +67,10 @@ check_git_repository()
 	if ! git ls-remote --exit-code "$1" > /dev/null 2>&1
 	then
 		error "\nThe repository $1 does not seem to exist"
-		err=1
+		return 1
 	else
 		success "OK!"
+		return 0
 	fi
 }
 
@@ -80,7 +78,7 @@ check_git_repository()
 # - eval ID="distro_name" to check it later in the script
 # - To be implemented: parsing lsb_release output
 # If the first one is working then the second is skipped.
-detect_linux()
+which_linux()
 {
 	no_osrelease=0
 	no_lsbrelease=0
@@ -122,7 +120,8 @@ detect_linux()
 	unset no_osrelease no_lsbrelease
 }
 
-# TODO: detect_bsd()
+# NOTE: BSDs are detected simply with 'uname -s'.
+# there's no need to detect a flavor
 
 # Check if a command exists and is executable (mind aliases and functions)
 # This is copied from: https://github.com/dylanaraps/pfetch
@@ -192,17 +191,17 @@ split()
 # Desktop section
 # =============================================================================
 
-for soft in $(split "$software_list")
-do
-	check_git_repository "$custom_git_repo_https/$soft"
-done
-
-[ $err -eq 1 ] && fatal "One or more repository is incorrect"
-
 setup_forks()
 {
 	for soft in $(split "$software_list")
 	do
+		if check_git_repository "$custom_git_repo_https/$soft"
+		then
+			err=1
+			error "Can not find the repository for $soft..."
+			continue
+		fi
+
 		if [ -d "$soft" ]
 		then
 			warning "Folder $soft already exists, skipping..."
@@ -212,18 +211,19 @@ setup_forks()
 		info "Installing $soft..."
 		git clone "$custom_git_repo_https/$soft" \
 			&& cd "$soft" \
-			&& "$1" make install \
+			&& "$priv" make install \
 			&& git remote add upstream "$suckless_git_upstream/$soft.git" \
 			&& git remote set-url origin "$custom_git_repo_ssh/$soft.git" \
 			&& make clean \
 			&& cd ..
 	done
-
-
+	[ $err -eq 1 ] && error 'One or more repository was incorrect'
 }
 
 setup_fonts()
 {
+	[ -f "CodeNewRomanNerdFont-Regular.otf" ] && return
+
 	curl -fLo "CodeNewRomanNerdFont-Regular.otf" \
 		https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/CodeNewRoman/Regular/CodeNewRomanNerdFont-Regular.otf
 }
@@ -232,10 +232,16 @@ setup_fonts()
 # Packages
 # =============================================================================
 
-which_linux_profile()
+# Utility function related to packages (used to know which set to install)
+# Idea: which_package_profile / take argument
+what_profile()
 {
 	# Retrieve all profiles and trim the last whitespace
+	# if [ "$os" = "Linux" ]; then
 	profile_list='{{range $key, $value := .linux.profiles}}{{$key}} {{end}}'
+	# TODO: elif [ "$os" = "FreeBSD" || "$os" = "OpenBSD" if there are differences
+		# profile_list='{{range $key, $value := .bsd.profiles}}{{$key}} {{end}}'
+	# fi
 	profile_list=${profile_list%${profile_list##*[![:space:]]}}
 	nb_profiles=$(count "$profile_list")
 	if [ "$nb_profiles" -eq 0 ]; then
@@ -268,7 +274,7 @@ which_linux_profile()
 	done
 	# Since every variable is global, $profile is set with the last break
 	# Anyway, I am not imaginating having a thousand profiles to manage...
-	echo "$0: $profile will be installed !"
+	echo "$0: Packages from the $profile profile will be installed !"
 
 	unset nb_profiles count choice profile_list
 }
@@ -319,16 +325,9 @@ install_linux_desktop_profile()
 	unset desktop
 }
 
-# A wrapper of the above section
-install_linux_packages()
-{
-	detect_linux
+# install_bsd_core_profile
 
-	which_linux_profile
-	[ "$profile" = "core" ] && install_linux_core_profile
-	[ "$profile" = "desktop" ] && install_linux_desktop_profile
-}
-
+# install_bsd_desktop_profile
 
 
 # =============================================================================
@@ -359,9 +358,22 @@ Examples:
 # Cross platform package installation
 install_packages()
 {
-	if [ "$operating_system" = 'Linux' ]; then
-		install_linux_packages
-	elif [ "$operating_system" = 'FreeBSD' ]; then
+	# Basically choose between a CLI or a GUI-ready set of packages
+	what_profile
+
+	if [ "$os" = 'Linux' ]
+	then
+		# Identify which linux to anticipate about the package manager
+		which_linux
+
+		if [ "$profile" = "desktop" ]
+		then
+			install_linux_desktop_profile	# includes core
+		else
+			install_linux_core_profile
+		fi
+
+	elif [ "$os" = 'FreeBSD' ]; then
 		printf "BSD Unsupported for now\n"
 		# install_bsd_packages
 	else
@@ -372,26 +384,22 @@ install_packages()
 # A set of forked software that make my GUI
 install_desktop()
 {
-	if [ "$operating_system" = 'Linux' ]
+	if [ ! -d "$forks_dir" || ! -d "$fonts_dir" ]
 	then
-		cd "$forks_dir"		|| fatal "Can not cd to: $forks_dir"
-		setup_forks "sudo"	|| fatal "Something went wrong"
-
-		cd "$fonts_dir"		|| fatal "Can not cd to: $fonts_dir"
-		setup_fonts		|| fatal "Could not install font(s)"
-
-	elif [ "$operating_system" = "FreeBSD" ]
-	then
-		cd "$forks_dir"		|| fatal "Can not cd to: $forks_dir"
-		setup_forks "doas"	|| fatal "Something went wrong"
-
-		cd "$fonts_dir"		|| fatal "Can not cd to: $fonts_dir"
-		setup_fonts		|| fatal "Could not install font(s)"
-	else
-		error "Unsupported platform for now"
-		return 1
+		error "Missing fork dir ($forks_dir) or font dir ($fonts_dir)."
+		error 'Have you run `chezmoi apply` to create empty folders?'
+		info "You can replay this step by running '$0 desktop'."
+		# Allow to setup the shell nonetheless in a 'all' use case
+		err=1; return "$err"
 	fi
-	success "Done!"
+
+	# Allow forks setup fo fail
+	cd "$forks_dir" && setup_forks
+
+	# Will not re-download the font
+	cd "$fonts_dir" && setup_fonts
+
+	[ "$err" -eq 0 ] && success "Desktop Succesfully installed!"
 }
 
 setup_shell()
@@ -400,11 +408,11 @@ setup_shell()
 	if [ ! -f '/etc/zsh/zshenv' ]
 	then
 		# Create a default file if it does not exist
-		echo 'ZDOTDIR="$HOME"/.config/zsh' | sudo tee /etc/zsh/zshenv
+		echo 'ZDOTDIR="$HOME"/.config/zsh' | "$priv" tee /etc/zsh/zshenv
 	elif ! grep -q 'ZDOTDIR' /etc/zsh/zshenv
 	then
 		# Add the config to a possibly existing default file if not set
-		echo 'ZDOTDIR="$HOME"/.config/zsh' | sudo tee -a /etc/zsh/zshenv
+		echo 'ZDOTDIR="$HOME"/.config/zsh' | "$priv" tee -a /etc/zsh/zshenv
 	fi
 
 	chsh "$default_shell"
@@ -414,18 +422,32 @@ setup_shell()
 # Main
 # =============================================================================
 
-operating_system="$(uname -s)"
+err=0
 
+os="$(uname -s)"
+if [ "$os" = "Linux" || "$os" = "FreeBSD" || "$os" = "NetBSD" || "$os" = "DragonFlyBSD" ]
+then
+	priv='sudo'
+elif [ "$os" = "OpenBSD" ]
+	priv='doas'
+else
+	warning 'No known privilege authentication command guest for this O.S.'
+	return 1
+fi
+
+# Mandatory argument
 if [ $# -eq 0 ]; then
-    display_help
-    exit 1
+	display_help
+	exit 1
 fi
 
 case "$1" in
 	'all')
 		install_packages
+
 		chezmoi apply
 		[ "$profile" = 'desktop' ] && install_desktop
+
 		setup_shell
 
 		success "All done, log out and then log back in to see the changes."
@@ -440,7 +462,7 @@ case "$1" in
 		;;
 	'packages')
 		install_packages
-		warning "Do not forget to manually run `chezmoi apply` if needed."
+		warning 'Do not forget to manually run `chezmoi apply` if needed.'
 		;;
 	'shell')
 		setup_shell
@@ -454,5 +476,8 @@ case "$1" in
 		display_help
 		;;
 esac
+
+[ $err -eq 0 ] && success "Done!"
+return $err
 
 # vim: ft=sh fen

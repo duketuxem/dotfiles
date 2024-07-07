@@ -188,47 +188,6 @@ split()
 
 
 # =============================================================================
-# Desktop section
-# =============================================================================
-
-setup_forks()
-{
-	for soft in $(split "$software_list")
-	do
-		if ! check_git_repository "$custom_git_repo_https/$soft"
-		then
-			err=1
-			error "Can not find the repository for $soft..."
-			continue
-		fi
-
-		if [ -d "$soft" ]
-		then
-			warning "Folder $soft already exists, skipping..."
-			continue
-		fi
-
-		info "Installing $soft..."
-		git clone "$custom_git_repo_https/$soft" \
-			&& cd "$soft" \
-			&& "$priv" make install \
-			&& git remote add upstream "$suckless_git_upstream/$soft.git" \
-			&& git remote set-url origin "$custom_git_repo_ssh/$soft.git" \
-			&& make clean \
-			&& cd ..
-	done
-	[ $err -eq 1 ] && error 'One or more repository was incorrect'
-}
-
-setup_fonts()
-{
-	[ -f "CodeNewRomanNerdFont-Regular.otf" ] && return
-
-	curl -fLo "CodeNewRomanNerdFont-Regular.otf" \
-		https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/CodeNewRoman/Regular/CodeNewRomanNerdFont-Regular.otf
-}
-
-# =============================================================================
 # Packages
 # =============================================================================
 
@@ -303,7 +262,7 @@ install_linux_core_profile()
 install_linux_desktop_profile()
 {
 	# depends_on: core
-	install_core_profile
+	install_linux_core_profile
 
 	desktop="{{ range .linux.profiles.desktop -}} {{.}} {{ end}}"
 
@@ -331,8 +290,75 @@ install_linux_desktop_profile()
 
 
 # =============================================================================
-# Script steps
+# Desktop section
 # =============================================================================
+
+setup_forks()
+{
+	for soft in $(split "$software_list")
+	do
+		if ! check_git_repository "$custom_git_repo_https/$soft"
+		then
+			err=1
+			error "Can not find the repository for $soft..."
+			continue
+		fi
+
+		if [ -d "$soft" ]
+		then
+			warning "Folder $soft already exists, skipping..."
+			continue
+		fi
+
+		info "Installing $soft..."
+		git clone "$custom_git_repo_https/$soft" \
+			&& cd "$soft" \
+			&& "$priv" make install \
+			&& git remote add upstream "$suckless_git_upstream/$soft.git" \
+			&& git remote set-url origin "$custom_git_repo_ssh/$soft.git" \
+			&& make clean \
+			&& cd .. \
+			|| error "Setup failed for $soft"; return 1
+	done
+	[ $err -eq 1 ] && error 'One or more repository was incorrect'
+}
+
+setup_fonts()
+{
+	if [ -f "CodeNewRomanNerdFont-Regular.otf" ]
+	then
+		info "Font CodeNewRoman already present, skipping download..."
+		return
+	else
+		curl -fLo "CodeNewRomanNerdFont-Regular.otf" \
+			https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/CodeNewRoman/Regular/CodeNewRomanNerdFont-Regular.otf
+	fi
+	# Is this needed ?: fc-cache -fv
+}
+
+
+# =============================================================================
+# Script (logical) steps
+# =============================================================================
+
+display_help()
+{
+	printf 'Prepare a host to apply the configuration from this repository.
+
+Usage:
+%s [command]
+
+Commands:
+all            Execute all steps for a complete environment setup.
+packages       Install a chosen set of packages based on the detected OS.
+shell          Set the configuration path and change the default shell.
+
+Examples:
+%s all
+%s packages
+%s shell
+' "$0" "$0" "$0" "$0"
+}
 
 detect_operating_system()
 {
@@ -354,27 +380,6 @@ detect_operating_system()
 	fi
 }
 
-display_help()
-{
-	printf 'Prepare a host to apply the configuration from this repository.
-
-Usage:
-%s [command]
-
-Commands:
-all            Execute all steps for a complete environment setup.
-packages       Install necessary packages based on the detected OS.
-shell          Set the configuration path and change the default shell.
-help           Show this help message and usage instructions.
-
-Examples:
-%s all
-%s packages
-%s shell
-%s help
-' "$0" "$0" "$0" "$0" "$0"
-}
-
 # Cross platform package installation
 install_packages()
 {
@@ -393,7 +398,8 @@ install_packages()
 			install_linux_core_profile
 		fi
 
-	elif [ "$os" = 'FreeBSD' ]; then
+	elif [ "$os" = 'FreeBSD' ]
+	then
 		printf "BSD Unsupported for now\n"
 		# install_bsd_packages
 	else
@@ -425,16 +431,24 @@ install_desktop()
 setup_shell()
 {
 	step 'Setting up the default shell.'
+
 	if [ ! -f '/etc/zsh/zshenv' ]
 	then
 		# Create a default file if it does not exist
 		echo 'ZDOTDIR="$HOME"/.config/zsh' | "$priv" tee /etc/zsh/zshenv
 	elif ! grep -q 'ZDOTDIR' /etc/zsh/zshenv
 	then
-		# Add the config to a possibly existing default file if not set
+		# Add the config to a possibly existing default file
 		echo 'ZDOTDIR="$HOME"/.config/zsh' | "$priv" tee -a /etc/zsh/zshenv
+	else
+		echo 'ZDOTDIR was found set to: ' $(grep ZDOTDIR /etc/zsh/zshenv)
 	fi
 
+	if [ "$SHELL" = "$shell" ]
+	then
+		info "Shell is already set to $shell"
+		return 0
+	fi
 	chsh -s "$default_shell" "$USER"
 }
 
@@ -450,38 +464,23 @@ if [ $# -eq 0 ]; then
 	exit 1
 fi
 
-# Guess platform for sudo/doas and packages set
-detect_operating_system
-
 case "$1" in
 	'all')
+		# Guess platform for sudo/doas and packages set
+		detect_operating_system
 		install_packages
-
 		chezmoi apply
 		[ "$profile" = 'desktop' ] && install_desktop
-
 		setup_shell
-
 		success "All done, log out and then log back in to see the changes."
 		;;
-
-	'desktop')
-		# Requires:
-		# install_packages (with desktop profile)
-		# `chezmoi apply` for having the required folder paths created
-		install_desktop
-		# setup_shell
-		;;
 	'packages')
+		detect_operating_system
 		install_packages
-		warning 'Do not forget to manually run `chezmoi apply` if needed.'
 		;;
 	'shell')
+		detect_operating_system
 		setup_shell
-		;;
-
-	'help')
-		display_help
 		;;
 	*)
 		printf 'Unknown command: %s\n\n' "$1"

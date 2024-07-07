@@ -195,7 +195,7 @@ setup_forks()
 {
 	for soft in $(split "$software_list")
 	do
-		if check_git_repository "$custom_git_repo_https/$soft"
+		if ! check_git_repository "$custom_git_repo_https/$soft"
 		then
 			err=1
 			error "Can not find the repository for $soft..."

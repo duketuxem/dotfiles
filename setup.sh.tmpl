@@ -334,6 +334,26 @@ install_linux_desktop_profile()
 # Script steps
 # =============================================================================
 
+detect_operating_system()
+{
+	os="$(uname -s)"
+	if [ "$os" = "Linux" ] || \
+		[ "$os" = "NetBSD" ] || \
+		[ "$os" = "FreeBSD" ] || \
+		[ "$os" = "DragonFlyBSD" ]
+		then
+			info "Detected: $os"
+			priv='sudo'
+		elif [ "$os" = "OpenBSD" ]
+		then
+			info "Detected: $os"
+			priv='doas'
+		else
+			error 'No known privilege authentication command guest for this OS.'
+			return 1
+	fi
+}
+
 display_help()
 {
 	printf 'Prepare a host to apply the configuration from this repository.
@@ -424,23 +444,14 @@ setup_shell()
 
 err=0
 
-os="$(uname -s)"
-if [ "$os" = "Linux" || "$os" = "FreeBSD" || "$os" = "NetBSD" || "$os" = "DragonFlyBSD" ]
-then
-	priv='sudo'
-elif [ "$os" = "OpenBSD" ]
-then
-	priv='doas'
-else
-	warning 'No known privilege authentication command guest for this O.S.'
-	return 1
-fi
-
-# Mandatory argument
+# Mandatory argument check
 if [ $# -eq 0 ]; then
 	display_help
 	exit 1
 fi
+
+# Guess platform for sudo/doas and packages set
+detect_operating_system
 
 case "$1" in
 	'all')

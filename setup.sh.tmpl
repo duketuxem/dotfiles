@@ -318,7 +318,7 @@ setup_forks()
 			&& git remote set-url origin "$custom_git_repo_ssh/$soft.git" \
 			&& make clean \
 			&& cd .. \
-			|| error "Setup failed for $soft"; return 1
+			|| error "Setup failed for $soft" && return 1
 	done
 	[ $err -eq 1 ] && error 'One or more repository was incorrect'
 }
@@ -444,7 +444,7 @@ setup_shell()
 		echo 'ZDOTDIR was found set to: ' $(grep ZDOTDIR /etc/zsh/zshenv)
 	fi
 
-	if [ "$SHELL" = "$shell" ]
+	if [ "$SHELL" = "$default_shell" ]
 	then
 		info "Shell is already set to $shell"
 		return 0

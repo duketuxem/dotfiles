@@ -429,6 +429,7 @@ if [ "$os" = "Linux" || "$os" = "FreeBSD" || "$os" = "NetBSD" || "$os" = "Dragon
 then
 	priv='sudo'
 elif [ "$os" = "OpenBSD" ]
+then
 	priv='doas'
 else
 	warning 'No known privilege authentication command guest for this O.S.'

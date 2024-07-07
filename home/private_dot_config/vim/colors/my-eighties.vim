@@ -31,8 +31,8 @@ let s:purple = { "gui": "#cc99cc", "cli": "6" } 		" base0E
 let s:deprec = { "gui": "#d27b53", "cli": "6" } 		" base0F
 " Additionnal colors from me
 let s:bonus_dark1  = { "gui": "#303030", "cli": "1000" } " 80 col mark
-let s:bonus_green  = { "gui": "#225926", "cli": "9" } 	 " Lincoln Green
-let s:bonus_red    = { "gui": "#a42a28", "cli": "9" } 	 " Auburn
+let s:bonus_green  = { "gui": "#2b5437", "cli": "9" } 	 " Github green
+let s:bonus_red    = { "gui": "#4e231d", "cli": "9" } 	 " Github red
 let s:bonus_orange = { "gui": "#cc7400", "cli": "9" } 	 " Ochre
 let s:bonus_olight = { "gui": "#d18117", "cli": "9" } 	 " lighter than Ochre
 
@@ -83,7 +83,7 @@ call s:h("PmenuThumb",   "", s:cyan, "")
 call s:h("ErrorMsg",     "", s:bonus_red, "")
 
 call s:h("DiffAdd",      "", s:bonus_green, "")
-call s:h("DiffChange",   "", s:bonus_orange, "")
+call s:h("DiffChange",   "", s:dark3, "")
 call s:h("DiffDelete",   "", s:bonus_red, "")
 call s:h("DiffText",     "", s:bonus_olight, "")
 " }}}

@@ -540,18 +540,19 @@ alias \
 	la='ls -a'				\
 	ll='ls -l'				\
 	lla='ls -al'				\
-        ga='git add'				\
-        gc='git checkout'			\
-        gd='git diff'				\
-        gl='git log'				\
-        j='jobs'				\
-        ons='alsamixer'				\
-        se='sudoedit'				\
-        smci='sudo make clean install'		\
-        vi='vim'				\
-        xinst='sudo xbps-install'		\
-        xquery='xbps-query'			\
-        xremove='sudo xbps-remove'		\
+	gad='git add'				\
+	gch='git checkout'			\
+	gdi='git diff'				\
+	glo='git log'				\
+	gst='git status'			\
+	j='jobs'				\
+	ons='alsamixer'				\
+	se='sudoedit'				\
+	smci='sudo make clean install'		\
+	vi='vim'				\
+	xinst='sudo xbps-install'		\
+	xquery='xbps-query'			\
+	xremove='sudo xbps-remove'		\
 	tree='tree --dirsfirst'			\
 	vw='vim -c VimwikiIndex'		\
 	nnn='nnn -e'				\
@@ -568,7 +569,6 @@ alias \
         tconf="$EDITOR $XDG_CONFIG_HOME/tmux/tmux.conf" \
         vconf="$EDITOR $XDG_CONFIG_HOME/vim/vimrc" \
         xinitrc="$EDITOR $XDG_CONFIG_HOME/x11/xinitrc" \
-        zprofile="$EDITOR $XDG_CONFIG_HOME/zsh/zprofile" \
         zconf="$EDITOR $XDG_CONFIG_HOME/zsh/zshrc"
 
 ### Admin

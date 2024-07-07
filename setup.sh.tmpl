@@ -311,14 +311,16 @@ setup_forks()
 		fi
 
 		info "Installing $soft..."
-		git clone "$custom_git_repo_https/$soft" \
-			&& cd "$soft" \
-			&& "$priv" make install \
-			&& git remote add upstream "$suckless_git_upstream/$soft.git" \
-			&& git remote set-url origin "$custom_git_repo_ssh/$soft.git" \
-			&& make clean \
-			&& cd .. \
-			|| error "Setup failed for $soft" && return 1
+		if ! git clone "$custom_git_repo_https/$soft" \
+			|| ! cd "$soft" \
+			|| ! "$priv" make install \
+			|| ! git remote add upstream "$suckless_git_upstream/$soft.git" \
+			|| ! git remote set-url origin "$custom_git_repo_ssh/$soft.git" \
+			|| ! make clean \
+			|| ! cd ..; then
+				err=1
+				error "Setup failed for $soft"
+		fi
 	done
 	[ $err -eq 1 ] && error 'One or more repository was incorrect'
 }

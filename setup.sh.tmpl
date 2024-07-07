@@ -404,7 +404,7 @@ install_packages()
 # A set of forked software that make my GUI
 install_desktop()
 {
-	if [ ! -d "$forks_dir" || ! -d "$fonts_dir" ]
+	if [ ! -d "$forks_dir" ] || [ ! -d "$fonts_dir" ]
 	then
 		error "Missing fork dir ($forks_dir) or font dir ($fonts_dir)."
 		error 'Have you run `chezmoi apply` to create empty folders?'
@@ -435,7 +435,7 @@ setup_shell()
 		echo 'ZDOTDIR="$HOME"/.config/zsh' | "$priv" tee -a /etc/zsh/zshenv
 	fi
 
-	chsh "$default_shell"
+	chsh -s "$default_shell" "$USER"
 }
 
 # =============================================================================

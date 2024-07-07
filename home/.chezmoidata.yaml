@@ -45,3 +45,9 @@ linux:
       - noto-fonts-cjk
 
 bsd:
+  profiles:
+    core:
+      - htop
+    desktop:
+      - xorg
+      - firefox

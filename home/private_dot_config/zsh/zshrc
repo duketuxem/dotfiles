@@ -541,9 +541,12 @@ alias \
 	ll='ls -l'				\
 	lla='ls -al'				\
 	gad='git add'				\
+	gco='git commit'			\
+	gpu='git push'				\
+	gbr='git branch -a'			\
 	gch='git checkout'			\
 	gdi='git diff'				\
-	glo='git log'				\
+	glo='git log --graph --decorate --all'	\
 	gst='git status'			\
 	j='jobs'				\
 	ons='alsamixer'				\

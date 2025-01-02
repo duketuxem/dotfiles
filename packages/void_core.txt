@@ -1,0 +1,14 @@
+base-devel
+bat
+ctags
+curl
+fd
+fzf
+htop
+neofetch
+tmux
+tree
+vim
+wget
+zsh
+zsh-syntax-highlighting

@@ -9,16 +9,6 @@
 #  \▓▓\▓▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓ \▓▓▓▓▓▓▓\▓▓   \▓▓    \▓
 
 
-# This file is read by *every* possible zsh shell so it should contain
-# as less commands as possible, to ensure a quick start up time.
-
-# [Reminder]
-# /etc/zsh/zshenv:
-# ZDOTDIR="$HOME"/.config/zsh
-# -> Otherwise, there would be one ~/.zshenv remaining (ref: zsh startup files)
-
-
-
 # =============================================================================
 # Path setting
 # =============================================================================

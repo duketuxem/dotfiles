@@ -1,11 +1,9 @@
-# TODO: Documentation
-# desktop profiles implies core 'can not "use" firefox" if I don't get my CLI
-# setup up and running
+# See the documentation in the packages/ folder
+# to see why this has been discarded.
 
 linux:
   profiles:
     core:
-      - bat
       - curl
       - fzf
       - htop
@@ -24,6 +22,7 @@ linux:
 
   debian:
     core:
+      - batcat
       - build-essential
       - fd-find
       - universal-ctags
@@ -35,6 +34,7 @@ linux:
 
   void:
     core:
+      - bat
       - base-devel
       - fd
       - ctags
@@ -47,6 +47,7 @@ linux:
 bsd:
   profiles:
     core:
+      - bat
       - htop
     desktop:
       - xorg

@@ -1,0 +1,6 @@
+firefox
+fonts-noto-cjk
+libx11-dev
+libxft-dev
+libxinerama-dev
+xorg

@@ -1,0 +1,14 @@
+batcat
+build-essential
+curl
+fd-find
+fzf
+htop
+neofetch
+tmux
+tree
+universal-ctags
+vim
+wget
+zsh
+zsh-syntax-highlighting

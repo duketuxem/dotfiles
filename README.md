@@ -1,67 +1,127 @@
 <div align="center">
-    <h1>Dotfiles</h1>
-    <p>My personnal config for all my favorite softwares, at one location.</p>
-    <!-- Insert the ricing screenshot -->
+  <h1>Dotfiles</h1>
+  <p>My personal config for all my favorite software, in one place.</p>
+  <!-- Insert the ricing screenshot here -->
 </div>
 
+---
 
-## Table of contents
+### Table of Contents
 
-+ [Introduction](#introduction)
-+ [Requirements](#requirements)
+- [Introduction](#introduction)
+
 
 ## Introduction
 
-Every time I come to use a new set up (virtual) machine, obvioulsy nothing I
-want is there... Having to reinstall the same software suite repeatedly is
-frustrating, and managing the corresponding configuration for those
-applications is even worse.
+Every time I set up a new machine, none of the tools and
+configurations I need are available. Reinstalling the same software suite
+repeatedly is frustrating, and managing the corresponding configurations is
+even worse.
 
-This repository solves those issues at keeping my configuration and the related
-software suite at a central place.
+This repository addresses these issues by centralizing everything at one place.
 
+This can be seen as a package of a whole custom desktop environment experience,
+though not in the exact meaning of KDE or GNOME, but in the same spirit.
 
-## Requirements
+The configuration is organized into two conceptual layers,
+referred to as "profiles" in the following sections.
+These profiles enable partial or complete deployment of the configuration,
+depending on the needs:
 
-- Any Linux (still a WIP for maximum compatibility) or Windows (coming soon)
-- Internet access in the box
-- /!\ An updated system (followed by a reboot just in case) /!\
-- Installed [Chezmoi](https://www.chezmoi.io/) & `git`
+ - The "core" profile provides a minimal setup tailored for a command-line interface (CLI) workflow.
 
-### On Linux
-
-#### Install packages
-
-1. `chezmoi init duketuxem`
-2. `chezmoi cd`
-3. `./install-packages.sh`
-4. Choose core or desktop (core is for headless/tty, desktop for graphical use)
-5. The relevant packages should be installed!
-
-You may `exit` the shell since it was spawned by chezmoi
-
-#### Deploy config
-
-`chezmoi apply` to install everything on the host
-
-#### Show zsh the configuration path
-
-For all users:
-
-`echo 'ZDOTDIR="$HOME"/.config/zsh' | sudo tee /etc/zsh/zshenv`
-
-Or only for the current user:
-
-`echo 'ZDOTDIR="$HOME"/.config/zsh' > ~/.zshenv`
-
-`echo 'source $ZDOTDIR/.zshenv' >> ~/.zshenv`
-
-#### Logout and login again
-
-1. `chsh /bin/zsh` (or any platform default shell path and type the user passwd
-2. `exit`
+ - The "desktop" profile extends the core setup, adding everything required for a graphical user interface (GUI) environment.
 
 
-### On Windows
+### Packages table
 
-This is to be done.
+Dotfiles would not be useful without the associated software installed.
+
+Here is a summary of what is in use and what would be installed.
+
+| Software | Description |
+| -- | --|
+| TO | DO |
+
+
+## Installation
+
+
+### Requirements
+
+- (Virtual) machine with internet access
+- Any *NIX-based **up to date** system (Linux, macOS, BSD, ...)
+- [Chezmoi](https://www.chezmoi.io/) and `git` installed
+
+### Steps
+
+1. **Clone this repository with Chezmoi**
+
+   `chezmoi init duketuxem`
+
+2. **Navigate to the initialized repository**
+
+   `chezmoi cd`
+
+3. **Install the relevant packages**
+
+   a. Refer to the [packages/README.md](./packages/README.md#installation)
+   for platform-specific instructions on installing the "core"
+   profile packages. These packages provide a minimal and functional CLI setup.
+
+   b. Optionally, repeat the process for the "desktop" profile
+   to set up a GUI environment.
+
+4. **Set the Zsh configuration path**
+
+    This step ensures that the configurations from this repository
+    are correctly linked to the dotfiles to be deployed.
+
+    * **System wide**:
+
+        If there is no `/etc/zsh/zshenv` file:
+
+        Create it with the following line: `ZDOTDIR="$HOME"/.config/zsh`.
+
+        `echo 'ZDOTDIR="$HOME"/.config/zsh' | sudo tee /etc/zsh/zshenv`
+
+    * **On a per-user basis**:
+
+        A symbolic link would points to the actual path:
+
+        ```sh
+        cd # need to be in $HOME
+        ln -s .config/zsh/zshenv .zshenv
+        ```
+
+    You can check the related
+    [Zsh README.md](./home/private_dot_config/zsh/README.md#zshenv)
+    for more information on this step if you wish.
+
+5. **Deploy the configuration onto the host**
+
+    The system is now prepared to apply all the configurations from this
+    repository. Run the following command to deploy the dotfiles onto the host:
+
+   `chezmoi apply`
+
+6. **Change the default shell to Zsh**
+
+   Finally, enable Zsh to be the user's default shell, so everything will be loaded upon login.
+
+   `chsh`, then type `/bin/zsh`.
+
+7. **Log off and then log back again**
+
+   All set!
+
+
+### Additional Notes
+
+- Feel free to modify configurations as per your personal needs.
+- Contributions are welcome! Open an issue or PR if you’d like to improve or customize anything.
+
+
+## License
+
+This repository is licensed under the [GPL-3.0 license](LICENSE).

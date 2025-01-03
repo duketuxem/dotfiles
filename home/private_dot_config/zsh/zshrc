@@ -572,7 +572,8 @@ alias \
         tconf="$EDITOR $XDG_CONFIG_HOME/tmux/tmux.conf" \
         vconf="$EDITOR $XDG_CONFIG_HOME/vim/vimrc" \
         xinitrc="$EDITOR $XDG_CONFIG_HOME/x11/xinitrc" \
-        zconf="$EDITOR $XDG_CONFIG_HOME/zsh/zshrc"
+        zconf="$EDITOR $XDG_CONFIG_HOME/zsh/zshrc" \
+	cmcd="cd $(chezmoi source-path)"
 
 ### Admin
 alias \

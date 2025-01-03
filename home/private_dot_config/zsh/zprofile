@@ -14,7 +14,8 @@
 
 
 # If no graphical server instance is running and the user has logged from tty1
-if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]] && [[ $(command -v startx) ]]
+if [[ $(command -v dwm) ]] && [[ $(command -v startx) ]] \
+	&& [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]
 then
 	# `exec` is to log off once the graphical session has been terminated
 	# (calling zlogout)

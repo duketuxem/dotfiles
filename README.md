@@ -63,7 +63,23 @@ Here is a summary of what is in use and what would be installed.
 - Any *NIX-based **up to date** system (Linux, macOS, BSD, ...)
 - `chezmoi` and `git` installed
 
-### Steps
+### TL;DR
+
+
+   ```sh
+   chezmoi init duketuxem
+   chezmoi cd
+   # Packages install
+   echo 'ZDOTDIR="$HOME"/.config/zsh' | sudo tee /etc/zsh/zshenv
+   chezmoi apply
+   chsh # /bin/zsh
+   # Logout and log back
+   # Post install steps
+   # Install desktop or not
+   ```
+
+
+### Core install
 
 1. **Clone this repository with Chezmoi**
 
@@ -93,8 +109,6 @@ Here is a summary of what is in use and what would be installed.
 
         Create it with the following line: `ZDOTDIR="$HOME"/.config/zsh`.
 
-        `echo 'ZDOTDIR="$HOME"/.config/zsh' | sudo tee /etc/zsh/zshenv`
-
     * **On a per-user basis**:
 
         A symbolic link would points to the actual path:
@@ -122,12 +136,54 @@ Here is a summary of what is in use and what would be installed.
 
    `chsh`, then type `/bin/zsh`.
 
-7. **Log off and then log back again**
+7. **That's it**
 
-   All set!
+   Log off and then log back again to see everything loaded.
+
+### Some post installation steps
+
+   Here are a few pointers about things we always forget to do/set.
+
+   - **Import your ssh key**
+
+   - **Set some git parameters**
+
+      The `dotfiles` git repository was not configured, you might want to run:
+
+      ```sh
+      chezmoi cd
+
+      # use ssh for this repository
+      git remote set-url origin git@github.com:USERNAME/dotfiles.git
+
+      # identity setup (global or not depending on your needs)
+      git config --global user.name "YOUR NAME"
+      git config --global user.email "YOUR EMAIL"
+      ```
 
 
-### Additional Notes
+### Desktop installation
+
+If like me, you would like some custom managed software to be installed,
+you could use the `setup_desktop.sh` script.
+
+Just review the default parameters on the top in case you don't have `sudo`
+or alike installed.
+
+Once you are sure about those settings, just run `./setup_desktop.sh`.
+
+
+
+## FAQ
+
+- **Why is this process not fully automated as on some other repos ?**
+
+I deliberately chose to not have a full installation process despite having
+started to write one, see the `trash/` folder for some legacy code and reasons
+this has been discarded.
+
+
+## Additional Notes
 
 - Feel free to modify configurations as per your personal needs.
 - Contributions are welcome!

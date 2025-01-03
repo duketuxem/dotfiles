@@ -3,15 +3,14 @@
 # script run as root (su):
 priv="sudo"
 repos_root_folder="$HOME/workspace/repos"
-fonts_dir="$HOME/.local/share/fonts"
 
 # script run as sudo/doas:
 # priv=""
 # repos_root_folder="/tmp"
-# fonts_dir="/usr/share/fonts/"
 
 # -------------------------------------
 
+fonts_dir="/usr/share/fonts/"
 suckless_git_upstream="https://git.suckless.org/"
 custom_git_repo_https="https://github.com/duketuxem"
 custom_git_repo_ssh="git@github.com:duketuxem"
@@ -64,7 +63,7 @@ setup_code_new()
 	then
 		printf "Font CodeNewRoman already present, skipping download...\n"
 	else
-		curl -fLo "CodeNewRomanNerdFont-Regular.otf" \
+		"$priv" curl -fLo "CodeNewRomanNerdFont-Regular.otf" \
 			https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/CodeNewRoman/Regular/CodeNewRomanNerdFont-Regular.otf
 	fi
 	# Is this needed ?: fc-cache -fv

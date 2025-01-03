@@ -35,8 +35,11 @@ These profiles are defined as follows:
 
 ### Chezmoi
 
-The configuration is managed thanks to [Chezmoi](https://www.chezmoi.io)
-and is bundled into an indivisible set of files in the `home` directory.
+The configuration in itself is managed thanks to
+[Chezmoi](https://www.chezmoi.io).
+
+As opposed to the packages, it is bundled into an indivisible set of files
+in the `home` directory.
 
 
 ### Packages table

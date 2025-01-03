@@ -62,7 +62,7 @@ setup_code_new()
 
 	if [ -f "CodeNewRomanNerdFont-Regular.otf" ]
 	then
-		print "Font CodeNewRoman already present, skipping download...\n"
+		printf "Font CodeNewRoman already present, skipping download...\n"
 	else
 		curl -fLo "CodeNewRomanNerdFont-Regular.otf" \
 			https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/CodeNewRoman/Regular/CodeNewRomanNerdFont-Regular.otf
@@ -84,7 +84,7 @@ setup_forks()
 			print "Folder $soft already exists, skipping...\n"
 		fi
 
-		info "Installing $soft..."
+		printf "Installing $soft...\n"
 		if ! git clone "$custom_git_repo_https/$soft" \
 			|| ! cd "$soft" \
 			|| ! "$priv" make install \

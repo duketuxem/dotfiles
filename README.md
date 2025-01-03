@@ -20,17 +20,23 @@ even worse.
 
 This repository addresses these issues by centralizing everything at one place.
 
-This can be seen as a package of a whole custom desktop environment experience,
-though not in the exact meaning of KDE or GNOME, but in the same spirit.
+This can be seen as a package that provides a fully customized
+desktop environment experience—not in the exact sense of KDE or GNOME,
+but in a similar spirit.
 
-The configuration is organized into two conceptual layers,
-referred to as "profiles" in the following sections.
-These profiles enable partial or complete deployment of the configuration,
-depending on the needs:
+All dependencies, in the form of software packages, are organized into two
+conceptual layers, referred to as "profiles" in the following sections.
+These profiles are defined as follows:
 
- - The "core" profile provides a minimal setup tailored for a command-line interface (CLI) workflow.
+ - The "core" profile provides a minimal setup tailored for
+ a command-line interface (CLI) workflow.
 
  - The "desktop" profile extends the core setup, adding everything required for a graphical user interface (GUI) environment.
+
+### Chezmoi
+
+The configuration is managed thanks to [Chezmoi](https://www.chezmoi.io)
+and is bundled into an indivisible set of files in the `home` directory.
 
 
 ### Packages table
@@ -51,7 +57,7 @@ Here is a summary of what is in use and what would be installed.
 
 - (Virtual) machine with internet access
 - Any *NIX-based **up to date** system (Linux, macOS, BSD, ...)
-- [Chezmoi](https://www.chezmoi.io/) and `git` installed
+- `chezmoi` and `git` installed
 
 ### Steps
 
@@ -67,7 +73,7 @@ Here is a summary of what is in use and what would be installed.
 
    a. Refer to the [packages/README.md](./packages/README.md#installation)
    for platform-specific instructions on installing the "core"
-   profile packages. These packages provide a minimal and functional CLI setup.
+   profile packages.
 
    b. Optionally, repeat the process for the "desktop" profile
    to set up a GUI environment.

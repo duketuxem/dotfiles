@@ -24,6 +24,24 @@ error() {
     exit 1
 }
 
+# Split a string into a list, one element per line
+split()
+{
+	# disable globbing to ensure the word-splitting is safe.
+	set -f
+	# safe to disable as it just warns against
+	# word-splitting which is the behavior we expect.
+	# shellcheck disable=2086
+	set -- $1
+
+	# print each list value on its own line.
+	printf '%s\n' "$@"
+
+	# re-enable globbing.
+	set +f
+}
+
+
 check_git_repository()
 {
 	if ! git ls-remote --exit-code "$1" > /dev/null 2>&1

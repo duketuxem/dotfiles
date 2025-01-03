@@ -31,7 +31,8 @@ These profiles are defined as follows:
  - The "core" profile provides a minimal setup tailored for
  a command-line interface (CLI) workflow.
 
- - The "desktop" profile extends the core setup, adding everything required for a graphical user interface (GUI) environment.
+ - The "desktop" profile extends the core setup, adding everything required
+ for a graphical user interface (GUI) environment.
 
 ### Chezmoi
 
@@ -116,7 +117,8 @@ Here is a summary of what is in use and what would be installed.
 
 6. **Change the default shell to Zsh**
 
-   Finally, enable Zsh to be the user's default shell, so everything will be loaded upon login.
+   Finally, enable Zsh to be the user's default shell,
+   so everything will be loaded upon login.
 
    `chsh`, then type `/bin/zsh`.
 
@@ -128,7 +130,8 @@ Here is a summary of what is in use and what would be installed.
 ### Additional Notes
 
 - Feel free to modify configurations as per your personal needs.
-- Contributions are welcome! Open an issue or PR if you’d like to improve or customize anything.
+- Contributions are welcome!
+Open an issue or PR if you’d like to improve or customize anything.
 
 
 ## License

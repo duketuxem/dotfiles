@@ -18,6 +18,8 @@
 # UN*X legacy
 export EDITOR='vim'
 export PAGER='less'
+# Raw-chars/quit-on-EOF/wrap-lines/don't-clear-screen/one-match-color-search
+export LESS='-RFSXg'
 # Personnal
 export BROWSER='firefox'
 export PLAYER='mpv'
@@ -513,7 +515,7 @@ man() {
 	# ue = Stop underline effect.
 	# so = Start stand-out effect (similar to reverse text).
 	# se = Stop stand-out effect (similar to reverse text).
-	LESS="-j.5"			\
+	LESS="$LESS -j.5"		\
 	LESS_TERMCAP_md=$'\e[01;34m'    \
 	LESS_TERMCAP_me=$'\e[0m'        \
 	LESS_TERMCAP_us=$'\e[01;32m'    \

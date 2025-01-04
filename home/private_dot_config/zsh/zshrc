@@ -18,7 +18,6 @@
 # UN*X legacy
 export EDITOR='vim'
 export PAGER='less'
-export LESS='-R +g'
 # Personnal
 export BROWSER='firefox'
 export PLAYER='mpv'
@@ -573,7 +572,7 @@ alias \
         vconf="$EDITOR $XDG_CONFIG_HOME/vim/vimrc" \
         xinitrc="$EDITOR $XDG_CONFIG_HOME/x11/xinitrc" \
         zconf="$EDITOR $XDG_CONFIG_HOME/zsh/zshrc" \
-	cmcd="cd $(chezmoi source-path)"
+	cmcd="cd $(chezmoi source-path)/.."
 
 ### Admin
 alias \

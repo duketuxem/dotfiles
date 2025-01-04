@@ -1,5 +1,6 @@
 base-devel
 bat
+cloc
 ctags
 curl
 fd

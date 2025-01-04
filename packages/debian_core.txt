@@ -1,5 +1,6 @@
 batcat
 build-essential
+cloc
 curl
 fd-find
 fzf

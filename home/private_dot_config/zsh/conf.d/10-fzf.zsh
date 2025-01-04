@@ -5,12 +5,14 @@
 # this is a nice function
 autoload -Uz is-at-least
 
+# underlying binary used by fzf
 fdbin='fd'
 [[ "$DISTRO" = 'debian' ]] && fdbin='fdfind'
 
-fdversion="$($fdbin --version | cut -d ' ' -f 2)"
+fzfversion="$(fzf --version | cut -d ' ' -f 1)"
 
-if ! is-at-least "$fdversion" 0.48.0
+# if fzf is an older version
+if ! is-at-least 0.48.0 "$fzfversion"
 then
 	source /usr/share/doc/fzf/examples/completion.zsh
 	source /usr/share/doc/fzf/examples/key-bindings.zsh

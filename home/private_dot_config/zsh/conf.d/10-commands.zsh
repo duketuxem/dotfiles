@@ -28,15 +28,16 @@ man() {
 	# ue = Stop underline effect.
 	# so = Start stand-out effect (similar to reverse text).
 	# se = Stop stand-out effect (similar to reverse text).
-	LESS="$LESS -j.5"		\
-	LESS_TERMCAP_md=$'\e[01;34m'    \
-	LESS_TERMCAP_me=$'\e[0m'        \
-	LESS_TERMCAP_us=$'\e[01;32m'    \
-	LESS_TERMCAP_ue=$'\e[0m'        \
-	LESS_TERMCAP_so=$'\e[45;43m'    \
-	LESS_TERMCAP_se=$'\e[0m'        \
-	command man -O width=$(($(tput cols)-10)) "$@"
-	# -O indent=10 ?
+	# note: had to export so it would work on other platforms.
+	export LESS="$LESS -j.5"		\
+		LESS_TERMCAP_md=$'\e[01;34m'	\
+		LESS_TERMCAP_me=$'\e[0m'	\
+		LESS_TERMCAP_us=$'\e[01;32m'	\
+		LESS_TERMCAP_ue=$'\e[0m'	\
+		LESS_TERMCAP_so=$'\e[45;43m'	\
+		LESS_TERMCAP_se=$'\e[0m'
+
+	command man "$@"
 }
 
 

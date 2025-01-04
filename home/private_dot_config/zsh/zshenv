@@ -16,6 +16,7 @@
 # Prepend:
 path=(
 	"$HOME/.local/bin"
+	"$HOME/.local/extra/bin"
 	$path
 )
 

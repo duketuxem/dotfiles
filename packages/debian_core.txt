@@ -1,4 +1,4 @@
-batcat
+bat
 build-essential
 cloc
 curl

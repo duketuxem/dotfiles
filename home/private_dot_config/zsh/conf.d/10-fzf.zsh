@@ -11,7 +11,6 @@ fdbin='fd'
 
 fzfversion="$(fzf --version | cut -d ' ' -f 1)"
 
-# if fzf is an older version
 if ! is-at-least 0.48.0 "$fzfversion"
 then
 	source /usr/share/doc/fzf/examples/completion.zsh

@@ -13,6 +13,10 @@
 
 
 
+# Run ssh-agent if not already running
+kill -0 "$SSH_AGENT_PID" || eval $(ssh-agent -s)
+
+
 # If no graphical server instance is running and the user has logged from tty1
 if [[ $(command -v dwm) ]] && [[ $(command -v startx) ]] \
 	&& [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]

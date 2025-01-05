@@ -1,0 +1,2 @@
+# Ask for password once per session as long as `ssh-agent` is running
+AddKeysToAgent yes

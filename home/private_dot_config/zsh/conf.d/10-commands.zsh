@@ -37,7 +37,12 @@ man() {
 		LESS_TERMCAP_so=$'\e[45;43m'	\
 		LESS_TERMCAP_se=$'\e[0m'
 
-	command man "$@"
+	if [ "$DISTRO" = 'void' ]; then
+		# man pages are not taking the maximum space...
+		command -O width=$(($(tput cols)-1)) "$@"
+	else
+		command man "$@"
+	fi
 }
 
 

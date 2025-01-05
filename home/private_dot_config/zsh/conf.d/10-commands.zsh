@@ -39,7 +39,7 @@ man() {
 
 	if [ "$DISTRO" = 'void' ]; then
 		# man pages are not taking the maximum space...
-		command -O width=$(($(tput cols)-1)) "$@"
+		command man -O width=$(($(tput cols)-1)) "$@"
 	else
 		command man "$@"
 	fi

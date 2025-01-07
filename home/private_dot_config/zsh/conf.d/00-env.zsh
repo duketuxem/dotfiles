@@ -1,6 +1,6 @@
-# ============================================================================
-# Environment variables (in an interactive context)
-# ============================================================================
+# =============================================================================
+# Environment variables - in an interactive context
+# =============================================================================
 
 ### System:
 export EDITOR='vim'
@@ -15,3 +15,6 @@ export BROWSER='firefox'
 export PLAYER='mpv'
 # export EXPLORER=''
 # export TERMINAL=''
+
+### XDG Base Directory fixes to keep a clean env
+alias wget='wget --no-hsts'

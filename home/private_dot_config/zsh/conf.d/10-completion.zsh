@@ -90,4 +90,3 @@ zstyle ':completion:*' verbose yes
 
 # reference:
 # zstyle :completion:<function>:<completer>:<command>:<argument>:<tag>
-# }}}

@@ -1,6 +1,8 @@
-xorg
+feh
+firefox
 libX11-devel
 libXft-devel
 libXinerama-devel
+mpv
 noto-fonts-cjk
-firefox
+xorg

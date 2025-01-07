@@ -70,7 +70,6 @@ Here is a summary of what is in use and what would be installed.
    chezmoi init duketuxem
    chezmoi cd
    # Packages install
-   echo 'ZDOTDIR="$HOME"/.config/zsh' | sudo tee /etc/zsh/zshenv
    chezmoi apply
    chsh # /bin/zsh
    # Logout and log back
@@ -98,45 +97,21 @@ Here is a summary of what is in use and what would be installed.
    b. Optionally, repeat the process for the "desktop" profile
    to set up a GUI environment.
 
-4. **Set the Zsh configuration path**
-
-    This step ensures that the configurations from this repository
-    are correctly linked to the dotfiles to be deployed.
-
-    * **System wide**:
-
-        If there is no `/etc/zsh/zshenv` file:
-
-        Create it with the following line: `ZDOTDIR="$HOME"/.config/zsh`.
-
-    * **On a per-user basis**:
-
-        A symbolic link would points to the actual path:
-
-        ```sh
-        cd # need to be in $HOME
-        ln -s .config/zsh/zshenv .zshenv
-        ```
-
-    You can check the related
-    [Zsh README.md](./home/private_dot_config/zsh/README.md#zshenv)
-    for more information on this step if you wish.
-
-5. **Deploy the configuration onto the host**
+4. **Deploy the configuration onto the host**
 
     The system is now prepared to apply all the configurations from this
     repository. Run the following command to deploy the dotfiles onto the host:
 
    `chezmoi apply`
 
-6. **Change the default shell to Zsh**
+5. **Change the default shell to Zsh**
 
    Finally, enable Zsh to be the user's default shell,
    so everything will be loaded upon login.
 
    `chsh`, then type `/bin/zsh`.
 
-7. **That's it**
+6. **That's it**
 
    Log off and then log back again to see everything loaded.
 

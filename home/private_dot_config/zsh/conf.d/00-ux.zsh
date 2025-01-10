@@ -36,7 +36,7 @@ alias \
 	mpv='mpv --fullscreen'						\
 	nnn='nnn -e'							\
 	patch='patch --reject-file=/dev/null --no-backup-if-mismatch --merge' \
-	tree='tree --dirsfirst'						\
+	tree='tree -C --dirsfirst'					\
 	watch='watch --color'						\
 	xterm='xterm -bg black -fg white'
 

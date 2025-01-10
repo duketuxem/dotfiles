@@ -1,0 +1,1 @@
+# https://www.cyberciti.biz/open-source/bat-linux-command-a-cat-clone-with-written-in-rust/

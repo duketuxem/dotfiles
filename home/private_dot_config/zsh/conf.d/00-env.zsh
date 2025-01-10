@@ -5,16 +5,22 @@
 ### System:
 export EDITOR='vim'
 export PAGER='less'
-# Raw-chars/quit-on-EOF/wrap-lines/don't-clear-screen/one-match-color-search
-export LESS='-RFSXg'
+# R: raw-chars
+# F: quit-on-EOF
+# S: wrap-lines
+# X: don't-clear-screen
+# g: one-match-color-search
+# j: center screen
+export LESS='-RFSXg -j.5'
 
 ### Custom:
 export DISTRO=$(awk -F= '/^ID=/ {gsub(/"/, "", $2); print $2}' /etc/os-release)
-## Defaults
+## Default apps
 export BROWSER='firefox'
 export PLAYER='mpv'
 # export EXPLORER=''
 # export TERMINAL=''
 
-### XDG Base Directory fixes to keep a clean env
-alias wget='wget --no-hsts'
+### Preferences
+# Dark theme
+export QT_STYLE_OVERRIDE='kvantum-dark'

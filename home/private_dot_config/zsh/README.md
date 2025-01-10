@@ -79,6 +79,24 @@ Where all the magic happens!
 
 Clear the terminal or any other resource acquired at login.
 
+## Configuration file levels
+
+In the idea:
+
+00-* 'init' stage - variables that may be used in later scripts
+or defaults that are going to be extended.
+
+10-* vanilla zsh features configuration
+
+20-* Use of plugins that enhance the vanilla experience
+
+30-* Plugins that use or rely on other plugins or soft
+
+50_* User mapping / merging of all of those into one customized experience
+
+90+* The latest required by settings/plugins and so on
+
+
 ## Resources
 
 Insert interesting resources here.

@@ -2,6 +2,7 @@
 #  Fuzzy File Finding
 # =============================================================================
 
+### Loading
 # From fzf changelog v0.48.0:
 # Shell integration scripts are now embedded in the fzf binary
 autoload -Uz is-at-least
@@ -12,14 +13,15 @@ then
 	# source /usr/share/fzf/key-bindings.zsh
 else
 	if [ "$DISTRO" = 'debian' ]; then
-		source /usr/share/doc/fzf/examples/completion.zsh \
-			/usr/share/doc/fzf/examples/key-bindings.zsh
+		source /usr/share/doc/fzf/examples/completion.zsh
+		source /usr/share/doc/fzf/examples/key-bindings.zsh
 	fi
 fi
 
+### Settings
 # underlying binary used by fzf
 fdbin='fd'
-[[ "$DISTRO" = 'debian' ]] && fdbin='fdfind'
+[ "$DISTRO" = 'debian' ] && fdbin='fdfind'
 
 # FuzZy Finder - So awesome...
 # - $FZF_TMUX_OPTS
@@ -38,3 +40,4 @@ export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 #"^R" fzf-history-widget
 #"^T" fzf-file-widget
 #"^[c" fzf-cd-widget
+unset fdbin

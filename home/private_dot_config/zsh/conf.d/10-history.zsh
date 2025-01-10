@@ -2,7 +2,6 @@
 # History
 # =============================================================================
 
-### History
 HISTFILE="$XDG_STATE_HOME/zsh/history"
 HISTSIZE=100000
 SAVEHIST=100000

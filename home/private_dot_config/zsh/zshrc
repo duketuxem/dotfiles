@@ -13,7 +13,10 @@
 # Uncomment here and: #zprof to audit startup time
 # zmodload zsh/zprof
 
-for file in $ZDOTDIR/conf.d/*; do source $file; done
+for file in $ZDOTDIR/conf.d/*.zsh; do
+        source "$file"
+done
+unset file
 
 # zprof
 

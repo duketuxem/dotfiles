@@ -11,5 +11,6 @@ tree
 universal-ctags
 vim
 wget
+xclip
 zsh
 zsh-syntax-highlighting

@@ -11,5 +11,6 @@ tmux
 tree
 vim
 wget
+xclip
 zsh
 zsh-syntax-highlighting

@@ -9,10 +9,12 @@
 #  \▓▓\▓▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓ \▓▓▓▓▓▓▓\▓▓   \▓▓    \▓
 
 
-# =============================================================================
-# Path setting
-# =============================================================================
+### Set the custom path independently from the system settings.
+# note: this stills requires a symlink: ~/.zshenv -> ~/.config/zsh
+ZDOTDIR="$HOME"/.config/zsh
 
+
+### Path setting
 # Prepend:
 path=(
 	"$HOME/.local/bin"
@@ -30,20 +32,16 @@ typeset -U path
 export PATH
 
 
-# =============================================================================
-# XDG Base directory spec
-# =============================================================================
-
-# Definition
+### XDG Base directory spec
+## Definition
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DESKTOP_DIR="$HOME/.local/share"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.local/cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 export HOME_LOG="$HOME/.local/log"
-# [[ ! -d "$HOME_LOG" ]] && mkdir -p "$HOME_LOG"
 
-# Exceptions
+## Exceptions
 # ~/.asoundrc -> Should be supported if XDG is set ~/.config/alsa/asoundrc
 export ADB_VENDOR_KEY="$XDG_CONFIG_HOME/android"
 export ANDROID_AVD_HOME="$XDG_DATA_HOME/android/"
@@ -66,18 +64,5 @@ export XAUTHORITY="$XDG_DATA_HOME/Xauthority"
 #export XINITRC
 #export XSERVERRC
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
-
-
-# =============================================================================
-# Graphical settings/fixes
-# =============================================================================
-
-# Fix awfully looking fonts in java apps
-export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
-# Java apps now work with Tiling Window Managers
-export _JAVA_AWT_WM_NONREPARENTING=1
-
-# Dark theme
-export QT_STYLE_OVERRIDE='kvantum-dark'
 
 # vim: ft=zsh

@@ -1,7 +1,6 @@
 ### Shortcuts
 ## Based on commands
 alias \
-	e="$EDITOR" 				\
 	agi='ag -i'				\
 	gad='git add'				\
 	gbr='git branch -a'			\
@@ -19,6 +18,7 @@ alias \
 	ons='alsamixer'				\
 	se='sudoedit'				\
 	smci='sudo make clean install'		\
+	vi="vim" 				\
 	vw='vim -c VimwikiIndex'		\
 	xinst='sudo xbps-install'		\
 	xquery='xbps-query'			\

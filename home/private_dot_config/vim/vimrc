@@ -189,23 +189,52 @@ set textwidth=79	" do break text with a newline after n typped chars
 set nojoinspaces	" leave only one space when joining (gqg)
 set showmatch		" briefly highlight the matching ( { [ if any
 
-" Files:
-set encoding=UTF-8
-set autoread		" reload files changed outside vim
-augroup onFocusAttemptToTriggerAutoread
-	autocmd!
-	" note: this is still not close to real-time
-	autocmd FocusGained,BufEnter * :checktime
-augroup END
-
-set modeline		" enable <fileCommentChar> vim: fdm=marker
-set modelines=1		" limit lines to read
-
 " Tabs:			(Historical reason to choose 8 as a default)
 set tabstop=8		" number of spaces that a <Tab> in a file counts for
 set shiftwidth=0	" number of spaces to use for each step of (auto)indent
 set softtabstop=0	" do not mix space and tabs to make up a set spacing
 set noexpandtab		" never replace tabs with space
+
+" Folds:
+set foldenable
+set foldmethod=marker
+set foldlevelstart=0	" close most folds when opening a file
+set foldnestmax=2	" maximum number of folds inside folds
+set foldopen-=block	" do not open ( { [ folds when 'h/j/k/l' on them
+" set foldclose=all	" auto close fold when leaving the fold scope
+
+" TODO: apply this to anything ?
+" C/C++ functions and so on
+" custom fold expression function
+function! MyShFoldExpr(lnum)
+    " Get the current line
+    let line = getline(a:lnum)
+    " Check for block start
+    if line =~ '^{\s*$'
+        " echom "Start fold at line ".a:lnum
+        return '>1'
+    " Check for block end
+    elseif line =~ '^\s*}$'
+        " echom "End fold at line ".a:lnum
+        return '<1'
+    " Inside a fold
+    else
+        return '=1'
+    endif
+endfunction
+augroup sh_folding
+  autocmd!
+  autocmd FileType sh setlocal foldmethod=expr
+  autocmd FileType sh setlocal foldexpr=MyShFoldExpr(v:lnum)
+augroup END
+
+" Copy:
+if executable('xclip')
+	vnoremap <silent> <C-c>
+		\ "zy <BAR> :call system('xclip -selection clipboard', @z)<CR>
+	" this cuts the whole line as ':' is meant to work with current line.
+	" vnoremap <C-c>	:silent w !xclip -selection clipboard<CR>
+endif
 
 " Search:
 set hlsearch		" highlight searches by default
@@ -244,52 +273,22 @@ nnoremap <silent><CR> :nohl<CR>
 "   exe ':%s/'.arf."/gc<Left><Left><Left>"
 " endfunction
 
-" Completion_menu:
-set wildmenu	" do not spam TAB in command line
-set wildmode=list:longest,list:lastused,list:full
-set wildignore=*.jpg,*.png,*.gif,*.pdf,*.pyc,*.flv,*.img
-set wildchar=<Tab>	" explicit setting: default in vim, <C-e> in Vi
-set wildcharm=<Tab>	" recognize tab as completer command in mappings
-
-" Folds:
-set foldenable
-set foldmethod=marker
-set foldlevelstart=0	" close most folds when opening a file
-set foldnestmax=2	" maximum number of folds inside folds
-set foldopen-=block	" do not open ( { [ folds when 'h/j/k/l' on them
-" set foldclose=all	" auto close fold when leaving the fold scope
-
-" TODO: apply this to anything ?
-" C/C++ functions and so on
-" custom fold expression function
-function! MyShFoldExpr(lnum)
-    " Get the current line
-    let line = getline(a:lnum)
-    " Check for block start
-    if line =~ '^{\s*$'
-        " echom "Start fold at line ".a:lnum
-        return '>1'
-    " Check for block end
-    elseif line =~ '^\s*}$'
-        " echom "End fold at line ".a:lnum
-        return '<1'
-    " Inside a fold
-    else
-        return '=1'
-    endif
-endfunction
-augroup sh_folding
-  autocmd!
-  autocmd FileType sh setlocal foldmethod=expr
-  autocmd FileType sh setlocal foldexpr=MyShFoldExpr(v:lnum)
+" Files:
+set encoding=UTF-8
+set autoread		" reload files changed outside vim
+augroup onFocusAttemptToTriggerAutoread
+	autocmd!
+	" note: this is still not close to real-time
+	autocmd FocusGained,BufEnter * :checktime
 augroup END
+
+set modeline		" enable <fileCommentChar> vim: fdm=marker
+set modelines=1		" limit lines to read
 
 " Vim:
 " turn off increase/decrease numbers to avoid mistakes, prefer :h v_g_CTRL-a
 map <C-a> <Nop>
 map <C-x> <Nop>
-" free up one mapping
-map + <Nop>
 
 " consistent mapping from other vim basic motions
 nnoremap Y y$
@@ -350,6 +349,13 @@ nnoremap : ;
 vnoremap ; :
 vnoremap : ;
 
+" Completion_menu:
+set wildmenu	" do not spam TAB in command line
+set wildmode=list:longest,list:lastused,list:full
+set wildignore=*.jpg,*.png,*.gif,*.pdf,*.pyc,*.flv,*.img
+set wildchar=<Tab>	" explicit setting: default in vim, <C-e> in Vi
+set wildcharm=<Tab>	" recognize tab as completer command in mappings
+
 " arrow up/down in :cmdline
 cnoremap <C-k> <Up>
 cnoremap <C-j> <Down>
@@ -399,15 +405,25 @@ let g:perldoc_split_modifier = 'rightbelow 15'
 "}}}
 " netrw {{{
 
-let g:netrw_fastbrowse = 0		" always re-read directories content
-let g:netrw_banner = 0			" remove header
-let g:netrw_liststyle = 3		" tree like listing
-let g:netrw_browse_split = 4		" open in previous buffer
-" let g:netrw_winsize = 30		"uses a percentage, which we don't want
+" look:
+let g:netrw_banner = 0		" remove header
+let g:netrw_liststyle = 3	" tree like listing
+let g:netrw_fastbrowse = 0	" always re-read directories content
+let g:netrw_browse_split = 4	" open in previous buffer
+" let g:netrw_winsize = 30	" uses a percentage, which we don't want
 let g:netrw_list_hide = &wildignore
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
-" TODO: Open on selected file if any ?
-nnoremap <silent> - :20Lexplore<CR>
+
+function! NetrwOpenReopen()
+	if !bufexists('NetrwTreeListing')
+		:20Lexplore %:p:h
+	else
+		" suppose Lexplore == <C-w> h
+		:wincmd h
+	endif
+endfunction
+
+nnoremap <silent> <leader><TAB> :call NetrwOpenReopen()<CR>
 
 " https://www.reddit.com/r/neovim/comments/jr5zdb/remapping_keys_in_netrw/
 augroup netrw_mapping
@@ -416,6 +432,14 @@ augroup netrw_mapping
 augroup END
 
 function! NetrwMapping()
+
+  " only one window open with netrw, folder view
+  if tabpagenr() == 1 && tabpagewinnr(1, '$') == 1 && bufname() == "NetrwTreeListing"
+	nnoremap <buffer><silent> <CR>	<Plug>NetrwLocalBrowseCheck<BAR>:bw#<CR>
+  endif
+
+  " open on the right
+  " nnoremap <buffer><silent> <CR>	<Plug>NetrwLocalBrowseCheck<BAR>zz
   " close netrw the same way you opened it
   nnoremap <buffer><silent> - :wincmd p <BAR> Lexplore<CR>
   " do not replace my current 'text file' buffer with netrw content
@@ -427,6 +451,8 @@ function! NetrwMapping()
   nnoremap <buffer> l <Plug>NetrwLocalBrowseCheck<BAR>zz
   " enter opens the selected file so closes the tree view to focus
   " nnoremap <silent><buffer> <CR> <Plug>NetrwLocalBrowseCheck<BAR>:Lexplore<CR>
+
+  nnoremap <buffer> <leader><TAB> :bw!<CR>
 endfunction
 " }}}
 

@@ -433,17 +433,16 @@ augroup END
 
 function! NetrwMapping()
 
-  " only one window open with netrw, folder view
+  " vim is being opened with a folder as an argument:
   if tabpagenr() == 1 && tabpagewinnr(1, '$') == 1 && bufname() == "NetrwTreeListing"
 	nnoremap <buffer><silent> <CR>	<Plug>NetrwLocalBrowseCheck<BAR>:bw#<CR>
   endif
 
-  " open on the right
-  " nnoremap <buffer><silent> <CR>	<Plug>NetrwLocalBrowseCheck<BAR>zz
-  " close netrw the same way you opened it
-  nnoremap <buffer><silent> - :wincmd p <BAR> Lexplore<CR>
-  " do not replace my current 'text file' buffer with netrw content
+  " fix: do not replace my current 'text file' buffer with netrw content
   nnoremap <buffer> <C-l> <C-W>l
+
+  " switch to the previous window (since we probably used leader+Tab to jump)
+  nnoremap <buffer> ^ <C-w>p
 
   " go above and below a directory
   " TODO: better 'h' user experience

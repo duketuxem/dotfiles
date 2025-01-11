@@ -6,6 +6,7 @@ fd-find
 fzf
 htop
 neofetch
+silversearcher-ag
 tmux
 tree
 universal-ctags

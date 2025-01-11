@@ -1,11 +1,14 @@
 ### Shortcuts
 ## Based on commands
 alias \
+	e="$EDITOR" 				\
+	agi='ag -i'				\
 	gad='git add'				\
 	gbr='git branch -a'			\
 	gch='git checkout'			\
 	gco='git commit'			\
 	gdi='git diff'				\
+	gdis='git diff --staged'		\
 	glo='git log --graph --decorate --all'	\
 	gpu='git push'				\
 	gst='git status'			\
@@ -16,7 +19,6 @@ alias \
 	ons='alsamixer'				\
 	se='sudoedit'				\
 	smci='sudo make clean install'		\
-	v='vim' 				\
 	vw='vim -c VimwikiIndex'		\
 	xinst='sudo xbps-install'		\
 	xquery='xbps-query'			\

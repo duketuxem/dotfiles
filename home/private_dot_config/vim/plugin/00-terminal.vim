@@ -1,4 +1,10 @@
+""" Manages how terminal emulators are behaving when running Vim
+
 " TODO: Put all the specificites for terminals here
+
+" Parent process
+set title
+set titlestring=Vim
 
 " explicit mappings to avoid weird behavior on some terminal emulators
 " example: urxvt and st have some trouble dealing 'natively'

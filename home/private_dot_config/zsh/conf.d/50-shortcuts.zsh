@@ -2,6 +2,7 @@
 ## Based on commands
 alias \
 	agi='ag -i'				\
+	cm='chezmoi'				\
 	gad='git add'				\
 	gbr='git branch -a'			\
 	gch='git checkout'			\
@@ -26,14 +27,12 @@ alias \
 
 ## Based on configuration
 alias \
-	cm='chezmoi'						\
 	cmcd="cd $(chezmoi source-path)/.."			\
-	reload="source $XDG_CONFIG_HOME/zsh/zshrc"		\
+	reload="source $ZDOTDIR/zshrc"				\
 	tconf="$EDITOR $XDG_CONFIG_HOME/tmux/tmux.conf"		\
-	vconf="$EDITOR $XDG_CONFIG_HOME/vim/vimrc"		\
+	vconf="$EDITOR $XDG_CONFIG_HOME/vim"			\
 	xinitrc="$EDITOR $XDG_CONFIG_HOME/x11/xinitrc"		\
-	zconf="$EDITOR $XDG_CONFIG_HOME/zsh/conf.d"		\
-	zshrc="$EDITOR $XDG_CONFIG_HOME/zsh/zshrc"
+	zconf="$EDITOR $ZDOTDIR/zsh/conf.d"
 
 ## TODO: dirty admin to fix
 alias \

@@ -3,7 +3,6 @@ build-essential
 cloc
 curl
 fd-find
-fzf
 htop
 neofetch
 silversearcher-ag
@@ -14,4 +13,3 @@ vim
 wget
 xclip
 zsh
-zsh-syntax-highlighting

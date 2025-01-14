@@ -4,7 +4,6 @@ cloc
 ctags
 curl
 fd
-fzf
 htop
 neofetch
 the_silver_searcher
@@ -14,4 +13,3 @@ vim
 wget
 xclip
 zsh
-zsh-syntax-highlighting

@@ -7,21 +7,98 @@
 	url = "https://github.com/junegunn/fzf/releases/download/v0.57.0/fzf-0.57.0-linux_amd64.tar.gz"
 	format = "tar.gz"
 	checksum.sha256 = "a3c087a5f40e8bb4d9bfb26faffa094643df111a469646bef53154a54af9ff92"
-
+	refreshPeriod = 0
 
 # =============================================================================
-# Vim
+# Plugins
 # =============================================================================
 
-[".config/vim/plugin/view/start/fzf"]
+#######
+# Vim #
+#######
+
+### App ###
+[".config/vim/pack/app/start/vimwiki"]
+	type = "git-repo"
+	url = "https://github.com/vimwiki/vimwiki"
+	refreshPeriod = "672h"
+
+### Git ###
+# Modifications in the buffer appearing on the bar as '~ / + / -'
+[".config/vim/pack/git/start/vim-gitgutter"]
+	type = "git-repo"
+	url = "https://github.com/airblade/vim-gitgutter"
+	refreshPeriod = "672h"
+
+# Git CLI integration, stop doing everything in the commandline
+# Status, diff, restore... all provided with simple commands
+[".config/vim/pack/git/start/vim-fugitive"]
+	type = "git-repo"
+	url = "https://github.com/tpope/vim-fugitive"
+	refreshPeriod = "672h"
+
+### Motions ###
+# align on '=' : gaip=
+[".config/vim/pack/motions/start/vim-easy-align"]
+	type = "git-repo"
+	url = "https://github.com/junegunn/vim-easy-align"
+	refreshPeriod = "672h"
+
+
+[".config/vim/pack/motions/start/vim-commentary"]
+	type = "git-repo"
+	url = "https://github.com/tpope/vim-commentary"
+	refreshPeriod = "672h"
+
+#'tpope/vim-repeat'		" ?
+
+# feature freeze:
+# TODO: Try vim-sandwich ?
+[".config/vim/pack/motions/start/vim-surround"]
+	type = "git-repo"
+	url = "https://github.com/tpope/vim-surround"
+	refreshPeriod = "672h"
+
+# Extra motions like delete around ',' / tags / html
+# Check vs vim-surround
+[".config/vim/pack/motions/start/targets.vim"]
+	type = "git-repo"
+	url = "https://github.com/wellle/targets.vim"
+	refreshPeriod = "672h"
+
+### View ###
+# lighter status bar than airline
+[".config/vim/pack/view/start/lightline.vim"]
+	type = "git-repo"
+	url = "https://github.com/itchyny/lightline.vim"
+	refreshPeriod = "672h"
+
+[".config/vim/pack/view/start/fzf"]
 	type = "git-repo"
 	url = "https://github.com/junegunn/fzf.git"
 	refreshPeriod = "672h"
 
+[".config/vim/pack/view/start/tagbar"]
+	type = "git-repo"
+	url = "https://github.com/preservim/tagbar"
+	refreshPeriod = "672h"
 
-# =============================================================================
-# Zsh
-# =============================================================================
+# Repository was archived
+[".config/vim/pack/view/start/indentLine"]
+	type = "git-repo"
+	url = "https://github.com/Yggdroot/indentLine"
+	refreshPeriod = 0
+
+### Session ###
+# :Obsess / :Obsess!
+[".config/vim/pack/session/start/vim-obsession"]
+	type = "git-repo"
+	url = "https://github.com/tpope/vim-obsession"
+	refreshPeriod = "672h"
+
+######
+# Zsh:
+######
 
 [".config/zsh/plugins/zsh-syntax-highlighting"]
 	type = "git-repo"

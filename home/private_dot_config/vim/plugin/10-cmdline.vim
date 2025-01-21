@@ -20,7 +20,6 @@ function! GetHelpOnCwordOnRight()
 	if &filetype == "vim" || &filetype == "help"
 		execute 'vert help ' . expand("<cword>")
 	else
-		echo &filetype
 		" To improve if needed
 		execute 'vert silent read ! ' . &keywordprg . ' ' . expand("<cword>")
 	endif

@@ -15,9 +15,20 @@ set wildcharm=<Tab>	" recognize tab as completer command in mappings
 cnoremap <C-k> <Up>
 cnoremap <C-j> <Down>
 
+" Help:
+function! GetHelpOnCwordOnRight()
+	if &filetype == "vim"
+		execute 'vert help ' . expand("<cword>")
+	else
+		" To improve if needed
+		execute 'vert silent read ! ' . &keywordprg . ' ' . expand("<cword>")
+	endif
+endfunction
+nnoremap K :call GetHelpOnCwordOnRight()<CR>
+
 " open help on the right
-cnoreabbrev h tab h
-" TODO: 'K' key behavior to open the same way as above
+cnoreabbrev h vert h
+
 
 " Terminal: The builtin :term inside of vim (will shift in favor of tmux)
 " rebind escape to avoid <C-w><S-N>

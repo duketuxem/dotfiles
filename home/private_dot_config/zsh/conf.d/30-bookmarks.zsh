@@ -12,8 +12,14 @@ alias favs="$PAGER $CDFAVS"
 alias f="favs"
 
 change-directory-favorites() {
-	eval cd $(fzf < $CDFAVS)
-	zle accept-line
+	local choice="$(fzf < $CDFAVS)"
+	if [[ "$choice" ]]; then
+		eval cd "$choice"
+		zle accept-line
+	else
+		# in case of Ctrl-C
+		zle reset-prompt
+	fi
 }
 zle -N change-directory-favorites
 bindkey -- "^F" change-directory-favorites

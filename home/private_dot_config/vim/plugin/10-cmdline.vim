@@ -17,9 +17,10 @@ cnoremap <C-j> <Down>
 
 " Help:
 function! GetHelpOnCwordOnRight()
-	if &filetype == "vim"
+	if &filetype == "vim" || &filetype == "help"
 		execute 'vert help ' . expand("<cword>")
 	else
+		echo &filetype
 		" To improve if needed
 		execute 'vert silent read ! ' . &keywordprg . ' ' . expand("<cword>")
 	endif

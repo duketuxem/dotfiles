@@ -16,19 +16,7 @@ cnoremap <C-k> <Up>
 cnoremap <C-j> <Down>
 
 " Help:
-function! GetHelpOnCwordOnRight()
-	if &filetype == "vim" || &filetype == "help"
-		execute 'vert help ' . expand("<cword>")
-	else
-		" To improve if needed
-		execute 'vert silent read ! ' . &keywordprg . ' ' . expand("<cword>")
-	endif
-endfunction
-nnoremap K :call GetHelpOnCwordOnRight()<CR>
-
-" open help on the right
-cnoreabbrev h vert h
-
+" :help to open in a vertical split is in ftplugins/help.vim
 
 " Terminal: The builtin :term inside of vim (will shift in favor of tmux)
 " rebind escape to avoid <C-w><S-N>

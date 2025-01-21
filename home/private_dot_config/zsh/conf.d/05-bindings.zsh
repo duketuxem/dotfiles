@@ -88,14 +88,14 @@ esac
 ### Plugins
 
 # backward-kill-word has to mind '/' and '$' as separators
-custom-backward-kill() {
+custom-backward-kill-word() {
 	# A list of non-alphanumeric characters
 	# considered part of a word by the line editor.
 	local WORDCHARS='*?-[]~=&;!#%^(){}<>|_.'
 	zle backward-kill-word
 }
 # create a user-defined zle widget to be bound later
-zle -N custom-backward-kill
+zle -N custom-backward-kill-word
 
 # Allow to execute vim with the current edited command in buffer
 autoload edit-command-line;
@@ -155,7 +155,7 @@ bindkey -- '^_'				undo
 bindkey -- '^@'				redo
 # 		-- Top row --
 bindkey -- '^Q'				beginning-of-line
-bindkey -- '^W'				custom-backward-kill
+bindkey -- '^W'				custom-backward-kill-word
 bindkey -- '^E'				edit-command-line
 # fallback, will become:		fzf-history-widget
 bindkey -- '^R'				history-incremental-search-backward
@@ -184,7 +184,7 @@ bindkey -- "^[[200~"			bracketed-paste
 
 ## Combinations
 # 'Portable' Alt + Del
-bindkey -- "^[${keys[Backspace]}"	custom-backward-kill
+bindkey -- "^[${keys[Backspace]}"	custom-backward-kill-word
 bindkey -- "${keys[CtrlRight]}"		forward-word
 bindkey -- "${keys[CtrlLeft]}"		backward-word
 bindkey -- "${keys[CtrlDel]}"		kill-word

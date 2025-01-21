@@ -89,6 +89,11 @@
 	url = "https://github.com/Yggdroot/indentLine"
 	refreshPeriod = 0
 
+[".config/vim/pack/view/start/vim-fern"]
+	type = "git-repo"
+	url = "https://github.com/lambdalisue/vim-fern"
+	refreshPeriod = "168h"
+
 ### Session ###
 # :Obsess / :Obsess!
 [".config/vim/pack/session/start/vim-obsession"]

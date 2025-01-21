@@ -1,4 +1,4 @@
-## fzf-powered bookmark navigation (plugin)
+## fzf-powered bookmark navigation plugin
 # note: no need to export, every zsh interactive shell will know this variable,
 # as this file is sourced inevitably.
 # The only use case would be for another program or script run externally,
@@ -11,7 +11,14 @@ alias efav="$EDITOR $CDFAVS"
 alias favs="$PAGER $CDFAVS"
 alias f="favs"
 
-addfav () {
+change-directory-favorites() {
+	eval cd $(fzf < $CDFAVS)
+	zle accept-line
+}
+zle -N change-directory-favorites
+bindkey -- "^F" change-directory-favorites
+
+addfav() {
 	local compute() {
 		# Do not add an invalid folder or a duplicate entry
 		if [ ! -d "$1" ]; then

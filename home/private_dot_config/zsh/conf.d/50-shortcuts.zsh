@@ -32,7 +32,7 @@ alias \
 	tconf="$EDITOR $XDG_CONFIG_HOME/tmux/tmux.conf"		\
 	vconf="$EDITOR $XDG_CONFIG_HOME/vim"			\
 	xinitrc="$EDITOR $XDG_CONFIG_HOME/x11/xinitrc"		\
-	zconf="$EDITOR $ZDOTDIR/zsh/conf.d"
+	zconf="$EDITOR $ZDOTDIR/conf.d"
 
 ## TODO: dirty admin to fix
 alias \

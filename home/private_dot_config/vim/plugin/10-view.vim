@@ -74,13 +74,9 @@ let g:indentLine_setColors = 1
 
 set showcmd		" show the command being typed. Ex: "a
 set noruler		" deactivate the vim ruler (x:y) - handled in plugin
-
-"-- <plugin> lightline settings
 set noshowmode		" avoid native vim --INSERT-- message below lightline
-set laststatus=2	" always show the status line
-let g:lightline = {
-\ 'colorscheme': 'darcula',
-\ }
+set laststatus=2	" always show the status line (required by lightline)
+" Lightline plugin is enhancing from those settings
 
 
 " Color:

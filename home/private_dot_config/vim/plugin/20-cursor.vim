@@ -20,22 +20,22 @@ nnoremap <expr> ' "'" . nr2char(getchar()) . "zz"
 nnoremap <expr> ` "`" . nr2char(getchar()) . "zz"
 " TODO: when searching
 
-"" Todo: a cursor plugin ? fix the <C-o> which does not remember cursor
-"" automatically restore the previous cursor position
-"" keywords: - vim.fandom.com
-""           - restore_cursor_to_file_position_in_previous_editing_session
-"function! ResCur()
-"  if line("'\"") > 1 && line("'\"") <= line("$")
-"    if foldclosed(line("'\"")) < 0
-"      silent normal! g`"zz
-"    else
-"      silent normal! g`"zozz
-"    endif
-"    return 1
-"  endif
-"endfunction
-"
-"augroup resCur
-"  autocmd!
-"  autocmd BufWinEnter * call ResCur()
-"augroup END
+" Todo: a cursor plugin ? fix the <C-o> which does not remember cursor
+" automatically restore the previous cursor position
+" keywords: - vim.fandom.com
+"           - restore_cursor_to_file_position_in_previous_editing_session
+function! ResCur()
+  if line("'\"") > 1 && line("'\"") <= line("$")
+    if foldclosed(line("'\"")) < 0
+      silent normal! g`"zz
+    else
+      silent normal! g`"zozz
+    endif
+    return 1
+  endif
+endfunction
+
+augroup resCur
+  autocmd!
+  autocmd BufWinEnter * call ResCur()
+augroup END

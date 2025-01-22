@@ -1,21 +1,67 @@
 " The following was an attempt to use netrw as an improved base.
 " It...could work, but if I want some git status, icons, it is a lot of hassle.
+" The rest would be handled by an external project drawer, for now vim-fern.
+
+" This is kept for reference, but if netrw is deactivated some feature like
+" opening an URL (vim https://raw.github.com...) would break.
+" The idea is to have a sane default config to act as a fallback.
 "
 " Deactivate netrw, see :h netrw-noload
-"let g:loaded_netrw       = 1
-"let g:loaded_netrwPlugin = 1
-"" Prevent further settings
-"finish
+" let g:loaded_netrw       = 1
+" let g:loaded_netrwPlugin = 1
+" Prevent further settings
+" finish
 
-
-" Look:
 let g:netrw_banner = 0		" remove header
 let g:netrw_liststyle = 3	" tree like listing
 let g:netrw_fastbrowse = 0	" always re-read directories content
-let g:netrw_browse_split = 4	" open in previous buffer
+let g:netrw_browse_split = 4	" open entries in previous buffer
 " let g:netrw_winsize = 30	" uses a percentage, which we don't want
 let g:netrw_list_hide = &wildignore
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
+
+" Acces and reaccess netrw from any buffer
+nnoremap <silent><expr> <leader><TAB> !bufexists('NetrwTreeListing')
+			\ ? ':20Lexplore %:p:h<CR>'
+			\ : ':5wincmd h<CR>'
+
+function! NetrwMapping()
+
+  " vim is being opened with a folder as an argument:
+  " once the file is found and opened (potentially several <CR> involved),
+  " the netrw buffer is going to be wiped.
+  if tabpagenr() == 1 && tabpagewinnr(1, '$') == 1 && bufname() == "NetrwTreeListing"
+	nnoremap <silent><buffer><expr>	<CR> getline('.') =~ '/$'
+		\ ? '<Plug>NetrwLocalBrowseCheck<BAR>zz'
+		\ : '<Plug>NetrwLocalBrowseCheck<BAR>:silent bw! 1 2<CR>'
+  endif
+
+  " fix: do not replace my current 'text file' buffer with netrw content
+  nnoremap <buffer> <C-l> <C-W>l
+
+  " ux:
+  " switch to the previous window
+  nnoremap <buffer> <C-^> <C-w>p
+  " refresh with Ctrl R (looses the cursor position)
+  nnoremap <buffer> <c-r> :e .<cr>
+  " go above and below a directory
+  " TODO: better 'h' user experience
+  nnoremap <buffer> h <Plug>NetrwBrowseUpDir
+  nnoremap <buffer> l <Plug>NetrwLocalBrowseCheck<BAR>zz
+  " try to bind leftclick to behave normally...
+  " nnoremap <buffer> <LeftMouse> <Plug>NetrwLocalBrowseCheck<BAR>zz
+  " note: original came with nmap
+  " noremap <buffer> <CR> :normal v<CR>
+
+  " close the tree if already focused
+  nnoremap <buffer><silent> <leader><TAB> :bw!<CR>
+endfunction
+
+" https://www.reddit.com/r/neovim/comments/jr5zdb/remapping_keys_in_netrw/
+augroup netrw_mapping
+  autocmd!
+  autocmd filetype netrw call NetrwMapping()
+augroup END
 
 " ChatGPT's attempt to open netrw at the current file cursor's position
 "function! OpenNetrwWithCurrentFile()
@@ -32,50 +78,3 @@ let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 "endfunction
 "nnoremap <leader>e :call OpenNetrwWithCurrentFile()<CR>
 
-function! NetrwToggle()
-	if !bufexists('NetrwTreeListing')
-		"20 is a percentage
-		:20Lexplore %:p:h
-	else
-		" suppose Lexplore == <C-w> h
-		:wincmd h
-	endif
-endfunction
-nnoremap <silent> <leader><TAB> :call NetrwToggle()<CR>
-
-function! NetrwMapping()
-  " fix: do not replace my current 'text file' buffer with netrw content
-  nnoremap <buffer> <C-l> <C-W>l
-  " refresh with Ctrl R (looses the cursor position)
-  nnoremap <buffer> <c-r> :e .<cr>
-
-  " vim is being opened with a folder as an argument:
-  " once the file opened, this needs to be deleted, see the last instruction.
-  if tabpagenr() == 1 && tabpagewinnr(1, '$') == 1 && bufname() == "NetrwTreeListing"
-	" :wincmd h
-	" :20Lexplore
-	" :wincmd l
-	" :enew
-	" " Problem here: maybe Enter can occur on a directory
-	" nnoremap <buffer><silent> <CR>	<Plug>NetrwLocalBrowseCheck<BAR>:bw#<CR>
-  endif
-
-  " switch to the previous window (since we probably used leader+Tab to jump)
-  nnoremap <buffer> <C-^> <C-w>p
-
-  " go above and below a directory
-  " TODO: better 'h' user experience
-  " nnoremap <buffer> h <Plug>NetrwBrowseUpDir
-  " nnoremap <buffer> l <Plug>NetrwLocalBrowseCheck<BAR>zz
-  " try to bind leftclick to behave normally...
-  " nnoremap <buffer> <LeftMouse> <Plug>NetrwLocalBrowseCheck
-
-  " close the tree if already focused
-  nnoremap <buffer><silent> <leader><TAB> :bw!<CR>
-endfunction
-
-" https://www.reddit.com/r/neovim/comments/jr5zdb/remapping_keys_in_netrw/
-augroup netrw_mapping
-  autocmd!
-  autocmd filetype netrw call NetrwMapping()
-augroup END

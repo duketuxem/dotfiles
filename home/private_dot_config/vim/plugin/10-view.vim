@@ -42,8 +42,7 @@ nnoremap <C-l>		<C-w>l
 "nnoremap <C-Down>	<C-w>j
 "nnoremap <C-Right>	<C-w>l
 
-" non layout destructive :bd
-nnoremap <silent> <leader>d :b#<bar>bw!#<CR>
+" non destructive layout shortcut is handled in ./30-bd.vim
 " window/tab destructive :bd
 nnoremap <silent> <leader>D :bd<CR>
 " shortcut of the shortcut <C-w>c

@@ -4,6 +4,8 @@ nnoremap : ;
 vnoremap ; :
 vnoremap : ;
 
+nnoremap ! :!
+
 " Completion_menu:
 set wildmenu	" do not spam TAB in command line
 set wildmode=list:longest,list:lastused,list:full

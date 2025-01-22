@@ -161,6 +161,19 @@ call s:h("javaOperator", s:purple, "", "") " new
 call s:h("javaTypedef", s:orange, "", "") " this
 call s:h("javaAnnotation", s:cyan, "", "") " @Override
 " }}}
+" {{{ Php
+call s:h("phpRegion", s:yellow, "", "") " paint it in yellow !
+call s:h("phpParent", s:yellow, "", "") " paint it in yellow !
+call s:h("phpType", s:green, "", "") " To contrast with yellow
+call s:h("phpDefine", s:purple, "", "") " new/function
+call s:h("phpOperator", s:purple, "", "") " consistence with = / + / < / ++
+call s:h("phpVarSelector", s:red, "", "")  " $ before VARNAME
+call s:h("phpIdentifier", s:red, "", "")  " variables / instances
+call s:h("phpMemberSelector", s:purple, "", "")  " ->
+call s:h("phpStructure", s:purple, "", "")  " namespace / class / extends...
+call s:h("phpMethodsVar", s:blue, "", "")  " members of classes
+call s:h("phpSpecialFunction", s:dark7, "", "")  " members of classes
+call s:h("Delimiter", s:orange, "", "")  " <?php
 " }}}
 
 " {{{ Extensions

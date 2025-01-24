@@ -40,6 +40,9 @@ alias \
 	unrack='sudo umount -l /mnt/rack' \
 	lsblk="lsblk; echo; ps aux | awk 'NR==1 || /sftp/ && !/awk/'"
 
+# if X11 vs wayland...
+alias clip='xclip -selection clipboard'
+
 # nvm (or how soydevs are going to slow down my perfect config...)
 # todo: lazy load
 #export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"

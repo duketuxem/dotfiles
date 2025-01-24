@@ -78,7 +78,12 @@ case $TERM in
 		keys[CtrlLeft]="^[[D"
 		keys[CtrlRight]="^[[C"
 		;;
-
+	"st" | "st-256color")
+		# st has both cbt and kcbt declared in its st.info file but in
+		# the end, infocmp only shows cbt (tested on debian), and kcbt
+		# is set to empty. Both have the same value, so we use cbt.
+		keys[ShiftTab]="${terminfo[cbt]}"
+		;;
 	*)
 		echo >&2 "Unsupported terminal!"
 		;;

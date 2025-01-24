@@ -36,6 +36,14 @@ export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --preview '(highlight -O 
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 
+function fzf-in-home() {
+  local choice=$(eval $FZF_DEFAULT_COMMAND . '$HOME' | fzf)
+  zle reset-prompt
+  LBUFFER="${LBUFFER}$choice"
+}
+zle -N fzf-in-home
+bindkey -- "^G" fzf-in-home
+
 #"^I" fzf-completion
 #"^R" fzf-history-widget
 #"^T" fzf-file-widget

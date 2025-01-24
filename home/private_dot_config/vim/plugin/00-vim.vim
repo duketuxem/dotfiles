@@ -12,6 +12,8 @@ nnoremap c "_c
 " TOFIX: is this working ? perform dot commands over visual blocks:
 vnoremap . :normal .<CR>
 
+nnoremap <leader>x :cd %:h<CR>
+
 augroup onVimEnterRestoreSessionIfAny
 	autocmd!
 	function! RestoreSess()

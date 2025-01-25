@@ -53,13 +53,41 @@ augroup sh_folding
 augroup END
 
 
-" Copy:
-if executable('xclip')
+" Copy / Cut / Paste {{{
+" Partial line copy/cut support: check (/)
+if executable('xsel')
+	" Prefer using xsel, as it handles text better.
+	" See below to know which corner case it is solving
 	vnoremap <silent> <C-c>
-		\ "zy <BAR> :call system('xclip -selection clipboard', @z)<CR>
-	" this cuts the whole line as ':' is meant to work with current line.
-	" vnoremap <C-c>	:silent w !xclip -selection clipboard<CR>
+		\ "zy <BAR> :call system('xsel -i -b', @z)<CR>
+	vnoremap <silent> <C-x>
+		\ "zy <BAR> :call system('xsel -i -b', @z)<BAR>:normal gvd<CR>
+elseif executable('xclip')
+	" This works except when vim is suspended (^Z):
+	" A selection is made using vim's visual mode
+	" The selection got 'copied' to the clipboard with ^C
+	" Vim is suspended with ^Z
+	" Try to paste the selection in say Firefox/Mousepad... Nothing happens
+	" Resume Vim with `fg`
+	" The selection finally pops out into the process it was made.
+	" If there were 2 ^V, the selection got pasted twice, and so on...
+	"
+	" This drove me crazy to the point I gave up and use xsel or don't ^Z.
+	" here are some resources:
+	" https://github.com/astrand/xclip/issues/20
+	" https://askubuntu.com/questions/705620/xclip-vs-xsel
+	" https://wiki.archlinux.org/title/Tmux#On_Xorg
+	vnoremap <silent> <C-c>
+		\ "zy :call system('xclip -selection clipboard', @z)<CR>
+	vnoremap <silent> <C-x>
+		\ "zy :call system('xclip -selection clipboard', @z)<BAR>
+		\ :normal gvd<CR>
+elseif executable('wl-clip')
+	" Wayland
+elseif executable('clip.exe')
+	" To test WSL
 endif
+" }}}
 
 
 " Files:

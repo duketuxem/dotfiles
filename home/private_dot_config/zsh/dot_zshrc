@@ -10,7 +10,7 @@
 
 
 
-# Uncomment here and: #zprof to audit startup time
+# Uncomment here and `#zprof` to audit startup time
 # zmodload zsh/zprof
 
 # Environment variables - in an interactive context {{{
@@ -688,6 +688,22 @@ chkfav() {
 }
 # }}}
 # Aliases / shortcuts {{{
+
+function vim() {
+	args=()
+	for i in $@; do
+		if [[ -h $i ]]; then
+			args+=$(readlink $1)
+		else
+			args+=$i
+		fi
+	done
+
+	echo "$args"
+	# /usr/bin/vim "${args[@]}"
+	# $(which vim) -p "${args[@]}"
+}
+
 ### Shortcuts
 ## Based on commands
 alias \
@@ -709,7 +725,7 @@ alias \
 	ons='alsamixer'				\
 	se='sudoedit'				\
 	smci='sudo make clean install'		\
-	vi="vim" 				\
+	# vi="vim" 				\
 	vw='vim -c VimwikiIndex'		\
 	xinst='sudo xbps-install'		\
 	xquery='xbps-query'			\

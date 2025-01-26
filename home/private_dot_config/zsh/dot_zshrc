@@ -705,7 +705,7 @@ function vim() {
 ### Shortcuts
 ## Based on commands
 alias \
-	agi='ag -i'				\
+	agi='ag -i --hiden'			\
 	cm='chezmoi'				\
 	gad='git add'				\
 	gbr='git branch -a'			\
@@ -736,7 +736,7 @@ alias \
 	tconf="$EDITOR $XDG_CONFIG_HOME/tmux/tmux.conf"		\
 	vconf="$EDITOR $XDG_CONFIG_HOME/vim/vimrc"			\
 	xinitrc="$EDITOR $XDG_CONFIG_HOME/x11/xinitrc"		\
-	zconf="$EDITOR $ZDOTDIR/zshrc"
+	zconf="$EDITOR $ZDOTDIR/.zshrc"
 
 ## TODO: dirty admin to fix
 alias \

@@ -396,6 +396,15 @@ nnoremap <silent><CR> :nohl<CR>
 " endfunction
 " }}}
 " Cursor {{{
+
+" Nice cursor shapes depending on the current editing mode
+let &t_SI = "\<Esc>[6 q" " steady bar cursor for editing mode
+let &t_EI = "\<Esc>[2 q" " steady block cursor for normal mode
+let &t_SR = "\<Esc>[4 q" " steady underline cursor for replace mode
+"set timeout
+"set timeoutlen=50
+"set ttimeoutlen=1000
+
 " Keep centered when...
 " scrolling up/down
 nnoremap <expr> <C-d>    line('.') == 1 ? 'M' : '<C-d>zz'

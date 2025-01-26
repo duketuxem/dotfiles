@@ -689,19 +689,17 @@ chkfav() {
 # }}}
 # Aliases / shortcuts {{{
 
+# wrapper to follow symlinks
 function vim() {
-	args=()
-	for i in $@; do
-		if [[ -h $i ]]; then
-			args+=$(readlink $1)
+	local args=()
+	for i in "$@"; do
+		if [[ -h "$i" ]]; then
+			args+=($(readlink "$i"))
 		else
-			args+=$i
+			args+=("$i")
 		fi
 	done
-
-	echo "$args"
-	# /usr/bin/vim "${args[@]}"
-	# $(which vim) -p "${args[@]}"
+	command vim "${args[@]}"
 }
 
 ### Shortcuts
@@ -725,7 +723,7 @@ alias \
 	ons='alsamixer'				\
 	se='sudoedit'				\
 	smci='sudo make clean install'		\
-	# vi="vim" 				\
+	vi="vim" 				\
 	vw='vim -c VimwikiIndex'		\
 	xinst='sudo xbps-install'		\
 	xquery='xbps-query'			\

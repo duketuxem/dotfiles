@@ -73,4 +73,3 @@ export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 if [ "$(ps -o comm= $PPID)" = "vim" ]; then
 	source "$ZDOTDIR/zshrc"
 fi
-# vim: ft=zsh

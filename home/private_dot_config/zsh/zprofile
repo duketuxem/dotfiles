@@ -28,5 +28,3 @@ then
 	# Could use xinit instead of startx
 	#   #exec xinit -- /usr/bin/X -nolisten tcp vt7
 fi
-
-# vim:ft=zsh

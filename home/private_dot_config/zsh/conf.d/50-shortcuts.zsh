@@ -30,9 +30,9 @@ alias \
 	cmcd="cd $(chezmoi source-path)/.."			\
 	reload="source $ZDOTDIR/zshrc"				\
 	tconf="$EDITOR $XDG_CONFIG_HOME/tmux/tmux.conf"		\
-	vconf="$EDITOR $XDG_CONFIG_HOME/vim"			\
+	vconf="$EDITOR $XDG_CONFIG_HOME/vim/vimrc"			\
 	xinitrc="$EDITOR $XDG_CONFIG_HOME/x11/xinitrc"		\
-	zconf="$EDITOR $ZDOTDIR/conf.d"
+	zconf="$EDITOR $ZDOTDIR/zshrc"
 
 ## TODO: dirty admin to fix
 alias \

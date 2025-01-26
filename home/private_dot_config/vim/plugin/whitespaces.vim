@@ -1,3 +1,6 @@
+" Is there any case we want to use trailing white spaces ?
+" -> Sometimes some 'foreign' files will have whitespaces.
+" It is good to know it.
 augroup HighlightUselessWhitespaceInRed
 	autocmd!
 

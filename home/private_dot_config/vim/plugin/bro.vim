@@ -38,3 +38,4 @@ nnoremap <silent> <leader>r :Bro<CR><CR>
 " replace :bro with :Bro
 cnoreabbrev <expr> bro (getcmdtype() ==# ':' && getcmdline() ==# 'bro')
 			\ ? 'Bro' : 'bro'
+

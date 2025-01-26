@@ -11,10 +11,7 @@
 " Useless because a vimrc file was found but still, an explicit setting.
 set nocompatible
 
-
-" =============================================================================
-" Always use the XDG Base Directory specification
-" =============================================================================
+" Always use the XDG Base Directory specification {{{
 
 " Note: this has been implemented in version 9.1.327:
 " This needs to precede any configuration since it manipulates the runtimepath.
@@ -49,18 +46,9 @@ set viewdir=$XDG_STATE_HOME/vim/view     | call mkdir(&viewdir,   'p')
 
 call mkdir($XDG_STATE_HOME."/vim", 'p')
 if !has('nvim') | set viminfofile=$XDG_STATE_HOME/vim/viminfo | endif
-
-
-" =============================================================================
-" User configuration
-" =============================================================================
+" }}}
 
 let mapleader = "\\"
-
-""" This is a trick that allows my custom configuration to be split
-""" under the plugin/ directory.
-""" I don't intend to use Vim without colors or plugins anyway,
-""" but `filetype plugin on` is required for plugin/ to be processed.
 
 " Enables automatic filetype detection, loads related system/user plugins and
 " indentation settings based on the filetype.
@@ -69,7 +57,40 @@ filetype plugin indent on
 " Logically, syntax can only be achieved on detected filetypes, so after.
 syntax on
 
+" Terminal specifics {{{
 
+" Parent process
+" fix 'Thanks for flying Vim':
+set notitle
+set titleold=
+
+" Note:
+" It seems before some settings were needed to unmap <C-Left/Right...> to avoid
+" some weird sequences to pop out in the buffer.
+" Now I could not reproduce anything. ex: nmap <ESC>[1;5D <C-Left>
+
+" if &term =~ "^st"
+" endif
+if &term =~ "^xterm-kitty"
+	inoremap <ESC>[3;133~ <C-o>dW
+endif
+
+" So far it seems to work across many terminals
+" kitty does it differentely
+" <C-Delete>
+inoremap <ESC>[3;5~ <C-o>dW
+" }}}
+" Vim specifics {{{
+
+" Defaults:
+" unmap increase/decrease numbers to avoid mistakes, prefer :h v_g_CTRL-a
+" also reserve C-x for cut, see further
+map <C-a> <Nop>
+map <C-x> <Nop>
+" consistent mapping from other vim basic motions
+nnoremap Y y$
+" ignore a text to replace from being recorded into registers
+nnoremap c "_c
 
 " Vimrc:
 " quick edit vimrc in a new tab
@@ -82,3 +103,566 @@ augroup sourceVimrcOnSave
 				\ | echo ".vimrc saved and reloaded!"
 				\ | endif
 augroup END
+
+" Session:
+augroup onVimEnterRestoreSessionIfAny
+	autocmd!
+	function! RestoreSess()
+		" [Gvim specific]
+		" do not restore the session if v:servername contains numbers.
+		" if so, it means an existing vim instance is running, but the
+		" goal is to have a fresh one started, not a mirrored instance
+		if filereadable(expand("~/Session.vim")) && v:servername !~ '\d'
+			source ~/Session.vim
+		endif
+	endfunction
+	" :h automcmd-nested
+	autocmd VimEnter * nested call RestoreSess()
+augroup END
+
+" Viminfo:
+" Tell vim to remember certain things when we exit
+" :h viminfo-!
+"  '10   :  marks will be remembered for up to 10 previously edited files
+"  "1000 :  will save up to 1000 lines for each register
+"  :20   :  up to 20 lines of command-line history will be remembered
+"  %     :  saves and restores the buffer list | off - (use sessions if needed)
+"  h     :  disable the effect of 'hlsearch'
+"  n...  :  where to save the viminfo files | viminfofile set in xdg.vim
+set viminfo='10,\"1000,:20,h
+
+" F12:
+" Discover the syntax group name for the word under the cursor.
+" Really helpful to write a colorscheme.
+" Wrapper of the vim native synstack function.
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+nnoremap <F12> :call g:SynStack()<CR>
+" }}}
+" User Interface (View) {{{
+
+" Appearance:
+set number		" show the line numbers on the left side...
+set relativenumber	" ...with the numbers relative to the current line
+set colorcolumn=80	" show a limit with a vertical mark bar
+set conceallevel=0	" never replace any symbol like lambda sign, whatever
+set nowrap		" allow long lines to extend as far as they go
+
+set lazyredraw		" faster execution of macros, mappings, etc...
+
+set belloff=all		" no bell
+set novisualbell	" disable sound
+set vb t_vb=		" clearing the visual bell length deactivates flashing
+
+" when :set wrap, access the visually down/up line
+nnoremap j gj
+nnoremap k gk
+
+" Splits:
+" sane default behavior
+set splitbelow
+set splitright
+
+" create quick splits (TODO: replace with tmux ?)
+nnoremap <silent> <leader>s :split<CR>
+nnoremap <silent> <leader>v :vsplit<CR>
+
+" navigation shortcuts
+" (TODO: do not break vimwiki's Backspace functionnality)
+nnoremap <C-h>		<C-w>h
+nnoremap <C-j>		<C-w>j
+nnoremap <C-k>		<C-w>k
+nnoremap <C-l>		<C-w>l
+" my workflow is now mature, is this ever used again ?
+" how about tmux ?
+"nnoremap <C-Up>		<C-w>k
+"nnoremap <C-Left>	<C-w>h
+"nnoremap <C-Down>	<C-w>j
+"nnoremap <C-Right>	<C-w>l
+
+" non destructive layout shortcut is handled in ./30-bd.vim
+" window/tab destructive :bd
+nnoremap <silent> <leader>D :bd<CR>
+" shortcut of the shortcut <C-w>c
+nnoremap <silent> <leader>c :close<CR>
+
+" Zoom without <C-w><C-o> (create a new 'temporary' window) - awesome trick
+nnoremap <silent> <leader>t :-tab split<CR>
+" Then close with <leader>c
+
+" Custom:
+nnoremap <silent> <leader>l :ls<CR>
+nnoremap <silent> <leader>L :ls!<CR>
+nnoremap <silent> <leader>q :bprev<CR>
+nnoremap <silent> <leader>p :bnext<CR>
+nnoremap <leader>e :enew<CR>
+
+" F1 : Help
+nnoremap <F2> :set wrap!<CR>
+nnoremap <F4> :set list!<CR>
+
+" <plugin> mark indentation levels
+let g:indentLine_char = '┊'
+let g:indentLine_setColors = 1
+
+" Statusline:
+set showcmd		" show the command being typed. Ex: "a
+set noruler		" deactivate the vim ruler (x:y) - handled in plugin
+set noshowmode		" avoid native vim --INSERT-- message below lightline
+set laststatus=2	" always show the status line (required by lightline)
+" Lightline plugin is enhancing from those settings
+
+" Color:
+set termguicolors	" use truecolor (24bit-mode)
+
+" was this a fix to enable color ?
+"if &term =~ "^st"
+"	" from :help xterm-true-color
+"	let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+"	let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+"	" Fixes mouse scrolling in st. Update: it seems fixed
+"	"set ttymouse=sgr
+"endif
+
+colorscheme my-eighties
+" }}}
+" Editor Settings {{{
+" General:
+set hidden		" allow background buffers
+set swapfile		" warn/recover on same opened file multiple times
+set mouse=a		" use mouse for all vim modes (normal/visual...)
+set tags=tags		" default file name to look for tags
+set noautochdir		" autochdir changes the global directory, not win/tab
+set backspace=indent,eol,start	" erase back even in insert mode
+set textwidth=79	" do break text with a newline after n typped chars
+set nojoinspaces	" leave only one space when joining (gqg)
+set showmatch		" briefly highlight the matching ( { [ if any
+
+" Tabs:			(Historical reason to choose 8 as a default)
+set tabstop=8		" number of spaces that a <Tab> in a file counts for
+set shiftwidth=0	" number of spaces to use for each step of (auto)indent
+set softtabstop=0	" do not mix space and tabs to make up a set spacing
+set noexpandtab		" never replace tabs with space
+
+" Folds:
+set foldenable
+set foldmethod=marker
+set foldlevelstart=0	" close most folds when opening a file
+set foldnestmax=2	" maximum number of folds inside folds
+set foldopen-=block	" do not open ( { [ folds when 'h/j/k/l' on them
+" set foldclose=all	" auto close fold when leaving the fold scope
+" TODO: apply this to anything ? Or make a plugin
+" C/C++ functions and so on
+" custom fold expression function
+function! MyShFoldExpr(lnum)
+    " Get the current line
+    let line = getline(a:lnum)
+    " Check for block start
+    if line =~ '^{\s*$'
+        " echom "Start fold at line ".a:lnum
+        return '>1'
+    " Check for block end
+    elseif line =~ '^\s*}$'
+        " echom "End fold at line ".a:lnum
+        return '<1'
+    " Inside a fold
+    else
+        return '=1'
+    endif
+endfunction
+augroup sh_folding
+  autocmd!
+  autocmd FileType sh setlocal foldmethod=expr
+  autocmd FileType sh setlocal foldexpr=MyShFoldExpr(v:lnum)
+augroup END
+
+" Files:
+set encoding=UTF-8
+set autoread		" reload files changed outside vim
+augroup onFocusAttemptToTriggerAutoread
+	autocmd!
+	" note: this is still not close to real-time
+	autocmd FocusGained,BufEnter * :checktime
+augroup END
+
+set nomodeline		" disable <fileCommentChar> vim: fdm=marker
+" set modelines=1		" limit lines to read
+
+" Misc:
+" TOFIX: is this working ? perform dot commands over visual blocks:
+vnoremap . :normal .<CR>
+nnoremap <leader>x :cd %:h<CR>
+" }}}
+" Copy / Cut / Paste {{{
+
+" Copy_Cut:
+" Partial line copy/cut support: check (/)
+if executable('xsel')
+	" Prefer using xsel, as it handles text better.
+	" See below to know which corner case it is solving
+	vnoremap <silent> <C-c>
+		\ "zy <BAR> :call system('xsel -i -b', @z)<CR>
+	vnoremap <silent> <C-x>
+		\ "zy <BAR> :call system('xsel -i -b', @z)<BAR>:normal gvd<CR>
+elseif executable('xclip')
+	" This works except when vim is suspended (^Z):
+	" A selection is made using vim's visual mode
+	" The selection got 'copied' to the clipboard with ^C
+	" Vim is suspended with ^Z
+	" Try to paste the selection in say Firefox/Mousepad... Nothing happens
+	" Resume Vim with `fg`
+	" The selection finally pops out into the process it was made.
+	" If there were 2 ^V, the selection got pasted twice, and so on...
+	"
+	" This drove me crazy to the point I gave up and use xsel or don't ^Z.
+	" here are some resources:
+	" https://github.com/astrand/xclip/issues/20
+	" https://askubuntu.com/questions/705620/xclip-vs-xsel
+	" https://wiki.archlinux.org/title/Tmux#On_Xorg
+	vnoremap <silent> <C-c>
+		\ "zy :call system('xclip -selection clipboard', @z)<CR>
+	vnoremap <silent> <C-x>
+		\ "zy :call system('xclip -selection clipboard', @z)<BAR>
+		\ :normal gvd<CR>
+elseif executable('wl-clip')
+	" Wayland
+elseif executable('clip.exe')
+	" To test WSL
+endif
+
+" Paste:
+" coderwall.com automatically-set-paste-mode-in-vim-when-pasting-in-insert-mode
+" https://cirw.in/blog/bracketed-paste
+" www.xfree86.org/4.7.0/ctlseqs.html#Bracketed Paste Mode
+
+" Suppose the following text to paste with Ctrl+Shift+V: FooBar
+" When being translated to the terminal emulator world this would become:
+" ^[200~FooBar^[201~
+" The function wraps the paste process, disabling :set_paste once the
+" paste has reached its terminating sequence.
+
+" The previous value was appending the escape sequence on and on again:
+"let &t_SI .= "\<Esc>[?2004h"
+let &t_SI = "\<Esc>[?2004h"  " Start Insert mode
+let &t_EI = "\<Esc>[?2004l"  " End Insert (or Replace) mode
+
+function! DoNotIndentWhilePasting()
+  set pastetoggle=<Esc>[201~  " Will turn 'paste' off in this context
+  set paste
+  " Text does not get indented
+  return ""
+endfunction
+inoremap <special> <expr> <Esc>[200~ DoNotIndentWhilePasting()
+" }}}
+" Search {{{
+set hlsearch		" highlight searches by default
+set incsearch		" find the next match as we type the search
+set ignorecase		" ignore case when searching...
+set smartcase		" ...unless we type an uppercase letter
+
+" search for the currently selected text in the file
+vnoremap / y/\V<C-R>=escape(@",'/\')<CR><CR>
+
+" shortcut to start a replace from the current line
+nnoremap S :.,$s//gc<Left><Left><Left>
+" and vim-cool is used to remove highlighted searches automatically (no :nohl)
+
+" okay, I am done searching
+nnoremap <silent><CR> :nohl<CR>
+
+" TODO: 1 of N matches while iterating the search results and combine:
+" always start a search from the cursor position
+" this will loose the 'incsearch' feature.
+" not incremental :(
+" nnoremap / :.,$/
+
+" should be to replace a selection (is there simpler ?)
+" function! GetVisualSelection()
+"   " Why is this not a built-in Vim script function?!
+"   let [line_start, column_start] = getpos("'<")[1:2]
+"   let [line_end, column_end] = getpos("'>")[1:2]
+"   let lines = getline(line_start, line_end)
+"   if len(lines) == 0
+"     return ''
+"   endif
+"   let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+"   let lines[0] = lines[0][column_start - 1:]
+"   let arf = join(lines, "\n")
+"   exe ':%s/'.arf."/gc<Left><Left><Left>"
+" endfunction
+" }}}
+" Cursor {{{
+" Keep centered when...
+" scrolling up/down
+nnoremap <expr> <C-d>    line('.') == 1 ? 'M' : '<C-d>zz'
+nnoremap <C-u>  <C-u>zz
+" going to the next/prev location
+nnoremap <C-i>  <C-i>zzzv
+nnoremap <C-o>  <C-o>zzzv
+" going to a tag (land in a centered window)
+nnoremap <C-]> <C-]>zzzv
+" searching
+nnoremap n nzzzv
+nnoremap N Nzzzv
+" joining
+nnoremap J mzJ`z
+" scrolling horizontally
+nnoremap zl zL
+nnoremap zh zH
+" TODO: Be sure that this centers screen when jumping to marks
+nnoremap <expr> ' "'" . nr2char(getchar()) . "zz"
+nnoremap <expr> ` "`" . nr2char(getchar()) . "zz"
+" TODO: when searching
+
+" Todo: a cursor plugin ? fix the <C-o> which does not remember cursor
+" automatically restore the previous cursor position
+" keywords: - vim.fandom.com
+"           - restore_cursor_to_file_position_in_previous_editing_session
+function! ResCur()
+  if line("'\"") > 1 && line("'\"") <= line("$")
+    if foldclosed(line("'\"")) < 0
+      silent normal! g`"zz
+    else
+      silent normal! g`"zozz
+    endif
+    return 1
+  endif
+endfunction
+
+augroup resCur
+  autocmd!
+  autocmd BufWinEnter * call ResCur()
+augroup END
+" }}}
+" Command-line mode {{{
+
+" arrow up/down in :cmdline
+cnoremap <C-k> <Up>
+cnoremap <C-j> <Down>
+
+" Quick_access:
+" swap colon with semicolon, game changer...
+nnoremap ; :
+nnoremap : ;
+vnoremap ; :
+vnoremap : ;
+
+" see :h complex-change
+" do not override the default !{motion} {filter} behavior
+nnoremap <leader>1 :!
+
+" Completion_menu:
+set wildmenu		" do not spam TAB in command line
+set wildmode=list:longest,list:lastused,list:full
+set wildignore=*.jpg,*.png,*.gif,*.pdf,*.pyc,*.flv,*.img
+set wildchar=<Tab>	" explicit setting: default in vim, <C-e> in Vi
+set wildcharm=<Tab>	" recognize tab as completer command in mappings
+
+" Help:
+" :help to open in a vertical split: ftplugin/help.vim
+
+" not ex-a-ctly related to the vim's command-line mode but eh
+" Terminal: The builtin :term inside of vim (will shift in favor of tmux)
+" rebind escape to avoid <C-w><S-N>
+" (or was it C-n like in the following mapping) ?
+tnoremap <C-[> <c-\><c-n>
+" impossible on MS-Windows -> :h scroll-mouse-wheel
+tnoremap <ScrollWheelUp> <C-\><C-n><C-u>
+tnoremap <ScrollWheelDown> <C-d>
+" }}}
+" Netrw {{{
+" The following was an attempt to use netrw as an improved base.
+" It...could work, but if I want some git status, icons, it is a lot of hassle.
+" The rest would be handled by an external project drawer, for now vim-fern.
+
+" This is kept for reference, but if netrw is deactivated some feature like
+" opening an URL (vim https://raw.github.com...) would break.
+" The idea is to have a sane default config to act as a fallback.
+" Deactivate netrw, see :h netrw-noload
+" let g:loaded_netrw       = 1
+" let g:loaded_netrwPlugin = 1
+" Prevent further settings
+" finish
+
+let g:netrw_banner = 0		" remove header
+let g:netrw_liststyle = 3	" tree like listing
+let g:netrw_fastbrowse = 0	" always re-read directories content
+let g:netrw_browse_split = 4	" open entries in previous buffer
+let g:netrw_winsize = 30	" uses a percentage, which we don't want
+let g:netrw_list_hide = &wildignore
+let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
+
+" Acces and reaccess netrw from any buffer
+nnoremap <silent><expr> <leader><TAB> !bufexists('NetrwTreeListing')
+			\ ? ':20Lexplore %:p:h<CR>'
+			\ : ':5wincmd h<CR>'
+
+function! NetrwMapping()
+
+  " vim is being opened with a folder as an argument:
+  " once the file is found and opened (potentially several <CR> involved),
+  " the netrw buffer is going to be wiped.
+  if tabpagenr() == 1 && tabpagewinnr(1, '$') == 1 && bufname() == "NetrwTreeListing"
+	nnoremap <silent><buffer><expr>	<CR> getline('.') =~ '/$'
+		\ ? '<Plug>NetrwLocalBrowseCheck<BAR>zz'
+		\ : '<Plug>NetrwLocalBrowseCheck<BAR>:silent bw! 1 2<CR>'
+  endif
+
+  " fix: do not replace my current 'text file' buffer with netrw content
+  nnoremap <buffer> <C-l> <C-W>l
+
+  " ux:
+  " switch to the previous window
+  nnoremap <buffer> <C-^> <C-w>p
+  " refresh with Ctrl R (looses the cursor position)
+  nnoremap <buffer> <c-r> :e .<cr>
+  " go above and below a directory
+  " TODO: better 'h' user experience
+  nnoremap <buffer> h <Plug>NetrwBrowseUpDir
+  nnoremap <buffer> l <Plug>NetrwLocalBrowseCheck<BAR>zz
+  " try to bind leftclick to behave normally...
+  " nnoremap <buffer> <LeftMouse> <Plug>NetrwLocalBrowseCheck<BAR>zz
+  " note: original came with nmap
+  " noremap <buffer> <CR> :normal v<CR>
+
+  " close the tree if already focused
+  nnoremap <buffer><silent> <leader><TAB> :bw!<CR>
+endfunction
+
+" https://www.reddit.com/r/neovim/comments/jr5zdb/remapping_keys_in_netrw/
+augroup netrw_mapping
+  autocmd!
+  autocmd filetype netrw call NetrwMapping()
+augroup END
+
+" ChatGPT's attempt to open netrw at the current file cursor's position
+"function! OpenNetrwWithCurrentFile()
+"  " Get the current file path and the file name
+"  let file_name = expand('%:t')
+"  " Open netrw in the left pane, at the current file's directory
+"  execute '20Explore ' . expand('%:p:h')
+"  " Wait for netrw to load completely (important for the contents to render)
+"  redraw!
+"  " Now, use the netrw buffer's features to navigate directly to the file
+"  " We're using a method based on cursor positioning:
+"  " Move the cursor to the appropriate position (the current file in the list)
+"  execute 'normal! /' . file_name . "\<CR>"
+"endfunction
+"nnoremap <leader>e :call OpenNetrwWithCurrentFile()<CR>
+" }}}
+
+" Plugin config {{{
+" Leave the plugin configuration aside:
+" This allows to overview the actual list of plugins and would make a
+" replacement easier, centralize plugin config with variables one can check.
+
+" =============================================================================
+" App
+" =============================================================================
+
+" Vimwiki:
+let g:vimwiki_list = [{'path': '~/documents/vimwiki',
+			\ 'syntax': 'markdown', 'ext': '.md'}]
+" let g:vimwiki_list = [{
+" 	\ 'path': '~/documents/vimwiki',
+" 	\ 'template_path': '~/documents/vimwiki/templates/',
+" 	\ 'template_default': 'default',
+" 	\ 'syntax': 'markdown',
+" 	\ 'ext': '.md',
+" 	\ 'path_html': '~/documents/wiki_extract',
+" 	\ 'custom_wiki2html': 'vimwiki_markdown',
+" 	\ 'template_ext': '.tpl'}]
+
+" Todo: convert this into a filetype file.
+" [terminal] this conflicts with the shortcut <C-W>H mapping
+" not a big deal since I am often dealing with vimwiki in a separate tab
+augroup onVimwikiBindShiftBackspace
+	autocmd!
+	autocmd FileType vimwiki nnoremap <silent><buffer> <C-H> :VimwikiGoBackLink<CR>
+augroup END
+
+
+" =============================================================================
+" Git
+" =============================================================================
+
+" Fugitive:
+" ...
+
+" Gitgutter:
+" TODO:
+"nmap <leader>Hp  <Plug>(GitGutterPreviewHunk)
+"nmap <leader>gr  <Plug>(GitGutterUndoHunk)
+"nmap <leader>ga  <Plug>(GitGutterStageHunk)
+"xmap <leader>ga  <Plug>(GitGutterStageHunk)
+
+
+" =============================================================================
+" Session
+" =============================================================================
+
+" Obsession:
+" ...
+
+" =============================================================================
+" View
+" =============================================================================
+
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
+" FZF:
+nnoremap <leader>f :FZF<CR>
+
+" Lightline:
+let g:lightline = {
+\ 'colorscheme': 'darcula',
+\ }
+" }}}
+" Fallback vim-plug in case {{{
+"
+" Autoinstall the plugin manager if missing
+"if empty(glob('$XDG_CONFIG_HOME/vim/autoload/plug.vim'))
+"  silent !curl -fLo $XDG_CONFIG_HOME/vim/autoload/plug.vim --create-dirs
+"    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+"  autocmd! VimEnter * PlugInstall --sync | source $MYVIMRC
+"endif
+"
+"call plug#begin('$XDG_CONFIG_HOME/vim/.vim-plug')
+
+" UI
+"Plug 'Yggdroot/indentLine'	" show indent levels of spaces
+"Plug 'itchyny/lightline.vim'	" lighter status bar than airline
+"Plug 'junegunn/fzf'
+"Plug 'preservim/tagbar'         " outline symbols (requires ctags)
+"
+"" motions
+"Plug 'tpope/vim-commentary'	" gcc / gcap / ...
+"Plug 'tpope/vim-surround'	" cs([
+"Plug 'wellle/targets.vim'	" di(
+"Plug 'tpope/vim-repeat'		" ?
+"Plug 'junegunn/vim-easy-align'	" align on '=' : gaip=
+"
+"" git
+"Plug 'airblade/vim-gitgutter'   " Actual modifications inside the buffer
+"Plug 'tpope/vim-fugitive'       " Stage current file from vim, restore...
+"
+"" resume sessions
+"Plug 'tpope/vim-obsession'      " :Obsess / :Obsess!
+"
+"" vim apps
+"Plug 'vimwiki/vimwiki'
+" could be a calendar or something...
+
+"call plug#end()
+
+" run :PlugInstall if there are some missing plugins
+"autocmd! VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+"	\ | PlugInstall --sync | source $MYVIMRC | endif
+" }}}

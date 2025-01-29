@@ -689,19 +689,6 @@ chkfav() {
 # }}}
 # Aliases / shortcuts {{{
 
-# wrapper to follow symlinks
-function vim() {
-	local args=()
-	for i in "$@"; do
-		if [[ -h "$i" ]]; then
-			args+=($(readlink "$i"))
-		else
-			args+=("$i")
-		fi
-	done
-	command vim "${args[@]}"
-}
-
 ### Shortcuts
 ## Based on commands
 alias \
@@ -746,14 +733,37 @@ alias \
 
 # if X11 vs wayland...
 alias clip='xclip -selection clipboard'
+# }}}
+# Commands {{{
+# NVM & Lazy loading
+export NVM_DIR="$XDG_CONFIG_HOME/nvm"
 
-# nvm (or how soydevs are going to slow down my perfect config...)
-# todo: lazy load
-#export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+function _load_nvm() {
+	unset -f nvm npm npx node _load_nvm
+	[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+	"$@"
+}
+function node { _load_nvm node "$@"; }
+function npm { _load_nvm npm "$@"; }
+function npx { _load_nvm npx "$@"; }
+function nvm { _load_nvm nvm "$@"; }
+
+# Vim wrapper to follow symlinks
+function vim() {
+	local args=()
+	for i in "$@"; do
+		if [[ -h "$i" ]]; then
+			args+=($(readlink "$i"))
+		else
+			args+=("$i")
+		fi
+	done
+	command vim "${args[@]}"
+}
 # }}}
 
 # External plugins {{{
+#
 source "$ZDOTDIR/plugins/you-should-use/you-should-use.plugin.zsh"
 
 # Fish-like syntax pre-validation (should be last)

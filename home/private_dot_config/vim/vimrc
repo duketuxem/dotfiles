@@ -192,6 +192,7 @@ nnoremap <silent> <leader>c :close<CR>
 
 " Zoom without <C-w><C-o> (create a new 'temporary' window) - awesome trick
 nnoremap <silent> <leader>t :-tab split<CR>
+nnoremap <silent> <leader>T :tabnew<CR>
 " Then close with <leader>c
 
 " Custom:
@@ -296,6 +297,9 @@ set nomodeline		" disable <fileCommentChar> vim: fdm=marker
 " TOFIX: is this working ? perform dot commands over visual blocks:
 vnoremap . :normal .<CR>
 nnoremap <leader>x :cd %:h<CR>
+
+nnoremap <leader>o o<ESC>k
+nnoremap <leader>O O<ESC>j
 " }}}
 " Copy / Cut / Paste {{{
 

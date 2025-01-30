@@ -9,6 +9,11 @@
 	checksum.sha256 = "a3c087a5f40e8bb4d9bfb26faffa094643df111a469646bef53154a54af9ff92"
 	refreshPeriod = 0
 
+[".local/diff-so-fancy"]
+	type = "file"
+	url = "https://github.com/so-fancy/diff-so-fancy/releases/latest/download/diff-so-fancy"
+	refreshPeriod = 0
+
 # =============================================================================
 # Plugins
 # =============================================================================

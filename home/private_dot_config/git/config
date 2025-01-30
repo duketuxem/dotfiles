@@ -1,0 +1,9 @@
+[core]
+	# $PAGER is less with its $LESS (options)
+	pager = "diff-so-fancy | $PAGER $LESS --tabs=4"
+
+[interactive]
+	diffFilter = "diff-so-fancy --patch"
+
+[diff-so-fancy]
+	markEmptyLines = false

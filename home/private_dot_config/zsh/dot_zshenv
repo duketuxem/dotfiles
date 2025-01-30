@@ -65,11 +65,6 @@ export XAUTHORITY="$XDG_DATA_HOME/Xauthority"
 #export XSERVERRC
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 
-# Force vim to source the interactive configuration files despite
-# it runs shell commands in non-login, non-interactive mode.
-# This is much cleaner than other quirks you will find online, telling you to
-# set the shell in interactive mode for a (vim) process that does not expect it
-# at all.
 if [ "$(ps -o comm= $PPID)" = "vim" ]; then
-	source "$ZDOTDIR/zshrc"
+	source "$ZDOTDIR/aliases.zsh"
 fi

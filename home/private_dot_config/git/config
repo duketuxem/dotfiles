@@ -4,6 +4,3 @@
 
 [interactive]
 	diffFilter = "diff-so-fancy --patch"
-
-[diff-so-fancy]
-	markEmptyLines = false

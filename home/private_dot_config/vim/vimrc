@@ -293,6 +293,12 @@ augroup END
 set nomodeline		" disable <fileCommentChar> vim: fdm=marker
 " set modelines=1		" limit lines to read
 
+" Recursively create folders on :e /non/existing/path/yet.file
+augroup Mkdir
+  autocmd!
+  autocmd BufWritePre * call mkdir(expand("<afile>:p:h"), "p")
+augroup END
+
 " Misc:
 " TOFIX: is this working ? perform dot commands over visual blocks:
 vnoremap . :normal .<CR>
@@ -607,11 +613,15 @@ augroup END
 " ...
 
 " Gitgutter:
-" TODO:
-"nmap <leader>Hp  <Plug>(GitGutterPreviewHunk)
-"nmap <leader>gr  <Plug>(GitGutterUndoHunk)
-"nmap <leader>ga  <Plug>(GitGutterStageHunk)
-"xmap <leader>ga  <Plug>(GitGutterStageHunk)
+" go to
+nmap <leader>g[  <Plug>(GitGutterNextHunk)
+nmap <leader>g]  <Plug>(GitGutterPreviousHunk)
+" git add
+nmap <leader>ga  <Plug>(GitGutterStageHunk)
+xmap <leader>ga  <Plug>(GitGutterStageHunk)
+
+nmap <leader>gd  <Plug>(GitGutterPreviewHunk)
+nmap <leader>gr  <Plug>(GitGutterUndoHunk)
 
 
 " =============================================================================
@@ -632,6 +642,7 @@ nmap ga <Plug>(EasyAlign)
 
 " FZF:
 nnoremap <leader>f :FZF<CR>
+nnoremap <leader>G :FZF ~<CR>
 
 " Lightline:
 let g:lightline = {

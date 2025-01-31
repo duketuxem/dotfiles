@@ -427,7 +427,7 @@ zstyle ':vcs_info:*'	check-for-changes true
 zstyle ':vcs_info:*'	unstagedstr " *" # %u
 zstyle ':vcs_info:*'	stagedstr " +"	# %c
 # Branch: only set branch name in bold
-zstyle ':vcs_info:git*'	formats "%%b %%B%b%%b%u%c%%B"
+zstyle ':vcs_info:git*'	formats "%%b %%B%b%%b%u%c%%B "
 # Merge/rebase/conflicts
 # Example:
 # Last command done (1 command done):
@@ -465,7 +465,7 @@ PS1="$PS1%F{green}%n"			# green username
 PS1="$PS1%F{yellow}@"			# yellow @
 PS1="$PS1%F{blue}%M "			# blue hostname
 PS1="$PS1%F{magenta}%~ "		# magenta path
-PS1="$PS1%F{cyan}\${vcs_info_msg_0_} "	# branch name
+PS1="$PS1%F{cyan}\${vcs_info_msg_0_}"	# branch name
 PS1="$PS1%f%b"				# stop color & bold
 PS1="$PS1%1(j.%F{yellow} %j .)%f"	# yellow background jobs
 PS1="$PS1%(?.%F{green}√.%F{red}%?)%f"	# √ or fail code

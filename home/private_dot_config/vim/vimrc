@@ -352,14 +352,18 @@ endif
 " Suppose the following text to paste with Ctrl+Shift+V: FooBar
 " When being translated to the terminal emulator world this would become:
 " ^[200~FooBar^[201~
-" The function wraps the paste process, disabling :set_paste once the
-" paste has reached its terminating sequence.
 
-" The previous value was appending the escape sequence on and on again:
-"let &t_SI .= "\<Esc>[?2004h"
+" :set termcap
 let &t_SI = "\<Esc>[?2004h"  " Start Insert mode
 let &t_EI = "\<Esc>[?2004l"  " End Insert (or Replace) mode
+" tmux does not set those variables:
+if &term =~ "^screen"
+	let &t_BE = "\<Esc>[?2004h"
+	let &t_BD = "\<Esc>[?2004l"
+endif
 
+" Wraps the paste process, disabling :set_paste once the
+" paste has reached its terminating sequence.
 function! DoNotIndentWhilePasting()
   set pastetoggle=<Esc>[201~  " Will turn 'paste' off in this context
   set paste

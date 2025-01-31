@@ -461,13 +461,12 @@ precmd() {
 # %B/%b bold
 # %F/%f color{red|green|blue|magenta|cyan|white}
 PS1="%B"				# start bold mode
-PS1="$PS1%F{green}%n"			# green username
-PS1="$PS1%F{yellow}@"			# yellow @
-PS1="$PS1%F{blue}%M "			# blue hostname
-PS1="$PS1%F{magenta}%~ "		# magenta path
+PS1="$PS1%F{green}%n"			# username
+PS1="$PS1%F{yellow}@"			# @
+PS1="$PS1%F{blue}%M "			# hostname
+PS1="$PS1%F{magenta}%~ "		# path
 PS1="$PS1%F{cyan}\${vcs_info_msg_0_}"	# branch name
-PS1="$PS1%f%b"				# stop color & bold
-PS1="$PS1%1(j.%F{yellow} %j .)%f"	# yellow background jobs
+PS1="$PS1%1(j.%F{yellow} %j .)%f"	# background jobs
 PS1="$PS1%(?.%F{green}√.%F{red}%?)%f"	# √ or fail code
 PS1="$PS1"$'\n'				# -- split prompt
 PS1="$PS1%B%F{yellow} %b%f"		# prompt char itself

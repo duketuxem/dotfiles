@@ -360,6 +360,8 @@ let &t_EI = "\<Esc>[?2004l"  " End Insert (or Replace) mode
 if &term =~ "^screen"
 	let &t_BE = "\<Esc>[?2004h"
 	let &t_BD = "\<Esc>[?2004l"
+	let &t_PS = "\e[200~"
+	let &t_PE = "\e[201~"
 endif
 
 " Wraps the paste process, disabling :set_paste once the

@@ -399,6 +399,8 @@ zstyle ':completion:*' verbose yes
 # }}}
 # Prompt {{{
 
+setopt PROMPT_SUBST	# Required for string interpolation in prompt
+
 # ISSUE#1: Thanks Tmux for changing my favorite ls colors...
 # [[ "$TERM" == "screen-256color" ]] && source "$XDG_CONFIG_HOME/tmux/ls.env"
 autoload -Uz colors && colors
@@ -418,41 +420,44 @@ autoload -Uz colors && colors
 #bindkey -- "^[/" _history-complete-older
 #bindkey -- "^[~" _bash_complete-word
 
-setopt PROMPTSUBST	# Required for string interpolation in prompt
-
-# autoload -Uz VCS_INFO
-# zstyle ':vcs_info:*' enable git
-# zstyle ':vcs_info:*' formats       '%F{5}(%F{cyan}%b%F{5})%f'
-# zstyle ':vcs_info:*' actionformats '%F{5}(%F{cyan}%b%F{3})%F{1}%a%F{5}]%f'
-# zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b%F{1}:%F{3}%r'
-# # Enable checking for (un)staged changes, enabling use of %u and %c
-# zstyle ':vcs_info:*' check-for-changes true
-# # Set custom strings for an unstaged vcs repo changes (*) and staged changes (+)
-# zstyle ':vcs_info:*' unstagedstr ' *'	# ongoing modifications
-# zstyle ':vcs_info:*' stagedstr ' +'		# todo: push
-# ✗
+autoload -Uz vcs_info
+zstyle ':vcs_info:*'	enable git
+# Enable checking for (un)staged changes
+zstyle ':vcs_info:*'	check-for-changes true
+zstyle ':vcs_info:*'	unstagedstr " *" # %u
+zstyle ':vcs_info:*'	stagedstr " +"	# %c
+# Branch: only set branch name in bold
+zstyle ':vcs_info:git*'	formats "%%b %%B%b%%b%u%c%%B"
+# Merge/rebase/conflicts
+# Example:
+# Last command done (1 command done):
+# pick a0274bc fix BadMatch error when embedding on some windows
+# Next command to do (1 remaining command):
+# pick 6009e6e Clear screen: Fix edge case->Will match
+# (use "git rebase --edit-todo" to view and edit)
+# --
+# %m: a0274bc
+# %b: 6009e6e
+# going with %m for now, maybe having the rebased branch commit is cool
+zstyle ':vcs_info:*' actionformats "(%a | %8>>%m%<<)%u%c"
 
 #timer_show=
 ## Except when the shell is started, add one new line after each command.
-#precmd() {
-#	# Override the precmd() with the following function
-#	# which will then be executed after each command
-#	#precmd() {
-#	#    echo
-#	#}
-#
+precmd() {
 #	if [ $timer ]; then
 #		timer_show=$(($SECONDS - $timer)) # $SECONDS is an internal var
 #		unset timer
 #	fi
-#	# vcs_info
-#}
+	vcs_info
+}
 #
 #preexec() {
 #	timer=${timer:-$SECONDS}
 #}
 
-# PROMPT == PS1
+# /!\ prompt != PS1
+# prompt is delaying the variable expansion every time
+# When using PS1, one needs to explicitely delay expansion using \${var}
 # %B/%b bold
 # %F/%f color{red|green|blue|magenta|cyan|white}
 PS1="%B"				# start bold mode
@@ -460,18 +465,12 @@ PS1="$PS1%F{green}%n"			# green username
 PS1="$PS1%F{yellow}@"			# yellow @
 PS1="$PS1%F{blue}%M "			# blue hostname
 PS1="$PS1%F{magenta}%~ "		# magenta path
-# PS1="$PS1%f%b\$vcs_info_msg_0_ "	# stop color & bold
-
+PS1="$PS1%F{cyan}\${vcs_info_msg_0_} "	# branch name
+PS1="$PS1%f%b"				# stop color & bold
 PS1="$PS1%1(j.%F{yellow} %j .)%f"	# yellow background jobs
-PS1="$PS1%(?.%F{green}√.%F{red}%?)%f"	# √ or fail code on the right
-
-PS1="$PS1"$'\n'				# split prompt
-
+PS1="$PS1%(?.%F{green}√.%F{red}%?)%f"	# √ or fail code
+PS1="$PS1"$'\n'				# -- split prompt
 PS1="$PS1%B%F{yellow} %b%f"		# prompt char itself
-
-
-# TODO: tty depending prompt (with battery status, replacement of dwm...)
-#cd ~/dwm
 # }}}
 #  Fuzzy File Finding {{{
 
@@ -654,7 +653,6 @@ vim() {
 			args+=("$i")
 		fi
 	done
-	echo $args
 	command vim "${args[@]}"
 }
 # }}}

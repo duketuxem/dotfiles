@@ -27,10 +27,12 @@ alias \
 	gbr='git branch -a'							\
 	gch='git checkout'							\
 	gco='git commit'							\
+	gcom='git commit -m'							\
 	gdi='git diff'								\
 	gdis='git diff --staged'						\
 	glo='git log --graph --decorate --all'					\
-	gpu='git push'								\
+	gpul='git pull'								\
+	gpus='git push'								\
 	gst='git status'							\
 	j='jobs'								\
 	la='ls -a'								\
@@ -57,11 +59,13 @@ alias clip='xclip -selection clipboard'
 # Config-specific shortcuts
 alias \
 	cmcd="cd $(chezmoi source-path)/.."					\
+	cmdi="chezmoi diff"							\
+	cmradi="chezmoi re-add --interactive"					\
 	reload="source $ZDOTDIR/zshrc"						\
 	tconf="$EDITOR $XDG_CONFIG_HOME/tmux/tmux.conf"				\
 	vconf="$EDITOR $XDG_CONFIG_HOME/vim/vimrc"				\
 	xinitrc="$EDITOR $XDG_CONFIG_HOME/x11/xinitrc"				\
-	aliases="$EDITOR $ZDOTDIR/aliases"					\
+	aliases="$EDITOR $ZDOTDIR/aliases.zsh"					\
 	zconf="$EDITOR $ZDOTDIR/.zshrc"
 
 ## Directory stack

@@ -441,35 +441,53 @@ zstyle ':vcs_info:git*'	formats "%%b %%B%b%%b%u%c%%B "
 # going with %m for now, maybe having the rebased branch commit is cool
 zstyle ':vcs_info:*' actionformats "(%a | %8>>%m%<<)%u%c"
 
-#timer_show=
-## Except when the shell is started, add one new line after each command.
 precmd() {
-#	if [ $timer ]; then
-#		timer_show=$(($SECONDS - $timer)) # $SECONDS is an internal var
-#		unset timer
-#	fi
 	vcs_info
+	if [ $timer ]; then
+		# Compute time difference
+		local now=$(($(date +%s%0N)*0.000000001))
+		local elp=$(echo $(($now-$timer)) | awk '{printf "%.3f", $1}')
+
+		# "Unpack" the difference into hours/minutes/seconds and round
+		local h=$(echo $(("$elp" / 3600)) | awk '{printf "%.0f", $1}')
+		local m=$(echo $((("$elp" % 3600) / 60)) | awk '{printf "%.0f", $1}')
+		local s=$(echo $(("$elp" % 60)) | awk '{printf "%.3f", $1}')
+
+		# Proper Rounding of elapsed time to print in the right context
+		elp=$(echo $elp | awk '{printf "%.0f", $1}')
+		if [ "$elp" -lt 60 ]; then
+			elapsed_display="took ${s}s at $(date +%H:%M)"
+		elif [ "$elp" -ge 60 ] && [ "$elp" -lt 3600 ]; then
+			elapsed_display="took ${m}m ${s}s at $(date +%H:%M)"
+		elif [ "$elp" -ge 3600 ]; then
+			elapsed_display="took ${h}h ${m}m ${s}s at $(date +%H:%M)"
+		fi
+
+		# Otherwise times how long the user takes to input something
+		unset timer
+	fi
 }
-#
-#preexec() {
-#	timer=${timer:-$SECONDS}
-#}
+
+preexec() {
+	timer=$(($(date +%s%0N)*0.000000001))
+}
 
 # /!\ prompt != PS1
 # prompt is delaying the variable expansion every time
 # When using PS1, one needs to explicitely delay expansion using \${var}
 # %B/%b bold
 # %F/%f color{red|green|blue|magenta|cyan|white}
-PS1="%B"				# start bold mode
-PS1="$PS1%F{green}%n"			# username
-PS1="$PS1%F{yellow}@"			# @
-PS1="$PS1%F{blue}%M "			# hostname
-PS1="$PS1%F{magenta}%~ "		# path
-PS1="$PS1%F{cyan}\${vcs_info_msg_0_}"	# branch name
-PS1="$PS1%1(j.%F{yellow} %j .)%f"	# background jobs
-PS1="$PS1%(?.%F{green}√.%F{red}%?)%f"	# √ or fail code
-PS1="$PS1"$'\n'				# -- split prompt
-PS1="$PS1%B%F{yellow} %b%f"		# prompt char itself
+PS1="%B"					# start bold mode
+PS1="$PS1%F{green}%n"				# username
+PS1="$PS1%F{yellow}@"				# @
+PS1="$PS1%F{blue}%M "				# hostname
+PS1="$PS1%F{magenta}%~ "			# path
+PS1="$PS1%F{cyan}\${vcs_info_msg_0_}"		# branch name
+PS1="$PS1%1(j.%F{yellow} %j .)%f"		# background jobs
+PS1="$PS1%(?.%F{green}√.%F{red}%?)%f"		# √ or fail code
+PS1="$PS1%F{black}  \${elapsed_display}%f"	# execution time
+PS1="$PS1"$'\n'					# -- split prompt
+PS1="$PS1%B%F{yellow} %b%f"			# prompt char itself
 # }}}
 #  Fuzzy File Finding {{{
 

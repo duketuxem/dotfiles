@@ -31,6 +31,7 @@ alias \
 	gdi='git diff'								\
 	gdis='git diff --staged'						\
 	glo='git log --graph --decorate --all'					\
+	glol='git log --graph --decorate --all --oneline'			\
 	gpul='git pull'								\
 	gpus='git push'								\
 	gst='git status'							\

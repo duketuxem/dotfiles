@@ -8,6 +8,7 @@ neofetch
 silversearcher-ag
 tmux
 tree
+syncthing
 universal-ctags
 vim
 wget

@@ -239,7 +239,7 @@ set mouse=a		" use mouse for all vim modes (normal/visual...)
 set tags=tags		" default file name to look for tags
 set noautochdir		" autochdir changes the global directory, not win/tab
 set backspace=indent,eol,start	" erase back even in insert mode
-set textwidth=79	" do break text with a newline after n typped chars
+set textwidth=0		" do break text with a newline after n typped chars
 set nojoinspaces	" leave only one space when joining (gqg)
 set showmatch		" briefly highlight the matching ( { [ if any
 
@@ -590,8 +590,8 @@ augroup END
 " =============================================================================
 
 " Vimwiki:
-let g:vimwiki_list = [{'path': '~/documents/vimwiki',
-			\ 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_list = [{'path': '~/documents/vimwiki' }]
+
 " let g:vimwiki_list = [{
 " 	\ 'path': '~/documents/vimwiki',
 " 	\ 'template_path': '~/documents/vimwiki/templates/',
@@ -609,6 +609,10 @@ augroup onVimwikiBindShiftBackspace
 	autocmd!
 	autocmd FileType vimwiki nnoremap <silent><buffer> <C-H> :VimwikiGoBackLink<CR>
 augroup END
+
+" Please, let me use backspace to navigate through code or lines
+nmap <leader><BS> <Plug>VimwikiGoBackLink
+
 
 
 " =============================================================================

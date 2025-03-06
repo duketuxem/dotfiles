@@ -178,16 +178,16 @@ call s:h("Delimiter", s:orange, "", "")  " <?php
 
 " {{{ Extensions
 " Vimwiki
-call s:h("VimwikiHeader1",	s:purple, "", "bold")
-call s:h("VimwikiHeader2",	s:purple, "", "bold")
-call s:h("VimwikiHeader3",	s:purple, "", "bold")
-call s:h("VimwikiHeader4",	s:purple, "", "bold")
-call s:h("VimwikiHeader5",	s:purple, "", "bold")
+call s:h("VimwikiHeader1",	s:orange, "", "bold")
+call s:h("VimwikiHeader2",	s:green, "", "bold")
+call s:h("VimwikiHeader3",	s:yellow, "", "bold")
+call s:h("VimwikiHeader4",	s:cyan, "", "bold")
+call s:h("VimwikiHeader5",	s:red, "", "bold")
 call s:h("VimwikiHeader6",	s:purple, "", "bold")
-call s:h("VimwikiHeader7",	s:purple, "", "bold")
 call s:h("VimwikiLink",		s:blue, "", "underline") " underline KO...
 call s:h("VimwikiCode",		s:yellow, "", "")
-call s:h("VimwikiListTodo",	s:red, "", "")
+call s:h("VimwikiListTodo",	s:purple, "", "")
+
 " hi VimwikiHeaderChar
 " hi VimwikiHR
 " hi VimwikiList

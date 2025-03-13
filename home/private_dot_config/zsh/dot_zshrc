@@ -539,7 +539,7 @@ bindkey -- "^G" fzf-in-home
 #"^[c" fzf-cd-widget
 unset fdbin
 # }}}
-# favzf: fzf-powered bookmark navigation plugin {{{
+# favzf: FZF-Powered Favorite Directory Chooser {{{
 # note: no need to export, every zsh interactive shell will know this variable,
 # as this file is sourced inevitably.
 # The only use case would be for another program or script run externally,
@@ -547,18 +547,13 @@ unset fdbin
 # But it's not necessary since it's meant to be used only here.
 CDFAVS="$XDG_DATA_HOME"/zsh/favs.txt
 
-change-directory-favorites() {
+get-favorite-directory-path() {
 	local choice="$(fzf < $CDFAVS)"
-	if [[ "$choice" ]]; then
-		eval cd "$choice"
-		zle accept-line
-	else
-		# in case of Ctrl-C
-		zle reset-prompt
-	fi
+	LBUFFER="${LBUFFER}${choice}"
+	zle reset-prompt
 }
-zle -N change-directory-favorites
-bindkey -- "^F" change-directory-favorites
+zle -N get-favorite-directory-path
+bindkey -- "^F" get-favorite-directory-path
 
 addfav() {
 	local compute() {

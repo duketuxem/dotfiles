@@ -59,11 +59,11 @@ endfunction
 " {{{ Binding
 " {{{ Editor elements
 call s:h("Normal",       s:dark6, s:dark0, "")      " BG / FG
-call s:h("LineNr",       s:dark3, s:dark1, "")      " Vert. numbers
+call s:h("LineNr",       s:dark2, s:dark0, "")      " Vert. numbers
 call s:h("ColorColumn",  "", s:bonus_dark1, "")     " 80 col. marker
 call s:h("Folded",       s:dark3, s:dark1, "bold")  " Fold appearance
 call s:h("MatchParen",   "", s:blue, "")            " Matching ( )
-call s:h("VertSplit",    s:dark1, s:dark3, "")      " Pane separator
+call s:h("VertSplit",    s:dark2, s:dark0, "")      " Pane separator
 call s:h("StatusLine",   "", s:dark3, "")           " 1 char. gap current
 call s:h("StatusLineNC", "", s:dark0, "")           " ^^^ if same as above
 call s:h("NonText",      s:blue, "", "")            " '~' in end of file
@@ -95,17 +95,17 @@ call s:h("Type",           s:yellow, "", "")  " int long
 call s:h("Structure",      s:yellow, "", "")  " struct is also a type to me
 call s:h("Typedef",        s:orange, "", "")  " typedef
 call s:h("StorageClass",   s:cyan, "", "")    " const, static
-call s:h("Identifier",     s:yellow, "", "")   " Var type
-call s:h("Constant",       s:orange, "", "")   " NULL
+call s:h("Identifier",     s:yellow, "", "")  " Var type
+call s:h("Constant",       s:orange, "", "")  " NULL
 call s:h("Boolean",        s:orange, "", "")
 call s:h("Number",         s:orange, "", "")
 call s:h("Float",          s:orange, "", "")
 call s:h("String",         s:green, "", "")
 call s:h("Character",      s:green, "", "")
 call s:h("Statement",      s:purple, "", "")
-call s:h("Delimiter",      s:dark6, "", "")  " + . = ( ) ...
+call s:h("Delimiter",      s:dark6, "", "")   " + . = ( ) ...
 " + - = are white
-hi! link Operator          Delimiter
+" hi! link Operator          Delimiter
 
 call s:h("Comment",        s:dark3, "", "")
 call s:h("Todo",           s:orange, "", "bold,underline")
@@ -119,6 +119,8 @@ hi! link Error             ErrorMsg
 " }}}
 
 " {{{ Vim
+call s:h("vimParenSep",       s:dark6, "", "")      " Paren same as text: white
+call s:h("vimOperParen",      s:dark6, "", "")      " Paren commas same as text
 call s:h("vimOption",         s:red, "", "")       " i.e.: anything after a set
 call s:h("vimFunction",       s:blue, "", "")      " function name highlighting
 call s:h("vimAutoEvent",      s:orange, "", "")    " AuBuf / ...
@@ -127,6 +129,33 @@ call s:h("vimCommentTitle",   s:bonus_olight, "", "")
 " }}}
 " {{{ JavaScript
 " call s:h("javaExternal", s:purple, "", "")  " import
+" }}}
+" {{{ Typescript
+" I don't get why so many defined syntax groups are being skipped...
+" see /usr/share/vim/vim90/syntax/shared/typescriptcommon.vim
+" those tried and not working are commented out
+"
+" blue - classes & funcs & variable declaration
+call s:h("typescriptClassName",		s:blue, "", "")	" Programming 'symbols'
+call s:h("typescriptClassHeritage",	s:blue, "", "")	" implements 'name' {.}
+call s:h("typescriptInterfaceName",	s:blue, "", "")
+call s:h("typescriptArrowFunc",		s:blue, "", "")
+call s:h("typescriptVariableDeclaration", s:blue, "", "")
+" orange - class instances and alike
+call s:h("typescriptIdentifier",	s:orange, "", "") " 'this' keyword
+call s:h("typescriptOperator",		s:orange, "", "") " 'new' keyword
+" red - class attributes, arrow funcs arguments, props
+call s:h("typescriptCall", s:red, "", "")
+call s:h("typescriptPaymentShippingOptionProp", s:red, "", "") " id/label
+" yellow - literals / variable declaration
+call s:h("typescriptObjectLabel", s:yellow, "", "")	" { objlabel: 'value' }
+" white - Everything else
+call s:h("typescriptObjectLiteral", s:dark6, "", "")	" commas within object
+call s:h("typescriptBlock", s:dark6, "", "")		" Most of the text
+call s:h("typescriptBraces", s:dark6, "", "")		" {}
+call s:h("typescriptEndColons", s:dark6, "", "")	" consistent 'normal' ;
+" purple
+call s:h("typescriptVariable", s:purple, "", "")	" const
 " }}}
 " {{{ HTML
 call s:h("htmlTitle", s:blue, "", "bold")

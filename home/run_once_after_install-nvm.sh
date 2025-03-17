@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# Set some executable scripts
-chmod +x "$HOME"/.local/bin/diff-so-fancy
-
 # Do not alter any user shell configuration thanks to $PROFILE
 PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash'
 
@@ -11,4 +8,5 @@ export NVM_DIR="${NVM_DIR:-$HOME/config/nvm}"
 
 # Source the nvm 'env' so `node` commands will be available
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm install --lts
+nvm install --lts && \
+	npm install -g typescript

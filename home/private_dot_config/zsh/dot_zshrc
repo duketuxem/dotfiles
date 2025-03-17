@@ -13,7 +13,7 @@
 # Uncomment here and `#zprof` to audit startup time
 # zmodload zsh/zprof
 
-# Environment variables, for an interactive context {{{
+# Environment variables, for an interactive context [[[
 
 ### System:
 export EDITOR='vim'
@@ -62,8 +62,8 @@ export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
 ### Plugins
 # NVM & Lazy loading
 export NVM_DIR="$XDG_CONFIG_HOME/nvm"
-# }}}
-# Key bindings from scratch {{{
+# ]]]
+# Key bindings from scratch [[[
 
 ### In this section:
 ### 1. Attempt to read the Terminfo database
@@ -293,8 +293,8 @@ unset keys
 #
 # How to get control characters for Ctrl+Left from terminfo in Zsh:
 # https://stackoverflow.com/questions/31379824/
-# }}}
-# Shell Options & History {{{
+# ]]]
+# Shell Options & History [[[
 
 ### Miscellaneous
 setopt NOTIFY	# Report background job status immediately vs next prompt
@@ -312,8 +312,8 @@ setopt APPEND_HISTORY		# (On by default)
 setopt INC_APPEND_HISTORY	# Immediate recording
 setopt HIST_IGNORE_DUPS		# Avoid ls ls ls ls
 setopt HIST_IGNORE_SPACE	# Do not record ' cmd'
-# }}}
-# Completion {{{
+# ]]]
+# Completion [[[
 
 # TODO: close the completion menu
 # bindkey -M menuselect '^[' undo
@@ -396,8 +396,8 @@ zstyle ':completion:*' verbose yes
 
 # reference:
 # zstyle :completion:<function>:<completer>:<command>:<argument>:<tag>
-# }}}
-# Prompt {{{
+# ]]]
+# Prompt [[[
 
 setopt PROMPT_SUBST	# Required for string interpolation in prompt
 
@@ -488,8 +488,8 @@ PS1="$PS1%(?.%F{green}√.%F{red}%?)%f"		# √ or fail code
 PS1="$PS1%F{black}  \${elapsed_display}%f"	# execution time
 PS1="$PS1"$'\n'					# -- split prompt
 PS1="$PS1%B%F{yellow} %b%f"			# prompt char itself
-# }}}
-#  Fuzzy File Finding {{{
+# ]]]
+#  Fuzzy File Finding integration [[[
 
 ### Loading
 # From fzf changelog v0.48.0:
@@ -538,8 +538,8 @@ bindkey -- "^G" fzf-in-home
 #"^T" fzf-file-widget
 #"^[c" fzf-cd-widget
 unset fdbin
-# }}}
-# favzf: FZF-Powered Favorite Directory Chooser {{{
+# ]]]
+# favzf: FZF-Powered Favorite Directory Chooser [[[
 # note: no need to export, every zsh interactive shell will know this variable,
 # as this file is sourced inevitably.
 # The only use case would be for another program or script run externally,
@@ -633,8 +633,21 @@ chkfav() {
 	unset fav
 	return $err
 }
-# }}}
-# Command Wrappers {{{
+# ]]]
+# Node & Co integration [[[
+# This takes long, delaying it is tempting, but also partially loads the 'env'
+# and hides some binaries from the prompt until nvm/npm/npx/node is explicitely
+# called by the user.
+# One side effect is, suppose vim expects tsserver (npm package) to be present,
+# it has no idea nvm exists, and even though, should load the following only in
+# its child process scope, requiring the parent process to ALSO load it when
+# required. Giving up.
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+# Load angular completion if it was installed
+command ng && source <(ng completion script)
+# ]]]
+# Command Wrappers [[[
 # Oh...
 man() {
 	if [ "$DISTRO" = 'void' ]; then
@@ -644,16 +657,6 @@ man() {
 		command man "$@"
 	fi
 }
-
-_load_nvm() {
-	unset -f nvm npm npx node _load_nvm
-	[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-	"$@"
-}
-node() { _load_nvm node "$@"; }
-npm() { _load_nvm npm "$@"; }
-npx() { _load_nvm npx "$@"; }
-nvm() { _load_nvm nvm "$@"; }
 
 # Vim wrapper to follow symlinks
 vim() {
@@ -667,16 +670,16 @@ vim() {
 	done
 	command vim "${args[@]}"
 }
-# }}}
+# ]]]
 
 source "$ZDOTDIR/aliases.zsh"
 
-# External plugins {{{
-#
+# External plugins [[[
+
 source "$ZDOTDIR/plugins/you-should-use/you-should-use.plugin.zsh"
 
 # Fish-like syntax pre-validation (should be last)
 source "$ZDOTDIR"/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# }}}
+# ]]]
 
 # zprof

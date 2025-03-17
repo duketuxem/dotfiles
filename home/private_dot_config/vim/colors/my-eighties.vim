@@ -11,7 +11,7 @@ endif
 
 let g:colors_name='my-eighties'
 
-" {{{ Declarations (colors + helper function)
+" {{{ Defining colors & helper functions
 " base16-eighties exact color palette (except term - yet):
 let s:dark0  = { "gui": "#2d2d2d", "cli": "237", "term": "07" } " base00
 let s:dark1  = { "gui": "#393939", "cli": "1000" } 		" base01
@@ -56,7 +56,6 @@ function! s:h(group, fg, bg, attr)
 endfunction
 " }}}
 
-" {{{ Binding
 " {{{ Editor elements
 call s:h("Normal",       s:dark6, s:dark0, "")      " BG / FG
 call s:h("LineNr",       s:dark2, s:dark0, "")      " Vert. numbers
@@ -205,6 +204,9 @@ call s:h("phpStructure", s:purple, "", "")  " namespace / class / extends...
 call s:h("phpMethodsVar", s:blue, "", "")  " members of classes
 call s:h("phpSpecialFunction", s:dark7, "", "")  " members of classes
 call s:h("Delimiter", s:orange, "", "")  " <?php
+" }}}
+" Zsh {{{
+call s:h("zshFunction", s:blue, "", "")
 " }}}
 
 " netrw {{{

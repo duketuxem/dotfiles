@@ -60,6 +60,7 @@ endfunction
 " {{{ Editor elements
 call s:h("Normal",       s:dark6, s:dark0, "")      " BG / FG
 call s:h("LineNr",       s:dark2, s:dark0, "")      " Vert. numbers
+call s:h("CursorLineNr", s:dark2, s:dark0, "")      " The infamous netrw cursor
 call s:h("ColorColumn",  "", s:bonus_dark1, "")     " 80 col. marker
 call s:h("Folded",       s:dark3, s:dark1, "bold")  " Fold appearance
 call s:h("MatchParen",   "", s:blue, "")            " Matching ( )
@@ -105,7 +106,7 @@ call s:h("Character",      s:green, "", "")
 call s:h("Statement",      s:purple, "", "")
 call s:h("Delimiter",      s:dark6, "", "")   " + . = ( ) ...
 " + - = are white
-" hi! link Operator          Delimiter
+hi! link Operator          Delimiter
 
 call s:h("Comment",        s:dark3, "", "")
 call s:h("Todo",           s:orange, "", "bold,underline")
@@ -133,7 +134,6 @@ call s:h("vimCommentTitle",   s:bonus_olight, "", "")
 " {{{ Typescript
 " I don't get why so many defined syntax groups are being skipped...
 " see /usr/share/vim/vim90/syntax/shared/typescriptcommon.vim
-" those tried and not working are commented out
 "
 " blue - classes & funcs & variable declaration
 call s:h("typescriptClassName",		s:blue, "", "")	" Programming 'symbols'
@@ -165,20 +165,22 @@ call s:h("htmlH3", s:blue, "", "bold")
 call s:h("htmlH4", s:blue, "", "bold")
 call s:h("htmlH5", s:blue, "", "bold")
 call s:h("htmlH6", s:blue, "", "bold")
+
+" white < >
 call s:h("htmlTag", s:dark6, "", "")
 call s:h("htmlEndTag", s:dark6, "", "")
+
 call s:h("htmlTagName", s:red, "", "")
 call s:h("htmlItalic", s:orange, "", "bold")
 " }}}
 " {{{ JSON
 call s:h("JsonKeyword", s:yellow, "", "")
-call s:h("JsonBoolean", s:red, "", "")
+call s:h("JsonBoolean", s:orange, "", "")
 " }}}
 " {{{ Perl
 call s:h("PerlMethod", s:blue, "", "")
 " }}}
 " {{{ TODO: Java
-" Consider switching to neovim ? ...
 call s:h("javaExternal", s:purple, "", "")  " import
 call s:h("javaScopeDecl", s:purple, "", "") " public
 call s:h("javaClassDecl", s:purple, "", "") " class
@@ -203,6 +205,10 @@ call s:h("phpStructure", s:purple, "", "")  " namespace / class / extends...
 call s:h("phpMethodsVar", s:blue, "", "")  " members of classes
 call s:h("phpSpecialFunction", s:dark7, "", "")  " members of classes
 call s:h("Delimiter", s:orange, "", "")  " <?php
+" }}}
+
+" netrw {{{
+call s:h("netrwTreeBar", s:purple, "", "")
 " }}}
 
 " {{{ Extensions

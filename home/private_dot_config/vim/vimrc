@@ -658,6 +658,8 @@ nnoremap <leader>G :FZF ~<CR>
 let g:lightline = {
 \ 'colorscheme': 'darcula',
 \ }
+" VimHtmlTemplateLiterals:
+let g:htl_all_templates=1
 " }}}
 " Fallback vim-plug in case {{{
 "

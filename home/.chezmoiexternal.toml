@@ -13,6 +13,7 @@
 [".local/bin/diff-so-fancy"]
 	type = "file"
 	url = "https://github.com/so-fancy/diff-so-fancy/releases/latest/download/diff-so-fancy"
+	executable = true
 	refreshPeriod = 0
 
 # =============================================================================
@@ -106,12 +107,12 @@
 	refreshPeriod = "672h"
 # ]]]
 # vim-color-scheme-switcher [[[
-[".config/vim/pack/themes/start/vim-color-scheme-switcher"]
+[".config/vim/pack/themes/start/vim-colorscheme-switcher"]
 	type = "git-repo"
 	url = "https://github.com/xolox/vim-colorscheme-switcher"
 	refreshPeriod = "672h"
 # ]]]
-# vim-misc: vim-color-scheme-switcher dependency [[[
+# vim-misc: vim-colorscheme-switcher dependency [[[
 [".config/vim/pack/themes/start/vim-misc"]
 	type = "git-repo"
 	url = "https://github.com/xolox/vim-misc"

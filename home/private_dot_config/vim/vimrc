@@ -251,7 +251,8 @@ set noexpandtab		" never replace tabs with space
 
 " Folds:
 set foldenable
-set foldmethod=marker
+set foldmethod=marker	" uses {{{,}}} for folding code sections by default
+set foldmarker=[[[,]]]	" for everything but vim: overriden in ftplugin/vim.vim
 set foldlevelstart=0	" close most folds when opening a file
 set foldnestmax=2	" maximum number of folds inside folds
 set foldopen-=block	" do not open ( { [ folds when 'h/j/k/l' on them

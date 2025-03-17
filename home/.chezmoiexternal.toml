@@ -26,144 +26,144 @@
 ### 'This' is the directory name in ~/.config/vim/pack/DIR/plugin ###
 
 ### app ###
-# vimwiki {{{
+# vimwiki [[[
 [".config/vim/pack/app/start/vimwiki"]
 	type = "git-repo"
 	url = "https://github.com/vimwiki/vimwiki"
 	refreshPeriod = "672h"
-# }}}
+# ]]]
 
 ### git ###
-# vim-gitgutter: diff appearing in the lateral bar as '~ / + / -' {{{
+# vim-gitgutter: diff appearing in the lateral bar as '~ / + / -' [[[
 [".config/vim/pack/git/start/vim-gitgutter"]
 	type = "git-repo"
 	url = "https://github.com/airblade/vim-gitgutter"
 	refreshPeriod = "672h"
-# }}}
-# vim-fugitive: CLI Integration from vim, status, diff, restore and so on {{{
+# ]]]
+# vim-fugitive: CLI Integration from vim, status, diff, restore and so on [[[
 [".config/vim/pack/git/start/vim-fugitive"]
 	type = "git-repo"
 	url = "https://github.com/tpope/vim-fugitive"
 	refreshPeriod = "672h"
-# }}}
+# ]]]
 
 ### js ###
-# vim-html-template-literals: render syntax within `<h1>Hello</h1>` {{{
+# vim-html-template-literals: render syntax within `<h1>Hello</h1>` [[[
 [".config/vim/pack/js/start/vim-html-template-literals"]
 	type = "git-repo"
 	url = "https://github.com/jonsmithers/vim-html-template-literals.git"
 	refreshPeriod = "672h"
-# }}}
+# ]]]
 
 ### motions ###
-# targets: Extra targets to delete around [] () <> or interlaced (([])) {{{
+# targets: Extra targets to delete around [] () <> or interlaced (([])) [[[
 [".config/vim/pack/motions/start/targets.vim"]
 	type = "git-repo"
 	url = "https://github.com/wellle/targets.vim"
 	refreshPeriod = "672h"
-# }}}
-# vim-commentary: gcc / gcap {{{
+# ]]]
+# vim-commentary: gcc / gcap [[[
 [".config/vim/pack/motions/start/vim-commentary"]
 	type = "git-repo"
 	url = "https://github.com/tpope/vim-commentary"
 	refreshPeriod = "672h"
-# }}}
-# vim-easy-align: align on '=' : gaip= {{{
+# ]]]
+# vim-easy-align: align on '=' : gaip= [[[
 [".config/vim/pack/motions/start/vim-easy-align"]
 	type = "git-repo"
 	url = "https://github.com/junegunn/vim-easy-align"
 	refreshPeriod = "672h"
-# }}}
-# vim-surround: cs[" to change from [ ] to " " or html tags or whatever {{{
+# ]]]
+# vim-surround: cs[" to change from [ ] to " " or html tags or whatever [[[
 # feature freeze:
 # TODO: Try vim-sandwich ?
 [".config/vim/pack/motions/start/vim-surround"]
 	type = "git-repo"
 	url = "https://github.com/tpope/vim-surround"
 	refreshPeriod = "672h"
-# }}}
+# ]]]
 #'tpope/vim-repeat'		" ?
 
 ### session ###
-# vim-obsession: remember a previously opened project :Obsess / :Obsess! {{{
+# vim-obsession: remember a previously opened project :Obsess / :Obsess! [[[
 [".config/vim/pack/session/start/vim-obsession"]
 	type = "git-repo"
 	url = "https://github.com/tpope/vim-obsession"
 	refreshPeriod = "672h"
-# }}}
+# ]]]
 
 ### themes ###
-# base16-vim {{{
+# base16-vim [[[
 [".config/vim/pack/themes/start/base16-vim"]
 	type = "git-repo"
 	url = "https://github.com/chriskempson/base16-vim"
 	refreshPeriod = "672h"
-# }}}
-# onedark {{{
+# ]]]
+# onedark [[[
 [".config/vim/pack/themes/start/onedark.vim"]
 	type = "git-repo"
 	url = "https://github.com/joshdick/onedark.vim"
 	refreshPeriod = "672h"
-# }}}
-# vim-color-scheme-switcher {{{
+# ]]]
+# vim-color-scheme-switcher [[[
 [".config/vim/pack/themes/start/vim-color-scheme-switcher"]
 	type = "git-repo"
 	url = "https://github.com/xolox/vim-colorscheme-switcher"
 	refreshPeriod = "672h"
-# }}}
-# vim-misc: vim-color-scheme-switcher dependency {{{
+# ]]]
+# vim-misc: vim-color-scheme-switcher dependency [[[
 [".config/vim/pack/themes/start/vim-misc"]
 	type = "git-repo"
 	url = "https://github.com/xolox/vim-misc"
 	# Last update was 10 years ago
 	refreshPeriod = 0
-# }}}
+# ]]]
 
 ### view ###
-# lightline: status bar lighter than airline {{{
+# lightline: status bar lighter than airline [[[
 [".config/vim/pack/view/start/lightline.vim"]
 	type = "git-repo"
 	url = "https://github.com/itchyny/lightline.vim"
 	refreshPeriod = "672h"
-# }}}
-# fzf.git {{{
+# ]]]
+# fzf.git [[[
 [".config/vim/pack/view/start/fzf"]
 	type = "git-repo"
 	url = "https://github.com/junegunn/fzf.git"
 	refreshPeriod = "672h"
-# }}}
-# tagbar: file symobols outline {{{
+# ]]]
+# tagbar: file symobols outline [[[
 [".config/vim/pack/view/start/tagbar"]
 	type = "git-repo"
 	url = "https://github.com/preservim/tagbar"
 	refreshPeriod = "672h"
-# }}}
-# indentLine: display thin vertical lines at each space indentation level {{{
+# ]]]
+# indentLine: display thin vertical lines at each space indentation level [[[
 [".config/vim/pack/view/start/indentLine"]
 	type = "git-repo"
 	url = "https://github.com/Yggdroot/indentLine"
 	# Repository was archived
 	refreshPeriod = 0
-# }}}
-# vim-fern: TODO: nice netrw replacement {{{
+# ]]]
+# vim-fern: TODO: nice netrw replacement [[[
 [".config/vim/pack/view/start/vim-fern"]
 	type = "git-repo"
 	url = "https://github.com/lambdalisue/vim-fern"
 	refreshPeriod = "168h"
-# }}}
+# ]]]
 
 ######
 # Zsh:
 ######
-# zsh-syntax-highlighting: fish-like syntax pre-validation {{{
+# zsh-syntax-highlighting: fish-like syntax pre-validation [[[
 [".config/zsh/plugins/zsh-syntax-highlighting"]
 	type = "git-repo"
 	url = "https://github.com/zsh-users/zsh-syntax-highlighting.git"
 	refreshPeriod = "672h"
-# }}}
-# you-should-use: alias usage hints {{{
+# ]]]
+# you-should-use: alias usage hints [[[
 [".config/zsh/plugins/you-should-use"]
 	type = "git-repo"
 	url = "https://github.com/MichaelAquilina/zsh-you-should-use.git"
 	refreshPeriod = "672h"
-# }}}
+# ]]]

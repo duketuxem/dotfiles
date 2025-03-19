@@ -645,7 +645,7 @@ chkfav() {
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
 # Load angular completion if it was installed
-command ng && source <(ng completion script)
+command ng 2> /dev/null && source <(ng completion script)
 # ]]]
 # Command Wrappers [[[
 # Oh...

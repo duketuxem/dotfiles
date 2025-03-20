@@ -48,6 +48,45 @@
 	refreshPeriod = "672h"
 # ]]]
 
+### ide ###
+# ale: linter UI [[[
+[".config/vim/pack/ide/start/ale"]
+	type = "git-repo"
+	url = "https://github.com/dense-analysis/ale"
+	refreshPeriod = "672h"
+# ]]]
+# asyncomplete-file.vim: plug paths completion [[[
+[".config/vim/pack/ide/start/asyncomplete-file.vim"]
+	type = "git-repo"
+	url = "https://github.com/prabirshrestha/asyncomplete-file.vim"
+	refreshPeriod = "1200h"
+# ]]]
+# asyncomplete-lsp.vim: plug lsp completion [[[
+[".config/vim/pack/ide/start/asyncomplete-lsp.vim"]
+	type = "git-repo"
+	url = "https://github.com/prabirshrestha/asyncomplete-lsp.vim"
+	refreshPeriod = "1200h"
+# ]]]
+# asyncomplete.vim: search a completion list [[[
+[".config/vim/pack/ide/start/asyncomplete.vim"]
+	type = "git-repo"
+	url = "https://github.com/prabirshrestha/asyncomplete.vim"
+	refreshPeriod = "1200h"
+# ]]]
+# vim-lsp: lsp integration with side clients [[[
+[".config/vim/pack/ide/start/vim-lsp"]
+	type = "git-repo"
+	url = "https://github.com/prabirshrestha/vim-lsp"
+	refreshPeriod = "672h"
+# ]]]
+# vim-lsp-ale: pre-baked config to split concerns [[[
+[".config/vim/pack/ide/start/vim-lsp-ale"]
+	type = "git-repo"
+	url = "https://github.com/rhysd/vim-lsp-ale"
+	# last update was from 4 years, but no reason to so far
+	refreshPeriod = 0
+# ]]]
+
 ### js ###
 # vim-html-template-literals: render syntax within `<h1>Hello</h1>` [[[
 [".config/vim/pack/js/start/vim-html-template-literals"]

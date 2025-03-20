@@ -91,6 +91,10 @@ map <C-x> <Nop>
 nnoremap Y y$
 " ignore a text to replace from being recorded into registers
 nnoremap c "_c
+" fancy ways to quit insert mode
+inoremap jj <Esc>
+inoremap kj <Esc>
+inoremap <expr> <C-c> "<Esc>"
 
 " Vimrc:
 " quick edit vimrc in a new tab
@@ -99,8 +103,13 @@ nnoremap <silent> <leader>V :tabnew $MYVIMRC<CR>zozz
 augroup sourceVimrcOnSave
 	autocmd!
 	autocmd BufWritePost * nested if expand($MYVIMRC) ==# expand('%:p')
-				\ | source $MYVIMRC
-				\ | echo ".vimrc saved and reloaded!"
+				\ | let v:errmsg = ""
+				\ | silent source $MYVIMRC
+				\ | doautocmd filetype vim
+				\ | if empty(v:errmsg)
+				\ |   redrawstatus!
+				\ |   echo "virmc file reloaded without errors"
+				\ | endif
 				\ | endif
 augroup END
 
@@ -196,8 +205,8 @@ nnoremap <silent> <leader>T :tabnew<CR>
 " Then close with <leader>c
 
 " Custom:
-nnoremap <silent> <leader>l :ls<CR>
-nnoremap <silent> <leader>L :ls!<CR>
+nnoremap <silent> <leader>b :ls<CR>
+nnoremap <silent> <leader>B :ls!<CR>
 nnoremap <silent> <leader>q :bprev<CR>
 nnoremap <silent> <leader>p :bnext<CR>
 nnoremap <leader>e :enew<CR>
@@ -659,47 +668,98 @@ nnoremap <leader>G :FZF ~<CR>
 let g:lightline = {
 \ 'colorscheme': 'darcula',
 \ }
-" VimHtmlTemplateLiterals:
+
+" VimHtmlTemplateLiterals {{{
 let g:htl_all_templates=1
 " }}}
-" Fallback vim-plug in case {{{
-"
-" Autoinstall the plugin manager if missing
-"if empty(glob('$XDG_CONFIG_HOME/vim/autoload/plug.vim'))
-"  silent !curl -fLo $XDG_CONFIG_HOME/vim/autoload/plug.vim --create-dirs
-"    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-"  autocmd! VimEnter * PlugInstall --sync | source $MYVIMRC
-"endif
-"
-"call plug#begin('$XDG_CONFIG_HOME/vim/.vim-plug')
 
-" UI
-"Plug 'Yggdroot/indentLine'	" show indent levels of spaces
-"Plug 'itchyny/lightline.vim'	" lighter status bar than airline
-"Plug 'junegunn/fzf'
-"Plug 'preservim/tagbar'         " outline symbols (requires ctags)
-"
-"" motions
-"Plug 'tpope/vim-commentary'	" gcc / gcap / ...
-"Plug 'tpope/vim-surround'	" cs([
-"Plug 'wellle/targets.vim'	" di(
-"Plug 'tpope/vim-repeat'		" ?
-"Plug 'junegunn/vim-easy-align'	" align on '=' : gaip=
-"
-"" git
-"Plug 'airblade/vim-gitgutter'   " Actual modifications inside the buffer
-"Plug 'tpope/vim-fugitive'       " Stage current file from vim, restore...
-"
-"" resume sessions
-"Plug 'tpope/vim-obsession'      " :Obsess / :Obsess!
-"
-"" vim apps
-"Plug 'vimwiki/vimwiki'
-" could be a calendar or something...
-
-"call plug#end()
-
-" run :PlugInstall if there are some missing plugins
-"autocmd! VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-"	\ | PlugInstall --sync | source $MYVIMRC | endif
+" IDE: =======================================================================
+" ALE {{{
+" I only use ALE for its 'UI' just for forwarding the LSP results to my buffer
+" There should be nothing to configure here, as everything is handled elsewhere
 " }}}
+" vim-lsp {{{
+
+let g:lsp_document_code_action_signs_enabled = 0
+
+if executable('bash-language-server')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'shell',
+        \ 'cmd': {server_info->['bash-language-server', 'start']},
+        \ 'allowlist': ['sh'],
+        \ })
+endif
+
+if executable('typescript-language-server')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'typescript',
+        \ 'cmd': {server_info->['typescript-language-server', '--stdio']},
+        \ 'allowlist': ['typescript'],
+        \ })
+endif
+
+if executable('vim-language-server')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'vim',
+        \ 'cmd': {server_info->['vim-language-server', '--stdio']},
+        \ 'allowlist': ['vim'],
+        \ })
+endif
+
+function! s:on_lsp_buffer_enabled() abort
+    " Avoid init delay (preparation for ALE)
+    setlocal signcolumn=yes
+    " setlocal omnifunc=ale#completion#OmniFunc
+    " if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> <leader>ld <plug>(lsp-definition)
+    nmap <buffer> <leader>ls <plug>(lsp-document-symbol-search)
+    nmap <buffer> <leader>lS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> <leader>lr <plug>(lsp-references)
+    nmap <buffer> <leader>li <plug>(lsp-implementation)
+    nmap <buffer> <leader>lt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>lR <plug>(lsp-rename)
+    nmap <buffer> <leader>l[ <plug>(lsp-previous-diagnostic)
+    nmap <buffer> <leader>l] <plug>(lsp-next-diagnostic)
+    nmap <buffer> <leader>lK <plug>(lsp-hover)
+endfunction
+
+    " Eventually, if an autocmd is needed for working on the UX of ALE
+    " https://github.com/prabirshrestha/vim-lsp/issues/1280
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+" }}}
+" Asyncomplete {{{
+" let g:asyncomplete_auto_popup = 1
+" let g:asyncomplete_min_chars = 3
+
+" don't mess with the vim native settings
+let g:asyncomplete_auto_completeopt = 0
+set completeopt=menuone,noinsert,preview
+
+" navigate with either C-j or C-k
+" PageUp and PageDown are handled already, cool
+inoremap <expr> <C-j>  pumvisible() ? "\<C-n>" : "\<C-j>"
+inoremap <expr> <C-k>  pumvisible() ? "\<C-p>" : "\<C-k>"
+
+" accept selected entry with either Tab or CR
+inoremap <expr> <Tab>  pumvisible() ? asyncomplete#close_popup() : "\<Tab>"
+inoremap <expr> <CR>   pumvisible() ? asyncomplete#close_popup() : "\<CR>"
+
+augroup complete_files
+	autocmd!
+	autocmd User asyncomplete_setup call
+	\ asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+		\ 'name': 'file',
+		\ 'allowlist': ['*'],
+		\ 'priority': 10,
+		\ 'completor': function('asyncomplete#sources#file#completor')
+		\ }))
+augroup END
+" }}}
+
+" }}}
+"

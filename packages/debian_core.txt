@@ -5,6 +5,7 @@ curl
 fd-find
 htop
 neofetch
+shellcheck
 silversearcher-ag
 tmux
 tree

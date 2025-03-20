@@ -9,4 +9,7 @@ export NVM_DIR="${NVM_DIR:-$HOME/config/nvm}"
 # Source the nvm 'env' so `node` commands will be available
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 nvm install --lts && \
-	npm install -g typescript
+	npm install -g typescript \
+	npm install -g bash-language-server \
+	npm install -g typescript-language-server \
+	npm install -g vim-language-server

@@ -55,9 +55,10 @@ Here is a summary of what is in use and what would be installed.
 
 ## Getting Started
 
-The installation process requires some manual preliminary checks.
+The installation process requires some manual preliminary checks and actions.
 
-After that, the dotfiles can be deployed onto the host, then some final adjustments will be made.
+After that, the dotfiles can be automatically deployed onto the host, then some
+final adjustments will be made.
 
 ### Prerequisites
 
@@ -66,73 +67,36 @@ After that, the dotfiles can be deployed onto the host, then some final adjustme
 - Install `chezmoi`:
 
   `sh -c "$(curl -fsLS get.chezmoi.io) -b ~/.local/bin"`
-- Update the `$PATH` variable for chezmoi to be found:
+- Then update the `$PATH` variable for chezmoi to be found:
 
   `export PATH="$PATH:~/.local/bin"`
 
-
 ### Installation
 
-- Retrieve this repository locally:
+1. Retrieve and access this repository locally:
 
-  `chezmoi init duketuxem`
-- 
+  ```
+  chezmoi init duketuxem
+  chezmoi cd
+  ```
 
-### TL;DR
+2. Find your specific platform instructions under the [targets directory](./targets/README.md).
+	**Then**, resume from here.
 
+3. Deploy the dotfiles onto the host:
 
-   ```sh
-   chezmoi init duketuxem
-   chezmoi cd
-   # Packages install
-   chezmoi apply
-   chsh # /bin/zsh
-   # Logout and log back
-   # Post install steps
-   # Install desktop or not
-   ```
+	`chezmoi apply`
 
+4. Change the default shell:
 
-### Core install
+	`chsh -s /bin/zsh`
 
-1. **Clone this repository with Chezmoi**
+  Log off and then log back again to see everything loaded.
 
-   `chezmoi init duketuxem`
-
-2. **Navigate to the initialized repository**
-
-   `chezmoi cd`
-
-3. **Install the relevant packages**
-
-   a. Refer to the [packages/README.md](./packages/README.md#installation)
-   for platform-specific instructions on installing the "core"
-   profile packages.
-
-   b. Optionally, repeat the process for the "desktop" profile
-   to set up a GUI environment.
-
-4. **Deploy the configuration onto the host**
-
-    The system is now prepared to apply all the configurations from this
-    repository. Run the following command to deploy the dotfiles onto the host:
-
-   `chezmoi apply`
-
-5. **Change the default shell to Zsh**
-
-   Finally, enable Zsh to be the user's default shell,
-   so everything will be loaded upon login.
-
-   `chsh`, then type `/bin/zsh`.
-
-6. **That's it**
-
-   Log off and then log back again to see everything loaded.
 
 ### Some post installation steps
 
-   Here are a few pointers about things we always forget to do/set.
+   Here are a few pointers about things we always forget to do or set.
 
    - **Import your ssh key**
 

@@ -7,9 +7,9 @@ htop
 neofetch
 shellcheck
 silversearcher-ag
+syncthing
 tmux
 tree
-syncthing
 universal-ctags
 vim
 wget

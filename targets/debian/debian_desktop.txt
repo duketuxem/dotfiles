@@ -1,5 +1,5 @@
 feh
-firefox
+firefox-esr
 fonts-noto-cjk
 libx11-dev
 libxft-dev

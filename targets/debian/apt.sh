@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "--> Add the release PGP keys:"
+echo "Syncthing: Add the release PGP keys:"
 if [ ! -d /etc/apt/keyrings ]; then
 	echo "Missing /etc/apt/keyrings folder"
 	sudo mkdir -p /etc/apt/keyrings || exit 1
@@ -20,6 +20,6 @@ if ! grep "sync" /etc/apt/sources.list.d/syncthing.list > /dev/null; then
 	# Add the "stable" channel to your APT sources:
 	echo "Adding Syncthing repos to APT"
 	echo "deb [signed-by=/etc/apt/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
+	sudo apt-get update
 fi
-
-sudo apt-get update
+echo "Ready to install the Syncthing upstream version!"

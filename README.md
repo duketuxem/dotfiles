@@ -4,9 +4,8 @@
   <!-- Insert the ricing screenshot here -->
 </div>
 
----
 
-### Table of Contents
+## Table of Contents
 
 - [Introduction](#introduction)
 
@@ -54,14 +53,30 @@ Here is a summary of what is in use and what would be installed.
 | TO | DO |
 
 
-## Installation
+## Getting Started
+
+The installation process requires some manual preliminary checks.
+
+After that, the dotfiles can be deployed onto the host, then some final adjustments will be made.
+
+### Prerequisites
+
+- Ensure you have an **up to date** system with **internet access**
+- Ensure `curl` and `git` are installed
+- Install `chezmoi`:
+
+  `sh -c "$(curl -fsLS get.chezmoi.io) -b ~/.local/bin"`
+- Update the `$PATH` variable for chezmoi to be found:
+
+  `export PATH="$PATH:~/.local/bin"`
 
 
-### Requirements
+### Installation
 
-- (Virtual) machine with internet access
-- Any *NIX-based **up to date** system (Linux, macOS, BSD, ...)
-- `chezmoi` and `git` installed
+- Retrieve this repository locally:
+
+  `chezmoi init duketuxem`
+- 
 
 ### TL;DR
 

@@ -82,6 +82,7 @@ final adjustments will be made.
   ```
 
 2. Find your specific platform instructions under the [targets directory](./targets/README.md).
+
 	**Then**, resume from here.
 
 3. Deploy the dotfiles onto the host:
@@ -92,7 +93,7 @@ final adjustments will be made.
 
 	`chsh -s /bin/zsh`
 
-  Log off and then log back again to see everything loaded.
+5. Log off and then log back again to see everything loaded.
 
 
 ### Some post installation steps

@@ -9,7 +9,7 @@ See the [Debian documentation](https://wiki.debian.org/DebianTesting#How_to_inst
 ## Installation
 
 ```sh
-# Prefer some recent packages over the defaults
+# In any case, prefer some more recent packages over the defaults
 ./apt.sh
 
 # Install the core packages

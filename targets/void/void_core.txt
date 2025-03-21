@@ -6,6 +6,8 @@ curl
 fd
 htop
 neofetch
+shellcheck
+syncthing
 the_silver_searcher
 tmux
 tree

@@ -62,7 +62,8 @@ final adjustments will be made.
 
 ### Prerequisites
 
-- Ensure you have an **up to date** system with **internet access**
+- Ensure you have an **up to date** system with **internet access**, and eventually
+	reboot to take some changes into considerations.
 - Ensure `curl` and `git` are installed
 - Install `chezmoi`:
 

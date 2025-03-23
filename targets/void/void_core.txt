@@ -5,6 +5,7 @@ ctags
 curl
 fd
 htop
+ncdu
 neofetch
 shellcheck
 syncthing

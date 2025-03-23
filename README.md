@@ -4,56 +4,89 @@
   <!-- Insert the ricing screenshot here -->
 </div>
 
+## Motivation
 
-## Table of Contents
-
-- [Introduction](#introduction)
-
-
-## Introduction
-
-Every time I set up a new machine, none of the tools and
+Every time I set up a new machine, obviously none of the tools and
 configurations I need are available. Reinstalling the same software suite
 repeatedly is frustrating, and managing the corresponding configurations is
 even worse.
 
-This repository addresses these issues by centralizing everything at one place.
+This repository addresses these issues by centralizing everything at one place,
+and allows for a fast deployment and maintenance of the configuration, thanks
+to [Chezmoi](https://www.chezmoi.io).
 
-This can be seen as a package that provides a fully customized
-desktop environment experience—not in the exact sense of KDE or GNOME,
-but in a similar spirit.
+## Features
 
-All dependencies, in the form of software packages, are organized into two
-conceptual layers, referred to as "profiles" in the following sections.
-These profiles are defined as follows:
+- Works on your favorite platform, with or without a GUI.
+\
+  Can be used on a headless server, within your favorite desktop environment,
+  or shipped with [dwm](https://github.com/duketuxem/dwm).
 
- - The "core" profile provides a minimal setup tailored for
- a command-line interface (CLI) workflow.
+- Documented config files and tool scope in the relevant directories.
 
- - The "desktop" profile extends the core setup, adding everything required
- for a graphical user interface (GUI) environment.
+- Comes with a default sensible home folder directories specification.
+\
+	Simply remove the empty directories under this `home/`'s folder before
+	applying the procedure below.
 
-### Chezmoi
+### CLI Tools
 
-The configuration in itself is managed thanks to
-[Chezmoi](https://www.chezmoi.io).
+Notable Command Line Interface tools to be used with these dotfiles:
 
-As opposed to the packages, it is bundled into an indivisible set of files
-in the `home` directory.
+- [bat:](https://github.com/sharkdp/bat) for nice file previews
+- [fzf:](https://junegunn.github.io/fzf/) for super powers
+- [The Silver Searcher (Ag):](https://github.com/ggreer/the_silver_searcher) for a faster `grep`
+- [Syncthing](https://syncthing.net/) for a full background automated files synchronization
+- `tree`: because tree is nice too!
 
+#### Tmux as the terminal multiplexer
 
-### Packages table
+This is to be documented. TODO
 
-Dotfiles would not be useful without the associated software installed.
+- Prefix is bound to `<C-a>`
 
-Here is a summary of what is in use and what would be installed.
+#### Vim as the text editor
 
-| Software | Description |
-| -- | --|
-| TO | DO |
+This could be a whole page, but overall:
 
+- Config from scratch, including:
+	- Use of the native vim pack system
+	- [X11] Simple Copy/Paste even without `+clipboard`
+	- Sensible defaults, like `Y` for `y$`, buffer delete, and so on
+	- Most Recent Used (Bro plugin)
+	- Custom color theme inspired from tomorrow-night-eighties!
+- Plugins to enhance the exeperience even more:
+	- Vimwiki
+	- Git integration (vim-fugitive / vim-gitgutter)
+	- Linter support (ALE)
+	- LSP Support (vim-lsp)
+	- Autocomplete paths, LSP suggestion (Asyncomplete)
+	- FZF integration
+	- Lightline and popular themes out of the box (onedark, base16, material...)
+	- Colorscheme discovery + a "devtool" for knowing syntax group (F12)
+
+And much more to be discovered.
+
+#### Zsh as the shell
+
+- Vanilla config also from scratch:
+	- Support for the [XDG Base Directory Specification](https://wiki.archlinux.org/title/XDG_Base_Directory) as much as possible
+	- 100% homemade prompt with command return status, duration time, git
+	- Custom bindings (see the README) TODO
+	- Custom favzf plugin, [check this out](https://github.com/duketuxem/dotfiles/blob/9b75c2ce09e0e61f67ce7d19b1d6664c1321061f/home/private_dot_config/zsh/dot_zshrc#L542):
+ - Light plugins support:
+	 - zsh-syntax-highlighting: for a fish shell-like command prevalidation
+	 - You-should-use: for alias usage hints
+
+## GUI
+
+- For now, good support for X11, but I am willing to try Hyperland.
+- Cool fonts (Code New Roman Nerd Font, Noto, CJK Support)
+- More to come
 
 ## Getting Started
+
+Convinced? Great!
 
 The installation process requires some manual preliminary checks and actions.
 
@@ -62,15 +95,15 @@ final adjustments will be made.
 
 ### Prerequisites
 
-- Ensure you have an **up to date** system with **internet access**, and eventually
+1. Ensure you have an **up to date** system with **internet access**, and eventually
 	reboot to take some changes into considerations.
-- Ensure `curl` and `git` are installed
-- Install `chezmoi`:
+2. Ensure `curl` and `git` are installed
+3. Install `chezmoi`:
 
-  `sh -c "$(curl -fsLS get.chezmoi.io) -b ~/.local/bin"`
-- Then update the `$PATH` variable for chezmoi to be found:
+	`sh -c "$(curl -fsLS get.chezmoi.io) -b ~/.local/bin"`
+4. Then update the `$PATH` variable for chezmoi to be found:
 
-  `export PATH="$PATH:~/.local/bin"`
+	`export PATH="$PATH:~/.local/bin"`
 
 ### Installation
 
@@ -95,27 +128,22 @@ final adjustments will be made.
 
 5. Log off and then log back again to see everything loaded.
 
+## Some post installation steps
 
-### Some post installation steps
+Congratulations!
 
-   Here are a few pointers about things we always forget to do or set.
+At this point, you already have a working configuration, and can start enjoy
+it from your favorite terminal emulator, be the `linux` tty even!
 
-   - **Import your ssh key**
+However, if you would like to continue to install some tools, there are some
+scripts that can be run: TODO
 
-   - **Set some git parameters**
+- Maybe rerun `run_once_after_chezmoi-apply.sh` for matching your git config.
+- Desktop: TODO
 
-      The `dotfiles` git repository was not configured, you might want to run:
+### Hints
 
-      ```sh
-      chezmoi cd
-
-      # use ssh for this repository
-      git remote set-url origin git@github.com:USERNAME/dotfiles.git
-
-      # identity setup (global or not depending on your needs)
-      git config --global user.name "YOUR NAME"
-      git config --global user.email "YOUR EMAIL"
-      ```
+	- **Import your ssh key**
 
 
 ### Desktop installation
@@ -137,13 +165,6 @@ Once you are sure about those settings, just run `./setup_desktop.sh`.
 I deliberately chose to not have a full installation process despite having
 started to write one, see the `trash/` folder for some legacy code and reasons
 this has been discarded.
-
-
-## Additional Notes
-
-- Feel free to modify configurations as per your personal needs.
-- Contributions are welcome!
-Open an issue or PR if you’d like to improve or customize anything.
 
 
 ## License

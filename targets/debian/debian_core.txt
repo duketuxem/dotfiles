@@ -4,6 +4,7 @@ cloc
 curl
 fd-find
 htop
+ncdu
 neofetch
 shellcheck
 silversearcher-ag

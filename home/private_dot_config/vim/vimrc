@@ -384,6 +384,14 @@ function! DoNotIndentWhilePasting()
   return ""
 endfunction
 inoremap <special> <expr> <Esc>[200~ DoNotIndentWhilePasting()
+
+" Otherwise, if the text is too big, rely on some external tools to paste:
+if executable('xsel')
+	nnoremap <leader><C-v> :r !xsel -b<CR>
+elseif executable('xclip')
+	nnoremap <leader><C-v> :r !xclip -out -selection clipboard<CR>
+endif
+
 " }}}
 " Search {{{
 set hlsearch		" highlight searches by default

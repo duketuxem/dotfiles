@@ -9,6 +9,6 @@ DIR_TO_BE_THERE="/run/user/$USR_ID"
 
 if [ ! -d "$DIR_TO_BE_THERE" ]; then
 	sudo mkdir "$DIR_TO_BE_THERE"
-	sudo chown "$USR_ID":"$USR_ID"
+	sudo chown "$USR_ID":"$USR_ID" "$DIR_TO_BE_THERE"
 	sudo chmod 700 "$DIR_TO_BE_THERE"
 fi

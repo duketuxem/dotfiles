@@ -561,7 +561,7 @@ addfav() {
 		if [ ! -d "$1" ]; then
 			echo >&2 "'$1' is not a valid directory."
 			return 1
-		elif grep -Fxq "$1" "$CDFAVS"; then
+		elif grep -Fxq "$1" "$CDFAVS" 2> /dev/null; then
 			echo >&2 "'$1' is already in favorites."
 			return 1
 		fi

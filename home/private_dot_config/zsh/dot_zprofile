@@ -14,12 +14,12 @@
 
 
 # Run ssh-agent if not already running
-# kill -0 "$SSH_AGENT_PID" || eval $(ssh-agent -s)
+# taken from: https://wiki.archlinux.org/title/SSH_keys#ssh-agent
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-    ssh-agent > "$XDG_RUNTIME_DIR/ssh-agent.env"
+	ssh-agent > "$XDG_RUNTIME_DIR/ssh-agent.env"
 fi
 if [ ! -f "$SSH_AUTH_SOCK" ]; then
-    source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
+	source "$XDG_RUNTIME_DIR/ssh-agent.env" > /dev/null
 fi
 
 

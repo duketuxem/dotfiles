@@ -3,9 +3,12 @@
 # present but needs to exists for the XDG_RUNTIME_DIR variable.
 # This was tested on voidlinux and the folder did not exist out of the box.
 
-DIR_TO_BE_THERE="/run/user/$(id -u)"
+USR_ID="$(id -u)"
+
+DIR_TO_BE_THERE="/run/user/$USR_ID"
 
 if [ ! -d "$DIR_TO_BE_THERE" ]; then
 	sudo mkdir "$DIR_TO_BE_THERE"
-	sudo chown 700 "$DIR_TO_BE_THERE"
+	sudo chown "$USR_ID":"$USR_ID"
+	sudo chmod 700 "$DIR_TO_BE_THERE"
 fi

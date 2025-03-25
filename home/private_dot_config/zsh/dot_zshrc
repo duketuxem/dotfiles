@@ -639,8 +639,8 @@ chkfav() {
 # and hides some binaries from the prompt until nvm/npm/npx/node is explicitely
 # called by the user.
 # One side effect is, suppose vim expects tsserver (npm package) to be present,
-# it has no idea nvm exists, and even though if it was manually loaded in its
-# child scope (vim), the parent process (shell) would ALSO need to load it when
+# it has no idea nvm exists, and even though, should load the following only in
+# its child process scope, requiring the parent process to ALSO load it when
 # required. Giving up.
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 

@@ -92,8 +92,7 @@ nnoremap Y y$
 " ignore a text to replace from being recorded into registers
 nnoremap c "_c
 " fancy ways to quit insert mode
-inoremap jj <Esc>
-inoremap kj <Esc>
+inoremap jk <Esc>
 inoremap <expr> <C-c> "<Esc>"
 
 " Vimrc:
@@ -328,6 +327,8 @@ if executable('xsel')
 		\ "zy <BAR> :call system('xsel -i -b', @z)<CR>
 	vnoremap <silent> <C-x>
 		\ "zy <BAR> :call system('xsel -i -b', @z)<BAR>:normal gvd<CR>
+	nnoremap <silent> <C-a>
+		\ :%y z <BAR> :call system('xsel -i -b', @z)<CR>
 elseif executable('xclip')
 	" This works except when vim is suspended (^Z):
 	" A selection is made using vim's visual mode
@@ -666,8 +667,14 @@ nnoremap <leader>G :FZF ~<CR>
 
 " Lightline:
 let g:lightline = {
-\ 'colorscheme': 'darcula',
+\ 'colorscheme': 'darcula'
 \ }
+function! LightlineReload()
+  call lightline#init()
+  call lightline#colorscheme()
+  call lightline#update()
+endfunction
+command! LightlineReload call LightlineReload()
 
 " VimHtmlTemplateLiterals {{{
 let g:htl_all_templates=1
@@ -681,6 +688,8 @@ let g:htl_all_templates=1
 " vim-lsp {{{
 
 let g:lsp_document_code_action_signs_enabled = 0
+let g:lsp_semantic_enabled = 1
+let g:lsp_semantic_delay = 0
 
 if executable('bash-language-server')
     au User lsp_setup call lsp#register_server({
@@ -709,7 +718,7 @@ endif
 function! s:on_lsp_buffer_enabled() abort
     " Avoid init delay (preparation for ALE)
     setlocal signcolumn=yes
-    " setlocal omnifunc=ale#completion#OmniFunc
+    setlocal omnifunc=asyncomplete#
     " if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> <leader>ld <plug>(lsp-definition)
     nmap <buffer> <leader>ls <plug>(lsp-document-symbol-search)
@@ -727,10 +736,12 @@ endfunction
     " https://github.com/prabirshrestha/vim-lsp/issues/1280
 
 augroup lsp_install
-    au!
+    autocmd!
     " call s:on_lsp_buffer_enabled only for languages that has the server registered.
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
+
+
 " }}}
 " Asyncomplete {{{
 " let g:asyncomplete_auto_popup = 1
@@ -749,6 +760,9 @@ inoremap <expr> <C-k>  pumvisible() ? "\<C-p>" : "\<C-k>"
 inoremap <expr> <Tab>  pumvisible() ? asyncomplete#close_popup() : "\<Tab>"
 inoremap <expr> <CR>   pumvisible() ? asyncomplete#close_popup() : "\<CR>"
 
+" force completion to appear
+imap <C-Space> <Plug>(asyncomplete_force_refresh)
+
 augroup complete_files
 	autocmd!
 	autocmd User asyncomplete_setup call
@@ -761,5 +775,8 @@ augroup complete_files
 augroup END
 " }}}
 
+" let g:everforest_background = 'medium'
+" let g:everforest_transparent_background = 0
+" colo everforest
 " }}}
 "

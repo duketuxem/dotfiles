@@ -209,6 +209,30 @@ call s:h("Delimiter", s:orange, "", "")  " <?php
 call s:h("zshFunction", s:blue, "", "")
 " }}}
 
+" LSP {{{
+" call s:h("LspSemanticType", s:cyan, "", "")
+" call s:h("LspSemanticClass", s:blue, "", "")
+" call s:h("LspSemanticEnum", s:cyan, "", "")
+" call s:h("LspSemanticInterface", s:purple, "", "")
+" call s:h("LspSemanticStruct", s:cyan, "", "")
+" call s:h("LspSemanticTypeParameter", s:blue, "", "")
+" call s:h("LspSemanticParameter", s:blue, "", "")
+" call s:h("LspSemanticVariable", s:yellow, "", "")
+call s:h("LspSemanticProperty", s:yellow, "", "")
+" call s:h("LspSemanticEnumMember", s:orange, "", "")
+" call s:h("LspSemanticEvents", s:red, "", "")
+call s:h("LspSemanticFunction", s:blue, "", "")
+call s:h("LspSemanticMethod", s:blue, "", "")
+" call s:h("LspSemanticKeyword", s:red, "", "")
+" call s:h("LspSemanticModifier", s:purple, "", "")
+" call s:h("LspSemanticComment", s:dark3, "", "")
+" call s:h("LspSemanticString", s:blue, "", "")
+" call s:h("LspSemanticNumber", s:orange, "", "")
+" call s:h("LspSemanticRegexp", s:cyan, "", "")
+" call s:h("LspSemanticOperator", s:orange, "", "")
+
+" }}}
+
 " netrw {{{
 call s:h("netrwTreeBar", s:purple, "", "")
 " }}}

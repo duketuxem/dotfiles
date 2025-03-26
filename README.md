@@ -132,31 +132,20 @@ final adjustments will be made.
 
 Congratulations!
 
-At this point, you already have a working configuration, and can start enjoy
+At this point, you already have a working configuration, and can start enjoying
 it from your favorite terminal emulator, be the `linux` tty even!
 
-However, if you would like to continue to install some tools, there are some
-scripts that can be run: TODO
+However, if you would like to expand from here, there are some scripts inside
+the `./post-install` directory that can install different things depending on
+what is needed.
 
-- Maybe rerun `run_once_after_chezmoi-apply.sh` for matching your git config.
-- Desktop: TODO
+### Hints and reminders
 
-### Hints
+Having done a lot of testing for this repository and some distro hopping in the
+past, here is my reminder list of 'things we always forget' which prevent us to
+enjoy our precious muscle memory.
 
 	- **Import your ssh key**
-
-
-### Desktop installation
-
-If like me, you would like some custom managed software to be installed,
-you could use the `setup_desktop.sh` script.
-
-Just review the default parameters on the top in case you don't have `sudo`
-or alike installed.
-
-Once you are sure about those settings, just run `./setup_desktop.sh`.
-
-
 
 ## FAQ
 

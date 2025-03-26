@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 git_username="duketuxem"
 git_name="Duke Tuxem"
 git_mail="33418846+DukeTuxem@users.noreply.github.com"
@@ -11,4 +13,5 @@ echo "Repository user name set to: '$git_name'"
 git config user.email "$git_mail" && \
 echo "Repository user mail set to: '$git_mail'"
 
-echo "hint: Re-run this script with 'sh $0' and updated variables if you need."
+echo "hint: If you need, update the variables and re-run this script with 'sh $0'."
+

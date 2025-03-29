@@ -114,7 +114,7 @@ final adjustments will be made.
   chezmoi cd
   ```
 
-2. Find your specific platform instructions under the [targets directory](./targets/README.md).
+2. Find your specific platform instructions under the [targets directory](./targets).
 
 	**Then**, resume from here.
 

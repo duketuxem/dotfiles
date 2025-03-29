@@ -89,17 +89,17 @@ declare -A keys
 keys[Enter]="${terminfo[cr]:-^M}"
 keys[EnterNumpad]="${terminfo[kent]:-^M}"
 keys[Backspace]="${terminfo[kbs]}"
-keys[Delete]="${terminfo[kdch1]}"
-keys[Up]="${terminfo[kcuu1]}"
-keys[Down]="${terminfo[kcud1]}"
-keys[Left]="${terminfo[kcub1]}"
-keys[Right]="${terminfo[kcuf1]}"
-keys[PageUp]="${terminfo[kpp]}"
-keys[PageDown]="${terminfo[knp]}"
+keys[Delete]="${terminfo[kdch1]:-^[[3~}"
+keys[Up]="${terminfo[kcuu1]:-^[[A}"
+keys[Down]="${terminfo[kcud1]:-^[[B}"
+keys[Left]="${terminfo[kcub1]:-^[[C}"
+keys[Right]="${terminfo[kcuf1]:-^[[D}"
+keys[PageUp]="${terminfo[kpp]:-^[[5~}"
+keys[PageDown]="${terminfo[knp]:-^[[6~}"
 keys[Home]="${terminfo[khome]}"
 keys[End]="${terminfo[kend]}"
-keys[Tab]="${terminfo[ht]}"
-keys[ShiftTab]="${terminfo[kcbt]}"
+keys[Tab]="${terminfo[ht]:-	}"
+keys[ShiftTab]="${terminfo[kcbt]:-^[[Z}"
 # Combinations
 keys[CtrlRight]="^[[1;5C"
 keys[CtrlLeft]="^[[1;5D"
@@ -107,41 +107,19 @@ keys[CtrlDel]="^[[3;5~"
 keys[ShiftPageup]="^[[5;2~"
 keys[ShiftPagedown]="^[[6;2~"
 
+
+# Overrides some defaults for specific terminal emulators.
 case $TERM in
-	# xterm or tty
         "xterm" | "xterm-256color")
 		keys[Backspace]="${keys[Backspace]:-^H}"
-		keys[Delete]="${keys[Delete]:-^[[3~}"
-		keys[Up]="${keys[Up]:-^[[A}"
-		keys[Left]="${keys[Left]:-^[[B}"
-		keys[Right]="${keys[Right]:-^[[C}"
-		keys[Down]="${keys[Down]:-^[[D}"
-		keys[PageUp]="${keys[PageUp]:-^[[5~}"
-		keys[PageDown]="${keys[PageDown]:-^[[6~}"
 		keys[Home]="${keys[Home]:-^[[H}"
 		keys[End]="${keys[End]:-^[[F}"
-		keys[Tab]="${keys[Tab]:-	}"
-		keys[ShiftTab]="${keys[ShiftTab]:-^[[Z}"
 		;;
-	# also tmux
-	"screen" | "screen-256color")
-		# fix backspace
-			keys[Backspace]="${terminfo[kbs]:-^?}"
-		keys[Delete]="${terminfo[kdch1]:-^[[3~}"
-		keys[Up]="${terminfo[kcuu1]:-^[[A}"
-		keys[Down]="${terminfo[kcud1]:-^[[B}"
-		keys[Right]="${terminfo[kcuf1]:-^[[C}"
-		keys[Left]="${terminfo[kcub1]:-^[[D}"
-		keys[PageUp]="${terminfo[kpp]:-^[[5~}"
-		keys[PageDown]="${terminfo[knp]:-^[[6~}"
-			keys[Home]="${terminfo[khome]:-^[[1~}"
-			keys[End]="${terminfo[kend]:-^[[4~}"
-		keys[Tab]="${terminfo[ht]:-	}"
-		keys[ShiftTab]="${terminfo[kcbt]:-^[[Z}"
-		;;
-	"linux")
-		keys[CtrlLeft]="^[[D"
-		keys[CtrlRight]="^[[C"
+	"screen" | "screen-256color") # <- tmux can be set with these
+	# 	# fix backspace
+		keys[Backspace]="${terminfo[kbs]:-^?}"
+		keys[Home]="${terminfo[khome]:-^[[1~}"
+		keys[End]="${terminfo[kend]:-^[[4~}"
 		;;
 	"st" | "st-256color")
 		# st has both cbt and kcbt declared in its st.info file but in
@@ -153,9 +131,9 @@ case $TERM in
 		unset keys
 		return
 		;;
-	*)
-		echo >&2 "Unsupported terminal: $TERM"
-		;;
+	# *)
+	# 	echo >&2 "Unsupported terminal: $TERM"
+	# 	;;
 esac
 
 
@@ -259,9 +237,9 @@ bindkey -- "^[[200~"			bracketed-paste
 ## Combinations
 # 'Portable' Alt + Del
 bindkey -- "^[${keys[Backspace]}"	custom-backward-kill-word
+bindkey -- "${keys[CtrlDel]}"		kill-word
 bindkey -- "${keys[CtrlRight]}"		forward-word
 bindkey -- "${keys[CtrlLeft]}"		backward-word
-bindkey -- "${keys[CtrlDel]}"		kill-word
 # No tmux ? prevent self-insert
 bindkey -- "${keys[ShiftPageup]}"	history-beginning-search-backward
 bindkey -- "${keys[ShiftPagedown]}"	history-beginning-search-forward

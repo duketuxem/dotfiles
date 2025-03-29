@@ -6,6 +6,7 @@ curl
 fd
 htop
 ncdu
+ncurses-term
 neofetch
 shellcheck
 syncthing

@@ -21,7 +21,7 @@ xset r rate 300 50		# faster autorepeat
 while :
 do
     # Log stderr to a file
-    # dwm 2>&1 >> "$HOME_LOG"/dwm.log
+    # dwm 2>&1 >> ~/.local/log/dwm.log
 
     # No error logging
     dwm >/dev/null 2>&1

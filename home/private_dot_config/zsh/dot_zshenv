@@ -39,8 +39,14 @@ export XDG_DESKTOP_DIR="$HOME/.local/share"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.local/cache"
 export XDG_STATE_HOME="$HOME/.local/state"
-export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$UID}"
-export HOME_LOG="$HOME/.local/log"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/user/$(id -u)}"
+
+# fallback folder handling
+if [ ! -d "$XDG_RUNTIME_DIR" ]; then
+	mkdir -p "$XDG_RUNTIME_DIR" > /dev/null 2>&1
+	chown "$(id -u)":"$(id -g)" "$XDG_RUNTIME_DIR" > /dev/null 2>&1
+	chmod 700 "$XDG_RUNTIME_DIR" > /dev/null 2>&1
+fi
 
 ## Exceptions
 # ~/.asoundrc -> Should be supported if XDG is set ~/.config/alsa/asoundrc

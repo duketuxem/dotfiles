@@ -41,6 +41,11 @@ export XDG_CACHE_HOME="$HOME/.local/cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/user/$(id -u)}"
 
+# On some non-systemd distributions or systems without a session manager
+# running (not sure about the exact use case), the directory specified by
+# $XDG_RUNTIME_DIR - if it is set, as it might not be defined at all - may not
+# exist, yet it is necessary for tools like ssh-agent.
+
 # fallback folder handling
 if [ ! -d "$XDG_RUNTIME_DIR" ]; then
 	mkdir -p "$XDG_RUNTIME_DIR" > /dev/null 2>&1

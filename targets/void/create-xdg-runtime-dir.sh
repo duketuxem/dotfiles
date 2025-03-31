@@ -1,1 +1,0 @@
-../common/create-xdg-runtime-dir.sh

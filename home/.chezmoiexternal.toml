@@ -89,10 +89,12 @@
 
 ### js ###
 # vim-html-template-literals: render syntax within `<h1>Hello</h1>` [[[
-[".config/vim/pack/js/start/vim-html-template-literals"]
-	type = "git-repo"
-	url = "https://github.com/jonsmithers/vim-html-template-literals.git"
-	refreshPeriod = "672h"
+# Unfortunately this is breaking some typescriptreact functionnality.
+# Need to dig further...
+#[".config/vim/pack/js/start/vim-html-template-literals"]
+#	type = "git-repo"
+#	url = "https://github.com/jonsmithers/vim-html-template-literals.git"
+#	refreshPeriod = "672h"
 # ]]]
 
 ### motions ###

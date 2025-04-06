@@ -646,13 +646,13 @@ if executable('bash-language-server')
         \ })
 endif
 
-" if executable('typescript-language-server')
-"     au User lsp_setup call lsp#register_server({
-"         \ 'name': 'typescript',
-"         \ 'cmd': {server_info->['typescript-language-server', '--stdio']},
-"         \ 'allowlist': ['typescript', 'typescriptreact'],
-"         \ })
-" endif
+if executable('typescript-language-server')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'typescript',
+        \ 'cmd': {server_info->['typescript-language-server', '--stdio']},
+        \ 'allowlist': ['typescript', 'typescriptreact'],
+        \ })
+endif
 
 if executable('vim-language-server')
     au User lsp_setup call lsp#register_server({

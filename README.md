@@ -4,6 +4,14 @@
   <!-- Insert the ricing screenshot here -->
 </div>
 
+# Archiving note
+
+This repository was created as an optimistic attempt to solve configuration state replication to a target system.
+
+It uses the excellent chezmoi tool, which I highly recommend for “simple” use cases—“simple” in quotes because it already covers a wide range of functionality.
+
+Since then, I have moved my configuration to another repository using Ansible, as my needs are closer to machine provisioning than simply deploying configuration files to a target system—again, an oversimplification.
+
 ## Motivation
 
 Every time I set up a new machine, obviously none of the tools and
